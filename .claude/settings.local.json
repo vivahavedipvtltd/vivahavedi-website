@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:nestmatrimony.com)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Read(//c/wamp64/www/vivahavedi/vivahavedi-laravel-api/**)",
+      "Bash(curl:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)",
+      "Bash(timeout:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git log:*)",
+      "Bash(php artisan route:list:*)",
+      "Bash(php artisan tinker:*)",
+      "Bash(npx next:*)",
+      "Read(//c/wamp64/www/vivahavedi/**)",
+      "Bash(grep:*)",
+      "Bash(mysql:*)",
+      "Bash(awk:*)",
+      "WebFetch(domain:www.vivahavedimatrimony.com)",
+      "WebFetch(domain:www.keralamatrimony.com)",
+      "Bash(dir \"C:\\wamp64\\www\\vivahavedi\\matrimonial-website\\src\\app\\dashboard\")",
+      "Bash(findstr:*)",
+      "Bash(dir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cat:*)",
+      "Bash(mv:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npm install)",
+      "Bash(nul)",
+      "Bash(git remote set-url:*)",
+      "Bash(git config:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

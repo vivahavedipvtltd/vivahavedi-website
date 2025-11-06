@@ -1,0 +1,502 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { AuthGuard } from '@/components/auth/AuthGuard';
+import { useAuth } from '@/contexts/AuthContext';
+import DashboardSidebar from '@/components/DashboardSidebar';
+import { User, Loader2, Save, ArrowLeft } from 'lucide-react';
+
+interface MasterData {
+  body_type: Array<{ id: number; name: string }>;
+  complexion: Array<{ id: number; name: string }>;
+  mother_tongue: Array<{ id: number; name: string }>;
+  personal_values: Array<{ id: number; name: string }>;
+  physical_status: Array<{ id: number; name: string }>;
+  marital_status: Array<{ id: number; name: string }>;
+  created: Array<{ id: number; name: string }>;
+}
+
+interface BasicProfileData {
+  profile_created: string;
+  height: string;
+  weight: string;
+  merital_status: string;
+  childrens: string;
+  body_type: string;
+  complexion: string;
+  mother_tongue: string;
+  personal_values: string;
+  physical_status: string;
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
+const BasicProfilePage = () => {
+  const router = useRouter();
+  const { token } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [masters, setMasters] = useState<MasterData | null>(null);
+  const [formData, setFormData] = useState<BasicProfileData>({
+    profile_created: '',
+    height: '',
+    weight: '',
+    merital_status: '',
+    childrens: '',
+    body_type: '',
+    complexion: '',
+    mother_tongue: '',
+    personal_values: '',
+    physical_status: '',
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (token) {
+      fetchData();
+    }
+  }, [token]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch master data
+      const mastersResponse = await fetch(`${API_BASE_URL}/masters`, {
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+      const mastersResult = await mastersResponse.json();
+      if (mastersResult.status === 'success') {
+        setMasters(mastersResult.data);
+      }
+
+      // Fetch current profile data
+      const profileResponse = await fetch(`${API_BASE_URL}/my-details`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const profileResult = await profileResponse.json();
+
+      if (profileResult.status === 'success') {
+        const detailed = profileResult.data.detailed;
+        setFormData({
+          profile_created: detailed.up_added_by || '',
+          height: detailed.up_height || '',
+          weight: detailed.up_body_weight || '',
+          merital_status: detailed.up_marital_status || '',
+          childrens: detailed.up_children || 'No',
+          body_type: detailed.up_body_type || '',
+          complexion: detailed.up_complexion || '',
+          mother_tongue: detailed.up_mother_tongue || '',
+          personal_values: detailed.up_personal_values || '',
+          physical_status: detailed.up_physical_status || '',
+        });
+      } else {
+        // Handle API errors
+        console.error('Profile API Error:', profileResult);
+        if (profileResult.errors) {
+          const errorMessages = Object.values(profileResult.errors).flat().join(', ');
+          setError(`Failed to get profile details: ${errorMessages}`);
+        } else {
+          setError(`Failed to get profile details: ${profileResult.message || 'Unknown error'}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Failed to load profile data. Please check your connection.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/basic`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        setSuccess('Basic profile updated successfully!');
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 2000);
+      } else {
+        // Handle validation errors
+        if (result.errors) {
+          const errorMessages = Object.values(result.errors).flat().join(', ');
+          setError(`Validation error: ${errorMessages}`);
+        } else {
+          setError(result.message || 'Failed to update profile');
+        }
+        console.error('API Error:', result);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError('An error occurred while updating profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  if (loading) {
+    return (
+      <AuthGuard requireAuth={true} redirectTo="/login">
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-grow flex items-center justify-center bg-gray-50">
+            <Loader2 className="h-12 w-12 animate-spin text-red-500" />
+          </main>
+          <Footer />
+        </div>
+      </AuthGuard>
+    );
+  }
+
+  return (
+    <AuthGuard requireAuth={true} redirectTo="/login">
+      <div className="min-h-screen flex flex-col">
+        <Header />
+
+        <div className="flex-grow flex bg-gray-50">
+          <DashboardSidebar
+            activeSection="my-profile"
+            onSectionChange={(section) => {
+              if (section !== 'my-profile') {
+                router.push('/dashboard');
+              }
+            }}
+          />
+
+          <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+            <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+                  <User className="h-6 w-6 mr-2 text-red-500" />
+                  Update Basic Profile
+                </h1>
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="flex items-center text-gray-600 hover:text-gray-900"
+                >
+                  <ArrowLeft className="h-5 w-5 mr-1" />
+                  Back to Dashboard
+                </button>
+              </div>
+
+              {error && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                  {error}
+                </div>
+              )}
+
+              {success && (
+                <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+                  {success}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Profile Created By */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Profile Created By
+                  </label>
+                  <select
+                    name="profile_created"
+                    value={formData.profile_created}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  >
+                    <option value="">Select</option>
+                    {masters?.created?.map((item) => (
+                      <option key={item.id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Height & Weight */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Height
+                    </label>
+                    <select
+                      name="height"
+                      value={formData.height}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">Select Height</option>
+                      <option value="4.0">4'0" (122 cm)</option>
+                      <option value="4.1">4'1" (124 cm)</option>
+                      <option value="4.2">4'2" (127 cm)</option>
+                      <option value="4.3">4'3" (130 cm)</option>
+                      <option value="4.4">4'4" (132 cm)</option>
+                      <option value="4.5">4'5" (135 cm)</option>
+                      <option value="4.6">4'6" (137 cm)</option>
+                      <option value="4.7">4'7" (140 cm)</option>
+                      <option value="4.8">4'8" (142 cm)</option>
+                      <option value="4.9">4'9" (145 cm)</option>
+                      <option value="4.10">4'10" (147 cm)</option>
+                      <option value="4.11">4'11" (150 cm)</option>
+                      <option value="5.0">5'0" (152 cm)</option>
+                      <option value="5.1">5'1" (155 cm)</option>
+                      <option value="5.2">5'2" (157 cm)</option>
+                      <option value="5.3">5'3" (160 cm)</option>
+                      <option value="5.4">5'4" (163 cm)</option>
+                      <option value="5.5">5'5" (165 cm)</option>
+                      <option value="5.6">5'6" (168 cm)</option>
+                      <option value="5.7">5'7" (170 cm)</option>
+                      <option value="5.8">5'8" (173 cm)</option>
+                      <option value="5.9">5'9" (175 cm)</option>
+                      <option value="5.10">5'10" (178 cm)</option>
+                      <option value="5.11">5'11" (180 cm)</option>
+                      <option value="6.0">6'0" (183 cm)</option>
+                      <option value="6.1">6'1" (185 cm)</option>
+                      <option value="6.2">6'2" (188 cm)</option>
+                      <option value="6.3">6'3" (191 cm)</option>
+                      <option value="6.4">6'4" (193 cm)</option>
+                      <option value="6.5">6'5" (196 cm)</option>
+                      <option value="6.6">6'6" (198 cm)</option>
+                      <option value="6.7">6'7" (201 cm)</option>
+                      <option value="6.8">6'8" (203 cm)</option>
+                      <option value="6.9">6'9" (206 cm)</option>
+                      <option value="6.10">6'10" (208 cm)</option>
+                      <option value="6.11">6'11" (211 cm)</option>
+                      <option value="7.0">7'0" (213 cm)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Weight (in kg)
+                    </label>
+                    <select
+                      name="weight"
+                      value={formData.weight}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">Select Weight</option>
+                      {Array.from({ length: 101 }, (_, i) => i + 40).map((kg) => (
+                        <option key={kg} value={kg.toString()}>
+                          {kg} kg
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Marital Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Marital Status
+                  </label>
+                  <select
+                    name="merital_status"
+                    value={formData.merital_status}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  >
+                    <option value="">Select</option>
+                    {masters?.marital_status?.map((item) => (
+                      <option key={item.id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Children - Only show if not unmarried */}
+                {formData.merital_status && formData.merital_status.toLowerCase() !== 'unmarried' && formData.merital_status.toLowerCase() !== 'never married' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Children
+                    </label>
+                    <select
+                      name="childrens"
+                      value={formData.childrens}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">Select</option>
+                      <option value="No">No</option>
+                      <option value="1">1 Child</option>
+                      <option value="2">2 Children</option>
+                      <option value="3">3 Children</option>
+                      <option value="4">4 Children</option>
+                      <option value="5">5 Children</option>
+                      <option value="6">6 Children</option>
+                      <option value="More than 6">More than 6</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* Body Type & Complexion */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Body Type
+                    </label>
+                    <select
+                      name="body_type"
+                      value={formData.body_type}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">Select</option>
+                      {masters?.body_type?.map((item) => (
+                        <option key={item.id} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Complexion
+                    </label>
+                    <select
+                      name="complexion"
+                      value={formData.complexion}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">Select</option>
+                      {masters?.complexion?.map((item) => (
+                        <option key={item.id} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Mother Tongue & Personal Values */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Mother Tongue
+                    </label>
+                    <select
+                      name="mother_tongue"
+                      value={formData.mother_tongue}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">Select</option>
+                      {masters?.mother_tongue?.map((item) => (
+                        <option key={item.id} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Personal Values
+                    </label>
+                    <select
+                      name="personal_values"
+                      value={formData.personal_values}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">Select</option>
+                      {masters?.personal_values?.map((item) => (
+                        <option key={item.id} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Physical Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Physical Status
+                  </label>
+                  <select
+                    name="physical_status"
+                    value={formData.physical_status}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  >
+                    <option value="">Select</option>
+                    {masters?.physical_status?.map((item) => (
+                      <option key={item.id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex justify-end space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => router.push('/dashboard')}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium flex items-center disabled:opacity-50"
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-5 w-5 mr-2" />
+                        Save Changes
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+            </div>
+          </main>
+        </div>
+
+        <Footer />
+      </div>
+    </AuthGuard>
+  );
+};
+
+export default BasicProfilePage;

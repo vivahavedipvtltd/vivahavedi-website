@@ -1,0 +1,713 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Performance optimizations */
+html {
+  font-display: swap;
+}
+
+/* Critical CSS for above-the-fold content */
+.hero-section {
+  contain: layout style paint;
+}
+
+/* Reduce layout shifts */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* GPU acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Intersection Observer optimizations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-geist-sans: Arial, Helvetica, sans-serif;
+  --font-geist-mono: monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Enhanced smooth scrolling for modern browsers */
+@supports (scroll-behavior: smooth) {
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: none;
+  }
+}
+
+/* Ultra-smooth scrolling optimizations */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Modern scroll optimizations */
+* {
+  scroll-behavior: inherit;
+}
+
+/* Better scroll performance */
+body {
+  scroll-snap-type: y proximity;
+  scroll-padding: 80px 0 0 0;
+}
+
+/* Smooth scrolling for webkit browsers */
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #ef4444, #ec4899);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #dc2626, #db2777);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+
+  /* Optimize for smooth scrolling physics */
+  position: relative;
+  height: 100%;
+}
+
+/* Enhanced smooth scrolling for webkit browsers */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ultra-smooth performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+/* Smooth scrolling container optimizations */
+main {
+  contain: layout style paint;
+  transform: translateZ(0);
+}
+
+/* Optimized transitions for all interactive elements */
+a, button, [role="button"] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
+}
+
+/* Enhanced section scroll behavior */
+section {
+  scroll-snap-align: start;
+  scroll-margin-top: 80px;
+}
+
+/* Improved scroll reveal timing */
+.scroll-reveal:not(.revealed),
+.scroll-reveal-left:not(.revealed),
+.scroll-reveal-right:not(.revealed),
+.scroll-reveal-scale:not(.revealed) {
+  will-change: transform, opacity;
+}
+
+/* Scroll reveal animations - more responsive timing */
+.scroll-reveal:not(.revealed) {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-left:not(.revealed) {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right:not(.revealed) {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-scale:not(.revealed) {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Parallax scrolling support */
+.parallax-bg {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth section transitions - already defined above */
+
+/* Enhanced header scroll effects */
+header {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
+}
+
+header.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Advanced header animations */
+header.scroll-down {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+header.scroll-up {
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Keep header visible when scrolled to top */
+header.scroll-up.scrolled {
+  transform: translateY(0);
+}
+
+/* Mobile menu animation */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+/* Smooth hover effects */
+a, button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced button hover effects */
+.btn-smooth {
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-smooth:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Smooth focus effects */
+*:focus {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+  transition: outline-offset 0.2s ease;
+}
+
+/* Enhanced momentum scrolling for mobile devices */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Enhanced smooth scrolling behavior */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Enhanced momentum scrolling for mobile */
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Smooth scroll snap for sections */
+  main {
+    scroll-snap-type: y proximity;
+  }
+
+  section {
+    scroll-snap-align: start;
+    scroll-margin-top: 80px;
+  }
+}
+
+/* Optimized touch scrolling for mobile devices */
+@media (max-width: 768px) {
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Reduce animation complexity on mobile for better performance */
+  .scroll-reveal:not(.revealed),
+  .scroll-reveal-left:not(.revealed),
+  .scroll-reveal-right:not(.revealed),
+  .scroll-reveal-scale:not(.revealed) {
+    transition-duration: 0.4s; /* Faster animations on mobile */
+  }
+
+  /* Simplify transforms on mobile */
+  .scroll-reveal:not(.revealed) {
+    transform: translateY(20px);
+  }
+
+  .scroll-reveal-left:not(.revealed) {
+    transform: translateX(-20px);
+  }
+
+  .scroll-reveal-right:not(.revealed) {
+    transform: translateX(20px);
+  }
+
+  .scroll-reveal-scale:not(.revealed) {
+    transform: scale(0.95);
+  }
+}
+
+/* Mobile App Section Animations */
+@keyframes text-wave {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes count-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(50px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.2) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes number-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes feature-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes star-twinkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.2) rotate(90deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(0.8) rotate(180deg);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(1.1) rotate(270deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes button-bounce {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes phone-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes phone-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(100px) rotate(45deg) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotate(6deg) scale(1);
+  }
+}
+
+@keyframes phone-slide-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px) rotate(-45deg) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotate(-6deg) scale(1);
+  }
+}
+
+@keyframes screen-glow {
+  0%, 100% {
+    filter: brightness(1) contrast(1);
+  }
+  50% {
+    filter: brightness(1.1) contrast(1.1);
+  }
+}
+
+@keyframes float-icon {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-10px) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes icon-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes particle-float {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0);
+  }
+}
+
+@keyframes floating-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+@keyframes floating-fast {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  33% {
+    transform: translateY(-15px) translateX(10px);
+  }
+  66% {
+    transform: translateY(10px) translateX(-5px);
+  }
+}
+
+@keyframes floating-medium {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-25px) scale(1.1);
+  }
+}
+
+/* Toast notification animations */
+@keyframes slide-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-right {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Confirm dialog animations */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-text-wave {
+  animation: text-wave 2s ease-in-out infinite;
+}
+
+.animate-count-bounce {
+  animation: count-bounce 1s ease-out both;
+}
+
+.animate-number-glow {
+  animation: number-glow 2s ease-in-out infinite;
+}
+
+.animate-feature-slide {
+  animation: feature-slide 0.6s ease-out both;
+}
+
+.animate-star-twinkle {
+  animation: star-twinkle 3s ease-in-out infinite;
+}
+
+.animate-button-bounce {
+  animation: button-bounce 0.8s ease-out both;
+}
+
+.animate-phone-float {
+  animation: phone-float 4s ease-in-out infinite;
+}
+
+.animate-phone-slide-in {
+  animation: phone-slide-in 1s ease-out both;
+}
+
+.animate-phone-slide-in-right {
+  animation: phone-slide-in-right 1s ease-out both;
+}
+
+.animate-screen-glow {
+  animation: screen-glow 3s ease-in-out infinite;
+}
+
+.animate-float-icon {
+  animation: float-icon 0.8s ease-out both;
+}
+
+.animate-icon-bounce {
+  animation: icon-bounce 2s ease-in-out infinite;
+}
+
+.animate-particle-float {
+  animation: particle-float 4s ease-in-out infinite;
+}
+
+.animate-floating-slow {
+  animation: floating-slow 6s ease-in-out infinite;
+}
+
+.animate-floating-fast {
+  animation: floating-fast 3s ease-in-out infinite;
+}
+
+.animate-floating-medium {
+  animation: floating-medium 4s ease-in-out infinite;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out forwards;
+}
+
+.animate-slide-out-right {
+  animation: slide-out-right 0.3s ease-in forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .scroll-reveal,
+  .scroll-reveal-left,
+  .scroll-reveal-right,
+  .scroll-reveal-scale {
+    opacity: 1;
+    transform: none;
+  }
+}
