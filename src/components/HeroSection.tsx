@@ -75,8 +75,8 @@ const HeroSection = () => {
             <div className="relative">
               <div className="relative w-full h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
                 <Image
-                  src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                  alt="Happy couple"
+                  src="/images/hero_image.png"
+                  alt="Happy couple in traditional Kerala wedding attire"
                   fill
                   className="object-cover"
                   priority

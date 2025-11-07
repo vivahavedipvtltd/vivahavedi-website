@@ -147,7 +147,7 @@ export default function ContactUsPage() {
                         <a href={`tel:+91${contactDetails.mobile}`} className="text-gray-600 hover:text-red-500">
                           {formatPhoneNumber(contactDetails.mobile)}
                         </a>
-                        <p className="text-sm text-gray-500 mt-1">Mon-Sat: 9:00 AM - 6:00 PM</p>
+                        <p className="text-sm text-gray-500 mt-1">Mon-Sun: 9:30 AM - 5:30 PM (Closed on Sat)</p>
                       </div>
                     </div>
 
@@ -172,9 +172,9 @@ export default function ContactUsPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Office Hours</h3>
                     <p className="text-gray-600">
-                      Monday - Friday: 9:00 AM - 6:00 PM<br />
-                      Saturday: 10:00 AM - 4:00 PM<br />
-                      Sunday: Closed
+                      Monday - Friday: 9:30 AM - 5:30 PM<br />
+                      Saturday: Closed<br />
+                      Sunday: 9:30 AM - 5:30 PM
                     </p>
                   </div>
                 </div>

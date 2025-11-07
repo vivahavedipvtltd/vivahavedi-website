@@ -153,7 +153,7 @@ const Footer = () => {
             {/* Social Media Links */}
             <div className="flex items-center space-x-4">
               <span className="text-white font-medium">Follow Us:</span>
-              <Link href="#" className="text-gray-300 hover:text-red-400 transition-colors duration-200">
+              <Link href="https://www.facebook.com/vivahavedi/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-red-400 transition-colors duration-200">
                 <Facebook className="h-5 w-5" />
               </Link>
               <Link href="#" className="text-gray-300 hover:text-red-400 transition-colors duration-200">

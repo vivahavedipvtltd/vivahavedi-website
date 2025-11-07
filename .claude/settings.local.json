@@ -33,7 +33,9 @@
       "Bash(npm install)",
       "Bash(nul)",
       "Bash(git remote set-url:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(mkdir:*)",
+      "WebFetch(domain:api.vivahavedimatrimony.com)"
     ],
     "deny": [],
     "ask": []

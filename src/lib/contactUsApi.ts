@@ -11,7 +11,7 @@
  * 2. GET /api/contact-us/branches - Get all active company branches
  */
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace('/api', '');
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 /**
  * Contact Details Interface
@@ -65,7 +65,7 @@ interface ApiResponse<T> {
  */
 export async function getHomeContactDetails(): Promise<ContactDetails> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/contact-us/home`, {
+    const response = await fetch(`${API_BASE_URL}/contact-us/home`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -109,7 +109,7 @@ export async function getHomeContactDetails(): Promise<ContactDetails> {
  */
 export async function getBranches(): Promise<Branch[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/contact-us/branches`, {
+    const response = await fetch(`${API_BASE_URL}/contact-us/branches`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',

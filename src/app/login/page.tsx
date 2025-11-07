@@ -247,17 +247,6 @@ export default function LoginPage() {
               </p>
             </div>
           </div>
-
-          {/* Test Credentials Info */}
-          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800 font-medium mb-2">Test Credentials:</p>
-            <p className="text-sm text-blue-700">
-              <strong>Mobile/Email:</strong> 8888888888 or testuser2@example.com
-            </p>
-            <p className="text-sm text-blue-700">
-              <strong>Password:</strong> testpass123
-            </p>
-          </div>
         </div>
       </div>
 
