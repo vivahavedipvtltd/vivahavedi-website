@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Search, Loader2, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import { publicSearch, PublicSearchParams } from '@/lib/publicSearchApi';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProfileResult {
   id: number;
@@ -23,6 +24,7 @@ interface ProfileResult {
 const PublicSearchResultsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<ProfileResult[]>([]);
@@ -86,8 +88,13 @@ const PublicSearchResultsPage = () => {
   };
 
   const handleProfileClick = (profileId: number) => {
-    // Redirect to login page with return URL
-    router.push(`/login?returnTo=/profile/${profileId}`);
+    if (isAuthenticated) {
+      // User is logged in, go directly to profile details
+      router.push(`/profile/${profileId}`);
+    } else {
+      // User is not logged in, redirect to login page with return URL
+      router.push(`/login?returnTo=/profile/${profileId}`);
+    }
   };
 
   return (

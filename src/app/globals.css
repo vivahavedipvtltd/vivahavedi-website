@@ -88,7 +88,7 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
   overflow-x: hidden;
-  overflow-y: auto;
+  height: 100%;
 }
 
 /* Enhanced smooth scrolling for modern browsers */
@@ -111,11 +111,7 @@ html, body {
   scroll-behavior: inherit;
 }
 
-/* Better scroll performance */
-body {
-  scroll-snap-type: y proximity;
-  scroll-padding: 80px 0 0 0;
-}
+/* Better scroll performance - removed scroll-snap from body */
 
 /* Smooth scrolling for webkit browsers */
 html::-webkit-scrollbar {
@@ -146,9 +142,9 @@ body {
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
 
-  /* Optimize for smooth scrolling physics */
+  /* Allow body to expand naturally with content */
   position: relative;
-  height: 100%;
+  min-height: 100%;
 }
 
 /* Enhanced smooth scrolling for webkit browsers */
@@ -174,6 +170,8 @@ body {
 main {
   contain: layout style paint;
   transform: translateZ(0);
+  /* Add scroll-snap to main instead of body for better control */
+  scroll-snap-type: y proximity;
 }
 
 /* Optimized transitions for all interactive elements */
@@ -329,14 +327,9 @@ a, button {
   }
 
   /* Enhanced momentum scrolling for mobile */
-  body {
+  html {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
-  }
-
-  /* Smooth scroll snap for sections */
-  main {
-    scroll-snap-type: y proximity;
   }
 
   section {
@@ -347,7 +340,7 @@ a, button {
 
 /* Optimized touch scrolling for mobile devices */
 @media (max-width: 768px) {
-  body {
+  html {
     -webkit-overflow-scrolling: touch;
   }
 
