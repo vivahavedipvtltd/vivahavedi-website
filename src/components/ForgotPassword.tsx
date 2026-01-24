@@ -156,12 +156,8 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
       const result = await response.json();
 
       if (result.status === 'success') {
-        // Store token and user ID
-        auth.setToken(result.data.token);
-        auth.setUserId(result.data.user_id);
-
-        // Update auth context
-        authLogin(result.data.token, result.data.user_id);
+        // Update auth context (which also stores token, user ID, and expiry)
+        authLogin(result.data.token, result.data.user_id, result.data.expire_date);
 
         setSuccess('Password reset successful! Redirecting to dashboard...');
 

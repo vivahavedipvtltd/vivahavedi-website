@@ -66,12 +66,8 @@ export default function LoginPage() {
       const result = await apiClient.login(formData.login, formData.password);
 
       if (result.status === 'success') {
-        // Store token and user ID
-        auth.setToken(result.data.token);
-        auth.setUserId(result.data.user_id);
-
-        // Update auth context
-        authLogin(result.data.token, result.data.user_id);
+        // Update auth context (which also stores token, user ID, and expiry)
+        authLogin(result.data.token, result.data.user_id, result.data.expire_date);
 
         // Redirect to dashboard page
         router.push('/dashboard');

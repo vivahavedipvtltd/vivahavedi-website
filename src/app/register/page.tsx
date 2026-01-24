@@ -88,7 +88,7 @@ const RegisterPage = () => {
 
       if (result.status === 'success') {
         // Auto-login: Use AuthContext login method to update auth state
-        login(result.data.token, result.data.user_id);
+        login(result.data.token, result.data.user_id, result.data.expire_date);
 
         showSuccess('Registration successful! Redirecting to dashboard...');
         // Redirect to dashboard
