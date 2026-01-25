@@ -82,17 +82,7 @@ const sectionConfig: Record<string, {
 };
 
 const CommunicationViewsSection = ({ initialSection = 'interests' }: CommunicationViewsSectionProps) => {
-  // If the section is 'requests', render ProfileRequestsSection instead
-  if (initialSection === 'requests') {
-    return <ProfileRequestsSection />;
-  }
-
-  // If the section is 'messages', render ChatListSection instead
-  if (initialSection === 'messages') {
-    return <ChatListSection />;
-  }
-
-  const config = sectionConfig[initialSection] || sectionConfig['interests'];
+  // All hooks must be called before any conditional returns
   const [activeTab, setActiveTab] = useState<'by_me' | 'to_me'>('to_me');
   const router = useRouter();
   const { token } = useAuth();
@@ -101,6 +91,8 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [respondingTo, setRespondingTo] = useState<number | null>(null);
+
+  const config = sectionConfig[initialSection] || sectionConfig['interests'];
 
   // Get current view type based on active tab
   const currentViewType = activeTab === 'by_me' ? config.byMeType : config.toMeType;
@@ -115,6 +107,16 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab]);
+
+  // If the section is 'requests', render ProfileRequestsSection instead
+  if (initialSection === 'requests') {
+    return <ProfileRequestsSection />;
+  }
+
+  // If the section is 'messages', render ChatListSection instead
+  if (initialSection === 'messages') {
+    return <ChatListSection />;
+  }
 
   const fetchProfiles = async () => {
     try {

@@ -59,7 +59,12 @@ export async function searchProfiles(
   type: 'advance_search' | 'id_search' = 'advance_search'
 ): Promise<SearchResponse> {
   try {
-    const requestBody: any = {
+    const requestBody: {
+      type: string;
+      page: number;
+      filters?: SearchFilters | { user_id?: string };
+      sort?: { sort_by: string };
+    } = {
       type,
       page,
     };

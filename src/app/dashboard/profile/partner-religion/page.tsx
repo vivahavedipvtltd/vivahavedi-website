@@ -202,7 +202,7 @@ const PartnerReligionUpdatePage = () => {
                     <Star className="h-6 w-6 mr-2 text-red-500" />
                     Partner Religion & Caste Preferences
                   </h1>
-                  <p className="text-gray-600 mt-1">Set your ideal partner's religious preferences</p>
+                  <p className="text-gray-600 mt-1">Set your ideal partner&apos;s religious preferences</p>
                 </div>
               </div>
             </div>

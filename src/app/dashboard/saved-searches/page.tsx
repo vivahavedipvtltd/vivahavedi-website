@@ -50,9 +50,9 @@ const SavedSearchesPage = () => {
       } else {
         setError('Failed to load saved searches');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to load saved searches:', error);
-      if (error.message?.includes('429')) {
+      if (error instanceof Error && error.message?.includes('429')) {
         setError('Too many requests. Please wait a moment and try again.');
       } else {
         setError('Failed to load saved searches. Please try again.');
@@ -201,7 +201,7 @@ const SavedSearchesPage = () => {
                     No Saved Searches
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    You haven't saved any searches yet. Start searching for profiles and save your favorite filters for quick access.
+                    You haven&apos;t saved any searches yet. Start searching for profiles and save your favorite filters for quick access.
                   </p>
                   <button
                     onClick={() => router.push('/search')}

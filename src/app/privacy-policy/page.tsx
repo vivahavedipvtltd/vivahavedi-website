@@ -228,7 +228,7 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Children's Privacy</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Children&apos;s Privacy</h2>
               <p className="text-gray-700">
                 Vivahavedi services are intended for adults aged 18 and above. We do not knowingly collect personal information from children under 18. If we discover that we have collected information from a child under 18, we will delete it immediately.
               </p>

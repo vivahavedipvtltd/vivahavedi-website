@@ -223,7 +223,7 @@ const PrivacySettings = ({
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
                 <p className="font-medium mb-1">ℹ️ How it works:</p>
                 <ul className="list-disc ml-5 space-y-1">
-                  <li><strong>Hidden:</strong> Profile won't appear in searches or matching profiles</li>
+                  <li><strong>Hidden:</strong> Profile won&apos;t appear in searches or matching profiles</li>
                   <li><strong>Visible:</strong> Profile appears normally in search results</li>
                   <li>Direct profile links may still be accessible when hidden</li>
                 </ul>

@@ -144,7 +144,7 @@ export default function ShippingPolicyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Tracking Your Service</h2>
               <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                <li>Check your subscription status in the "Account Settings" section</li>
+                <li>Check your subscription status in the &quot;Account Settings&quot; section</li>
                 <li>View payment history and invoice details in your dashboard</li>
                 <li>Monitor service usage and remaining credits/features</li>
                 <li>Receive email confirmations for all transactions</li>

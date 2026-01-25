@@ -305,7 +305,7 @@ const PasswordChangeSettings = ({ onPasswordChanged }: PasswordChangeSettingsPro
         <ul className="text-xs text-blue-800 space-y-1">
           <li>• Use a mix of letters, numbers, and special characters</li>
           <li>• Avoid using personal information like birthdate or name</li>
-          <li>• Don't reuse passwords from other websites</li>
+          <li>• Don&apos;t reuse passwords from other websites</li>
           <li>• Change your password regularly for better security</li>
           <li>• Never share your password with anyone</li>
         </ul>

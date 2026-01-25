@@ -29,9 +29,34 @@ import {
 import { createOrder, verifyPayment } from '@/lib/planUpgradeApi';
 
 // Declare Razorpay on window
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => void;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+  theme?: {
+    color: string;
+  };
+  modal?: {
+    ondismiss?: () => void;
+  };
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
+
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
   }
 }
 
@@ -99,7 +124,7 @@ const PlanUpgradePage = () => {
         name: 'Vivahavedi Matrimony',
         description: `${orderData.plan_name} Plan Upgrade`,
         order_id: orderData.order_id,
-        handler: async function (response: any) {
+        handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
           try {
             // Verify payment
             await verifyPayment(

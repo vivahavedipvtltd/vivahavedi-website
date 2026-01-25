@@ -1055,25 +1055,25 @@ const ProfileDetailsPage = () => {
                       )}
                       {detailed.up_father_name && (
                         <div>
-                          <p className="text-sm text-gray-600">Father's Name</p>
+                          <p className="text-sm text-gray-600">Father&apos;s Name</p>
                           <p className="text-gray-900 font-medium">{detailed.up_father_name}</p>
                         </div>
                       )}
                       {detailed.up_father_occupation && (
                         <div>
-                          <p className="text-sm text-gray-600">Father's Occupation</p>
+                          <p className="text-sm text-gray-600">Father&apos;s Occupation</p>
                           <p className="text-gray-900 font-medium">{detailed.up_father_occupation}</p>
                         </div>
                       )}
                       {detailed.up_mother_name && (
                         <div>
-                          <p className="text-sm text-gray-600">Mother's Name</p>
+                          <p className="text-sm text-gray-600">Mother&apos;s Name</p>
                           <p className="text-gray-900 font-medium">{detailed.up_mother_name}</p>
                         </div>
                       )}
                       {detailed.up_mother_occupation && (
                         <div>
-                          <p className="text-sm text-gray-600">Mother's Occupation</p>
+                          <p className="text-sm text-gray-600">Mother&apos;s Occupation</p>
                           <p className="text-gray-900 font-medium">{detailed.up_mother_occupation}</p>
                         </div>
                       )}

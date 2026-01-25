@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, Building2 } from 'lucide-react';
@@ -186,7 +187,7 @@ export default function ContactUsPage() {
                 <p className="text-gray-700 mb-4">
                   Check out our FAQ section for answers to common questions.
                 </p>
-                <a
+                <Link
                   href="/"
                   className="text-red-500 hover:text-red-600 font-medium inline-flex items-center"
                 >
@@ -194,7 +195,7 @@ export default function ContactUsPage() {
                   <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
 

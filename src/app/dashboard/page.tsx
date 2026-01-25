@@ -361,7 +361,7 @@ function OverviewSection({ myDetails, communicationStats, myPlan, onSectionChang
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Welcome, {myDetails.basic.user_fname}!
         </h1>
-        <p className="text-gray-600">Here's your dashboard overview</p>
+        <p className="text-gray-600">Here&apos;s your dashboard overview</p>
       </div>
 
       {/* Statistics Cards */}

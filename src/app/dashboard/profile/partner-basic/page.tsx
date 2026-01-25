@@ -260,7 +260,7 @@ const PartnerBasicUpdatePage = () => {
                     <Users className="h-6 w-6 mr-2 text-red-500" />
                     Partner Basic Preferences
                   </h1>
-                  <p className="text-gray-600 mt-1">Set your ideal partner's basic criteria</p>
+                  <p className="text-gray-600 mt-1">Set your ideal partner&apos;s basic criteria</p>
                 </div>
               </div>
             </div>

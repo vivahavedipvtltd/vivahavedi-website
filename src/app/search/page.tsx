@@ -186,7 +186,7 @@ const SearchPage = () => {
     router.push(url);
   };
 
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = (key: string, value: string | number | string[] | number[] | undefined) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
     setSearchCount(null); // Reset count when filters change
   };
@@ -547,7 +547,7 @@ const SearchPage = () => {
                       </label>
                       <select
                         value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as any)}
+                        onChange={(e) => setSortBy(e.target.value as 'featured' | 'new' | 'photo')}
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       >
                         <option value="featured">Featured Profiles</option>
@@ -636,7 +636,7 @@ const SearchPage = () => {
                     Advanced Search
                   </h4>
                   <p className="text-sm text-gray-600">
-                    Use multiple filters like age, height, religion, location, and more to find compatible matches. Select your preferences and click "Search Profiles" to view results.
+                    Use multiple filters like age, height, religion, location, and more to find compatible matches. Select your preferences and click &quot;Search Profiles&quot; to view results.
                   </p>
                 </div>
                 <div className="bg-blue-50 p-4 rounded-lg">

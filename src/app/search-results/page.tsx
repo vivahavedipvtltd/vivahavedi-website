@@ -225,7 +225,7 @@ const SearchResultsPage = () => {
     }
   };
 
-  const executeAdvancedSearch = async (searchFilters: SearchFilters, sort: string, page: number) => {
+  const executeAdvancedSearch = async (searchFilters: SearchFilters, sort: 'featured' | 'new' | 'photo', page: number) => {
     if (!token) return;
 
     setLoading(true);
@@ -237,7 +237,7 @@ const SearchResultsPage = () => {
       }
 
       // Get results
-      const result = await searchProfiles(token, searchFilters, sort as any, page);
+      const result = await searchProfiles(token, searchFilters, sort, page);
       if (result.status === 'success') {
         setSearchResults(result.data);
         setCurrentPage(page);
@@ -306,8 +306,13 @@ const SearchResultsPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFilterChange = (key: string, value: any) => {
-    const newFilters = { ...filters, [key]: value };
+  const handleFilterChange = (key: string, value: string | number | string[] | number[] | undefined) => {
+    const newFilters = { ...filters };
+    if (value === undefined) {
+      delete newFilters[key as keyof SearchFilters];
+    } else {
+      newFilters[key as keyof SearchFilters] = value as never;
+    }
     setFilters(newFilters);
   };
 
@@ -352,8 +357,8 @@ const SearchResultsPage = () => {
       } else {
         setSaveMessage({ type: 'error', text: result.message || 'Failed to save search' });
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to save search. Please try again.';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save search. Please try again.';
       setSaveMessage({ type: 'error', text: errorMessage });
     } finally {
       setSaving(false);
@@ -722,7 +727,7 @@ const SearchResultsPage = () => {
                           </label>
                           <select
                             value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value as any)}
+                            onChange={(e) => setSortBy(e.target.value as 'featured' | 'new' | 'photo')}
                             className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                           >
                             <option value="featured">Featured Profiles</option>

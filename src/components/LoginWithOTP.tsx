@@ -269,7 +269,7 @@ const LoginWithOTP = ({ onBack }: LoginWithOTPProps) => {
               disabled={loading}
               className="text-sm text-red-500 hover:text-red-600 disabled:opacity-50"
             >
-              Didn't receive OTP? Resend
+              Didn&apos;t receive OTP? Resend
             </button>
           </div>
         </form>

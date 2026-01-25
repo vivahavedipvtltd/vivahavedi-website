@@ -213,7 +213,7 @@ const PartnerLocationUpdatePage = () => {
                     <MapPin className="h-6 w-6 mr-2 text-red-500" />
                     Partner Location Preferences
                   </h1>
-                  <p className="text-gray-600 mt-1">Set your ideal partner's location preferences</p>
+                  <p className="text-gray-600 mt-1">Set your ideal partner&apos;s location preferences</p>
                 </div>
               </div>
             </div>

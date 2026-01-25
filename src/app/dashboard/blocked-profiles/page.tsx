@@ -170,7 +170,7 @@ const BlockedProfilesPage = () => {
                     No Blocked Profiles
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    You haven't blocked any profiles yet.
+                    You haven&apos;t blocked any profiles yet.
                   </p>
                   <button
                     onClick={() => router.push('/search')}
