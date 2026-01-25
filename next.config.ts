@@ -42,7 +42,12 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    // Remove only console.log in production, keep console.error and console.warn for error tracking
+    removeConsole: process.env.NODE_ENV === 'production'
+      ? {
+          exclude: ['error', 'warn'],
+        }
+      : false,
   },
   async headers() {
     return [
