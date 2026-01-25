@@ -7,6 +7,7 @@ import ScrollProgress from '@/components/ScrollProgress';
 import HeroSection from '@/components/HeroSection';
 import BackToTop from '@/components/BackToTop';
 import ClientScrollManager from '@/components/ClientScrollManager';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Keep essential sections with animations for elegant experience
 const SearchSection = lazy(() => import('@/components/SearchSection'));
@@ -23,6 +24,21 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// Fallback component for section errors
+const SectionErrorFallback = ({ message }: { message: string }) => (
+  <div className="flex items-center justify-center py-16 px-4">
+    <div className="text-center">
+      <p className="text-gray-600 mb-4">{message}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="text-red-600 hover:text-red-700 font-medium"
+      >
+        Reload Page
+      </button>
+    </div>
+  </div>
+);
+
 export default function Home() {
   return (
     <>
@@ -30,51 +46,67 @@ export default function Home() {
       <ScrollProgress />
       <Header />
       <main>
-        <div id="hero" className="gpu-accelerated">
-          <HeroSection />
-        </div>
-
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="search">
-            <SearchSection />
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load hero section" />}>
+          <div id="hero" className="gpu-accelerated">
+            <HeroSection />
           </div>
-        </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="profiles">
-            <FeaturedProfiles />
-          </div>
-        </Suspense>
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load search section" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="search">
+              <SearchSection />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="find-special-someone">
-            <FindSpecialSomeone />
-          </div>
-        </Suspense>
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load featured profiles" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="profiles">
+              <FeaturedProfiles />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="why-choose-us">
-            <WhyChooseUs />
-          </div>
-        </Suspense>
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load this section" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="find-special-someone">
+              <FindSpecialSomeone />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="success-stories">
-            <SuccessStories />
-          </div>
-        </Suspense>
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load this section" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="why-choose-us">
+              <WhyChooseUs />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="mobile-app">
-            <MobileAppDownload />
-          </div>
-        </Suspense>
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load success stories" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="success-stories">
+              <SuccessStories />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="faq">
-            <FAQ />
-          </div>
-        </Suspense>
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load mobile app section" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="mobile-app">
+              <MobileAppDownload />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
+
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load FAQ section" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="faq">
+              <FAQ />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
       <BackToTop />

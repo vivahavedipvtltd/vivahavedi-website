@@ -18,6 +18,7 @@ import AccountSettingsSection from '@/components/dashboard/AccountSettingsSectio
 import ChangePasswordSection from '@/components/dashboard/ChangePasswordSection';
 import PlaceholderSection from '@/components/dashboard/PlaceholderSection';
 import PartnerPreferencesCard from '@/components/dashboard/PartnerPreferencesCard';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyDetails, CommunicationStats, MyPlan, MyPhotos } from '@/types/dashboard';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -230,24 +231,26 @@ function DashboardContent() {
 }
 
 
-// Main export with Suspense boundary
+// Main export with ErrorBoundary and Suspense boundary
 export default function DashboardPage() {
   return (
-    <Suspense fallback={
-      <AuthGuard requireAuth={true} redirectTo="/login">
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-grow flex items-center justify-center bg-gray-50">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-red-500 mx-auto mb-4" />
-              <p className="text-gray-600">Loading your dashboard...</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
-      </AuthGuard>
-    }>
-      <DashboardContent />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={
+        <AuthGuard requireAuth={true} redirectTo="/login">
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-grow flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <Loader2 className="h-12 w-12 animate-spin text-red-500 mx-auto mb-4" />
+                <p className="text-gray-600">Loading your dashboard...</p>
+              </div>
+            </main>
+            <Footer />
+          </div>
+        </AuthGuard>
+      }>
+        <DashboardContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
