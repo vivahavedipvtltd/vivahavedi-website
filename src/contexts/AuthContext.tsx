@@ -1,34 +1,49 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { auth, apiClient } from '@/lib/api';
 
-interface AuthContextType {
+// Split contexts: State vs Actions for better performance
+interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   userId: number | null;
   token: string | null;
+}
+
+interface AuthActions {
   login: (token: string, userId: number, expiryTimestamp: number) => void;
   logout: () => Promise<void>;
   refreshToken: () => Promise<boolean>;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  isLoading: true,
-  userId: null,
-  token: null,
-  login: () => {},
-  logout: async () => {},
-  refreshToken: async () => false,
-});
+// Separate contexts to prevent unnecessary re-renders
+const AuthStateContext = createContext<AuthState | undefined>(undefined);
+const AuthActionsContext = createContext<AuthActions | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
+// Hook to access auth state
+export const useAuthState = () => {
+  const context = useContext(AuthStateContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuthState must be used within an AuthProvider');
   }
   return context;
+};
+
+// Hook to access auth actions
+export const useAuthActions = () => {
+  const context = useContext(AuthActionsContext);
+  if (!context) {
+    throw new Error('useAuthActions must be used within an AuthProvider');
+  }
+  return context;
+};
+
+// Convenience hook that provides both state and actions (for backward compatibility)
+export const useAuth = () => {
+  const state = useAuthState();
+  const actions = useAuthActions();
+  return useMemo(() => ({ ...state, ...actions }), [state, actions]);
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -49,7 +64,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (storedToken && storedUserId) {
         // Check if token is expired
         if (auth.isTokenExpired()) {
-          console.log('Token has expired, clearing auth');
           auth.removeToken();
           setIsAuthenticated(false);
           setToken(null);
@@ -60,7 +74,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Check if token is expiring soon and refresh it
         if (auth.isTokenExpiringSoon()) {
-          console.log('Token expiring soon, refreshing...');
           try {
             const refreshResponse = await apiClient.refreshToken(storedToken);
 
@@ -124,16 +137,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     validateAuth();
   }, []);
 
-  const login = (newToken: string, newUserId: number, expiryTimestamp: number) => {
+  // Memoize auth state to prevent unnecessary re-renders
+  const authState = useMemo<AuthState>(
+    () => ({
+      isAuthenticated,
+      isLoading,
+      userId,
+      token,
+    }),
+    [isAuthenticated, isLoading, userId, token]
+  );
+
+  // Memoize login function to prevent recreation on every render
+  const login = useCallback((newToken: string, newUserId: number, expiryTimestamp: number) => {
     auth.setToken(newToken);
     auth.setUserId(newUserId);
     auth.setTokenExpiry(expiryTimestamp);
     setToken(newToken);
     setUserId(newUserId);
     setIsAuthenticated(true);
-  };
+  }, []);
 
-  const refreshToken = async (): Promise<boolean> => {
+  // Memoize logout function
+  const logout = useCallback(async () => {
+    const currentToken = auth.getToken();
+
+    if (currentToken) {
+      try {
+        // Call logout API to revoke token on server
+        await apiClient.logout(currentToken);
+      } catch (error) {
+        console.error('Error during logout:', error);
+        // Continue with local logout even if API call fails
+      }
+    }
+
+    // Clear local storage and state
+    auth.removeToken();
+    setToken(null);
+    setUserId(null);
+    setIsAuthenticated(false);
+  }, []);
+
+  // Memoize refreshToken function
+  const refreshTokenFn = useCallback(async (): Promise<boolean> => {
     const currentToken = auth.getToken();
 
     if (!currentToken) {
@@ -166,41 +213,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await logout();
       return false;
     }
-  };
+  }, [logout]);
 
-  const logout = async () => {
-    const currentToken = auth.getToken();
-
-    if (currentToken) {
-      try {
-        // Call logout API to revoke token on server
-        await apiClient.logout(currentToken);
-      } catch (error) {
-        console.error('Error during logout:', error);
-        // Continue with local logout even if API call fails
-      }
-    }
-
-    // Clear local storage and state
-    auth.removeToken();
-    setToken(null);
-    setUserId(null);
-    setIsAuthenticated(false);
-  };
+  // Memoize auth actions to prevent recreation on every render
+  const authActions = useMemo<AuthActions>(
+    () => ({
+      login,
+      logout,
+      refreshToken: refreshTokenFn,
+    }),
+    [login, logout, refreshTokenFn]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        isLoading,
-        userId,
-        token,
-        login,
-        logout,
-        refreshToken,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthStateContext.Provider value={authState}>
+      <AuthActionsContext.Provider value={authActions}>
+        {children}
+      </AuthActionsContext.Provider>
+    </AuthStateContext.Provider>
   );
 };

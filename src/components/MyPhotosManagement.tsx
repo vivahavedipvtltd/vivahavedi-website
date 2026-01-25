@@ -3,21 +3,9 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Upload, X, Loader2, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
+import { MyPhotos } from '@/types/dashboard';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-
-interface MyPhotos {
-  photos: {
-    [key: string]: string;
-  };
-  photo_status: string;
-  photo_all_status: string;
-  lock_status: string;
-  id_proof: string;
-  id_proof_status: string;
-  horoscope: string;
-  horoscope_status: string;
-}
 
 interface MyPhotosManagementProps {
   myPhotos: MyPhotos;
