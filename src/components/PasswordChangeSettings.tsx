@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Lock, Eye, EyeOff, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { changePasswordSchema, type ChangePasswordFormData } from '@/lib/validation';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -40,40 +41,29 @@ const PasswordChangeSettings = ({ onPasswordChanged }: PasswordChangeSettingsPro
 
   const validateForm = (): boolean => {
     const errors: typeof validationErrors = {};
-    let isValid = true;
 
-    // Old password validation
-    if (!formData.old_password) {
-      errors.old_password = ['The old password field is required.'];
-      isValid = false;
-    } else if (formData.old_password.length < 6 || formData.old_password.length > 20) {
-      errors.old_password = ['The old password must be between 6 and 20 characters.'];
-      isValid = false;
+    // Validate using Zod schema (only old_password and new_password)
+    const result = changePasswordSchema.safeParse({
+      old_password: formData.old_password,
+      new_password: formData.new_password,
+    });
+
+    if (!result.success) {
+      result.error.issues.forEach((error) => {
+        const fieldName = error.path[0] as string;
+        errors[fieldName as keyof typeof errors] = [error.message];
+      });
     }
 
-    // New password validation
-    if (!formData.new_password) {
-      errors.new_password = ['The new password field is required.'];
-      isValid = false;
-    } else if (formData.new_password.length < 6 || formData.new_password.length > 20) {
-      errors.new_password = ['The new password must be between 6 and 20 characters.'];
-      isValid = false;
-    } else if (formData.new_password === formData.old_password) {
-      errors.new_password = ['The new password must be different from old password.'];
-      isValid = false;
-    }
-
-    // Confirm password validation
+    // Validate confirm password separately (not in schema)
     if (!formData.confirm_password) {
       errors.confirm_password = ['Please confirm your new password.'];
-      isValid = false;
     } else if (formData.new_password !== formData.confirm_password) {
       errors.confirm_password = ['The passwords do not match.'];
-      isValid = false;
     }
 
     setValidationErrors(errors);
-    return isValid;
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

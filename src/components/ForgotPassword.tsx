@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Smartphone, ArrowLeft, Loader2, Lock, Eye, EyeOff, KeyRound } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { auth } from '@/lib/api';
+import { sendOtpSchema, verifyOtpSchema, resetPasswordSchema } from '@/lib/validation';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -33,9 +34,10 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setError(null);
     setSuccess(null);
 
-    // Validate mobile number
-    if (!/^[0-9]{10}$/.test(mobile)) {
-      setError('Please enter a valid 10-digit mobile number');
+    // Validate mobile number using Zod schema
+    const result = sendOtpSchema.safeParse({ mobile });
+    if (!result.success) {
+      setError(result.error.issues[0].message);
       return;
     }
 
@@ -79,9 +81,10 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setError(null);
     setSuccess(null);
 
-    // Validate OTP
-    if (!/^[0-9]{6}$/.test(otp)) {
-      setError('Please enter a valid 6-digit OTP');
+    // Validate mobile and OTP using Zod schema
+    const result = verifyOtpSchema.safeParse({ mobile, otp });
+    if (!result.success) {
+      setError(result.error.issues[0].message);
       return;
     }
 
@@ -125,19 +128,15 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setError(null);
     setSuccess(null);
 
-    // Validate passwords
-    if (password.length < 6 || password.length > 20) {
-      setError('Password must be between 6 and 20 characters');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (!/^[0-9]{6}$/.test(otp)) {
-      setError('Please enter a valid 6-digit OTP');
+    // Validate using Zod schema
+    const result = resetPasswordSchema.safeParse({
+      mobile,
+      otp,
+      password,
+      confirmPassword
+    });
+    if (!result.success) {
+      setError(result.error.issues[0].message);
       return;
     }
 

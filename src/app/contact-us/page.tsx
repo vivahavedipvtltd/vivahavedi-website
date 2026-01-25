@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, Building2 } from 'lucide-react';
 import { getHomeContactDetails, getBranches, formatPhoneNumber, type ContactDetails, type Branch } from '@/lib/contactUsApi';
+import { contactUsSchema, type ContactUsFormData } from '@/lib/validation';
 
 export default function ContactUsPage() {
   const [formData, setFormData] = useState({
@@ -65,9 +66,12 @@ export default function ContactUsPage() {
     setError('');
     setSuccess(false);
 
-    // Validate form
-    if (!formData.name || !formData.email || !formData.message) {
-      setError('Please fill in all required fields');
+    // Validate form using Zod schema
+    const result = contactUsSchema.safeParse(formData);
+
+    if (!result.success) {
+      const firstError = result.error.issues[0];
+      setError(firstError.message);
       setLoading(false);
       return;
     }

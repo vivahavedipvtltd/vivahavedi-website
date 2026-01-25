@@ -23,13 +23,16 @@ interface BasicProfileData {
   profile_created: string;
   height: string;
   weight: string;
-  merital_status: string;
-  childrens: string;
+  marital_status: string;
+  children: string;
   body_type: string;
   complexion: string;
   mother_tongue: string;
   personal_values: string;
   physical_status: string;
+  eating_habits: string;
+  drinking_habits: string;
+  smoking_habits: string;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -44,13 +47,16 @@ const BasicProfilePage = () => {
     profile_created: '',
     height: '',
     weight: '',
-    merital_status: '',
-    childrens: '',
+    marital_status: '',
+    children: '',
     body_type: '',
     complexion: '',
     mother_tongue: '',
     personal_values: '',
     physical_status: '',
+    eating_habits: '',
+    drinking_habits: '',
+    smoking_habits: '',
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -91,13 +97,16 @@ const BasicProfilePage = () => {
           profile_created: detailed.up_added_by || '',
           height: detailed.up_height || '',
           weight: detailed.up_body_weight || '',
-          merital_status: detailed.up_marital_status || '',
-          childrens: detailed.up_children || 'No',
+          marital_status: detailed.up_marital_status || '',
+          children: detailed.up_children || 'No',
           body_type: detailed.up_body_type || '',
           complexion: detailed.up_complexion || '',
           mother_tongue: detailed.up_mother_tongue || '',
           personal_values: detailed.up_personal_values || '',
           physical_status: detailed.up_physical_status || '',
+          eating_habits: detailed.up_eating_habits || '',
+          drinking_habits: detailed.up_drinking_habits || '',
+          smoking_habits: detailed.up_smoking_habits || '',
         });
       } else {
         // Handle API errors
@@ -321,8 +330,8 @@ const BasicProfilePage = () => {
                     Marital Status
                   </label>
                   <select
-                    name="merital_status"
-                    value={formData.merital_status}
+                    name="marital_status"
+                    value={formData.marital_status}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   >
@@ -336,14 +345,14 @@ const BasicProfilePage = () => {
                 </div>
 
                 {/* Children - Only show if not unmarried */}
-                {formData.merital_status && formData.merital_status.toLowerCase() !== 'unmarried' && formData.merital_status.toLowerCase() !== 'never married' && (
+                {formData.marital_status && formData.marital_status.toLowerCase() !== 'unmarried' && formData.marital_status.toLowerCase() !== 'never married' && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Children
                     </label>
                     <select
-                      name="childrens"
-                      value={formData.childrens}
+                      name="children"
+                      value={formData.children}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     >

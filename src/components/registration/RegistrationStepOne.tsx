@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Phone, Lock } from 'lucide-react';
 import { RegistrationFormData } from '@/types/registration';
+import { registrationStepOneSchema, type RegistrationStepOneFormData } from '@/lib/validation';
 
 interface RegistrationStepOneProps {
   formData: RegistrationFormData;
@@ -37,49 +38,28 @@ const RegistrationStepOne = ({ formData, onComplete }: RegistrationStepOneProps)
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Validate mobile
-    if (!localFormData.mobile) {
-      newErrors.mobile = 'Mobile number is required';
-    } else if (!/^\d{10}$/.test(localFormData.mobile)) {
-      newErrors.mobile = 'Mobile number must be 10 digits';
+    // Prepare data for validation (gender is handled separately)
+    const dataToValidate: RegistrationStepOneFormData = {
+      mobile: localFormData.mobile,
+      email: localFormData.email,
+      password: localFormData.password,
+      confirmPassword: localFormData.confirmPassword,
+      name: localFormData.name,
+      last_name: localFormData.last_name,
+    };
+
+    // Validate using Zod schema
+    const result = registrationStepOneSchema.safeParse(dataToValidate);
+
+    if (!result.success) {
+      // Extract errors from Zod validation
+      result.error.issues.forEach((error) => {
+        const fieldName = error.path[0] as string;
+        newErrors[fieldName] = error.message;
+      });
     }
 
-    // Validate email
-    if (!localFormData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(localFormData.email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
-    // Validate password
-    if (!localFormData.password) {
-      newErrors.password = 'Password is required';
-    } else if (localFormData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    // Validate confirm password
-    if (!localFormData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (localFormData.password !== localFormData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    // Validate name
-    if (!localFormData.name) {
-      newErrors.name = 'First name is required';
-    } else if (localFormData.name.length > 255) {
-      newErrors.name = 'First name is too long';
-    }
-
-    // Validate last name
-    if (!localFormData.last_name) {
-      newErrors.last_name = 'Last name is required';
-    } else if (localFormData.last_name.length > 255) {
-      newErrors.last_name = 'Last name is too long';
-    }
-
-    // Validate gender
+    // Validate gender separately (not in schema)
     if (!localFormData.gender) {
       newErrors.gender = 'Gender is required';
     }

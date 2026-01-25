@@ -10,6 +10,7 @@ import {
   Shield,
   X
 } from 'lucide-react';
+import { mobileSchema, otpSchema } from '@/lib/validation';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -103,8 +104,10 @@ const MobileVerification = ({ onVerificationComplete }: MobileVerificationProps)
   };
 
   const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
-      setError('Please enter a valid 6-digit OTP');
+    // Validate OTP using Zod schema
+    const result = otpSchema.safeParse({ otp });
+    if (!result.success) {
+      setError(result.error.issues[0].message);
       return;
     }
 
