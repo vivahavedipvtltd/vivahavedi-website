@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardSidebar from '@/components/DashboardSidebar';
+import { useMasterData } from '@/hooks/useMasterData';
 import {
   Search,
   SlidersHorizontal,
@@ -20,7 +21,6 @@ import {
   Bookmark,
 } from 'lucide-react';
 import { searchProfiles, getSearchCount, saveSearch, executeSavedSearch, getSavedSearchCount } from '@/lib/searchApi';
-import { getMasterData } from '@/lib/masterApi';
 import MultiSelectCheckbox from '@/components/MultiSelectCheckbox';
 
 interface MasterData {
@@ -81,9 +81,10 @@ const SearchResultsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { token } = useAuth();
+  const { data: masterDataResponse, isLoading: masterLoading } = useMasterData();
+  const masterData = masterDataResponse?.data;
 
   const [loading, setLoading] = useState(false);
-  const [masterData, setMasterData] = useState<MasterData | null>(null);
   const [searchResults, setSearchResults] = useState<ProfileResult[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,7 +106,6 @@ const SearchResultsPage = () => {
 
   useEffect(() => {
     if (token) {
-      loadMasterData();
       loadUserGender();
       loadSearchFromParams();
     }
@@ -130,17 +130,6 @@ const SearchResultsPage = () => {
       }
     } catch (error) {
       console.error('Failed to load user gender:', error);
-    }
-  };
-
-  const loadMasterData = async () => {
-    try {
-      const result = await getMasterData();
-      if (result.status === 'success') {
-        setMasterData(result.data);
-      }
-    } catch (error) {
-      console.error('Failed to load master data:', error);
     }
   };
 

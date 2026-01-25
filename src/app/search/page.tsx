@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardSidebar from '@/components/DashboardSidebar';
+import { useMasterData } from '@/hooks/useMasterData';
 import {
   Search,
   SlidersHorizontal,
@@ -14,7 +15,6 @@ import {
   Loader2,
 } from 'lucide-react';
 import { getSearchCount } from '@/lib/searchApi';
-import { getMasterData } from '@/lib/masterApi';
 import MultiSelectCheckbox from '@/components/MultiSelectCheckbox';
 
 interface MasterData {
@@ -59,9 +59,11 @@ interface SearchFilters {
 const SearchPage = () => {
   const router = useRouter();
   const { token } = useAuth();
+  const { data: masterDataResponse, isLoading: masterLoading, hasData } = useMasterData();
+  const masterData = masterDataResponse?.data;
+
   const [activeTab, setActiveTab] = useState<'advanced' | 'id'>('advanced');
   const [loading, setLoading] = useState(false);
-  const [masterData, setMasterData] = useState<MasterData | null>(null);
   const [searchCount, setSearchCount] = useState<number | null>(null);
 
   // Advanced Search Filters
@@ -79,23 +81,6 @@ const SearchPage = () => {
     const feet = Math.floor(inches / 12);
     const remainingInches = Math.round(inches % 12);
     return `${feet}'${remainingInches}"`;
-  };
-
-  useEffect(() => {
-    if (token) {
-      loadMasterData();
-    }
-  }, [token]);
-
-  const loadMasterData = async () => {
-    try {
-      const result = await getMasterData();
-      if (result.status === 'success') {
-        setMasterData(result.data);
-      }
-    } catch (error) {
-      console.error('Failed to load master data:', error);
-    }
   };
 
   const handleGetSearchCount = async () => {

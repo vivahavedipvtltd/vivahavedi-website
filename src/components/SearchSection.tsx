@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
-import { getMasterData } from '@/lib/masterApi';
+import { useMasterData } from '@/hooks/useMasterData';
 
 interface MasterData {
   religion: Array<{ id: number; name: string }>;
@@ -13,8 +13,11 @@ interface MasterData {
 const SearchSection = () => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [masterData, setMasterData] = useState<MasterData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: masterDataResponse, isLoading: loading, hasData } = useMasterData();
+  const masterData = masterDataResponse?.data ? {
+    religion: masterDataResponse.data.religion,
+    caste: masterDataResponse.data.caste
+  } : null;
 
   const [searchData, setSearchData] = useState({
     gender: 'bride',
@@ -36,25 +39,7 @@ const SearchSection = () => {
 
   useEffect(() => {
     setMounted(true);
-    loadMasterData();
   }, []);
-
-  const loadMasterData = async () => {
-    try {
-      setLoading(true);
-      const result = await getMasterData();
-      if (result.status === 'success') {
-        setMasterData({
-          religion: result.data.religion,
-          caste: result.data.caste
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load master data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputChange = (field: string, value: string) => {
     setSearchData(prev => ({
