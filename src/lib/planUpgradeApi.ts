@@ -18,6 +18,8 @@
  * - Payment signature is verified on backend for security
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 /**
@@ -79,7 +81,7 @@ export async function createOrder(
   from: 'app' | 'web' = 'web'
 ): Promise<CreateOrderResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plan-upgrade/create-order`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/plan-upgrade/create-order`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -90,6 +92,8 @@ export async function createOrder(
         plan_id: planId,
         from: from,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     // Try to get the response body even if status is not ok
@@ -147,7 +151,7 @@ export async function verifyPayment(
   razorpaySignature: string
 ): Promise<{ payment_id: string; order_id: string }> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plan-upgrade/verify-payment`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/plan-upgrade/verify-payment`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -159,6 +163,8 @@ export async function verifyPayment(
         razorpay_payment_id: razorpayPaymentId,
         razorpay_signature: razorpaySignature,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     // Try to get the response body even if status is not ok
@@ -206,13 +212,15 @@ export async function verifyPayment(
  */
 export async function getOrderHistory(token: string): Promise<OrderHistoryItem[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plan-upgrade/order-history`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/plan-upgrade/order-history`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
       cache: 'no-store', // Always fetch fresh data
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {

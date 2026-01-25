@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './config';
+import { fetchWithRetry } from './fetchWithRetry';
 
 // API Response Types
 export interface ApiResponse<T = unknown> {
@@ -14,12 +15,14 @@ export const apiClient = {
    * Fetch master data for registration dropdowns
    */
   async getMasterData() {
-    const response = await fetch(`${API_BASE_URL}/masters`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/masters`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -29,12 +32,14 @@ export const apiClient = {
    * Fetch locations by district ID
    */
   async getLocationsByDistrict(districtId: number) {
-    const response = await fetch(`${API_BASE_URL}/masters/locations?district_id=${districtId}`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/masters/locations?district_id=${districtId}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -60,13 +65,15 @@ export const apiClient = {
     district: number;
     location: number;
   }) {
-    const response = await fetch(`${API_BASE_URL}/register`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/register`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -76,13 +83,15 @@ export const apiClient = {
    * User login
    */
   async login(login: string, password: string) {
-    const response = await fetch(`${API_BASE_URL}/login`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ login, password }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -92,13 +101,15 @@ export const apiClient = {
    * Get authenticated user profile
    */
   async getUserProfile(token: string) {
-    const response = await fetch(`${API_BASE_URL}/user`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/user`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -108,13 +119,15 @@ export const apiClient = {
    * Get user's complete profile details
    */
   async getMyDetails(token: string) {
-    const response = await fetch(`${API_BASE_URL}/my-details`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/my-details`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -124,12 +137,14 @@ export const apiClient = {
    * Validate authentication token
    */
   async validateToken(token: string) {
-    const response = await fetch(`${API_BASE_URL}/validate-token`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/validate-token`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -139,13 +154,15 @@ export const apiClient = {
    * Logout and revoke token
    */
   async logout(token: string) {
-    const response = await fetch(`${API_BASE_URL}/logout`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/logout`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 2,
+      retryDelay: 1000,
     });
 
     return response.json();
@@ -155,13 +172,15 @@ export const apiClient = {
    * Refresh authentication token
    */
   async refreshToken(token: string) {
-    const response = await fetch(`${API_BASE_URL}/refresh-token`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/refresh-token`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 2,
+      retryDelay: 1000,
     });
 
     return response.json();

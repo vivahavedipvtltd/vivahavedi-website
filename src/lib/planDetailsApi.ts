@@ -13,6 +13,8 @@
  * 4. POST /api/plan-details - Get plan details by ID
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 /**
@@ -68,12 +70,14 @@ interface ApiResponse<T> {
  */
 export async function getPopularPlans(): Promise<Plan[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plan-details/popular`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/plan-details/popular`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
       cache: 'no-store', // Disable caching to get fresh data
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -111,12 +115,14 @@ export async function getPopularPlans(): Promise<Plan[]> {
  */
 export async function getAllPlans(): Promise<Plan[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plan-details/all`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/plan-details/all`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
       cache: 'no-store', // Disable caching to get fresh data
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -155,12 +161,14 @@ export async function getAllPlans(): Promise<Plan[]> {
  */
 export async function getPremiumPlans(): Promise<Plan[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plan-details/premium`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/plan-details/premium`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
       cache: 'no-store', // Disable caching to get fresh data
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -197,7 +205,7 @@ export async function getPremiumPlans(): Promise<Plan[]> {
  */
 export async function getPlanDetails(planId: number): Promise<Plan> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plan-details`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/plan-details`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -205,6 +213,8 @@ export async function getPlanDetails(planId: number): Promise<Plan> {
       },
       body: JSON.stringify({ plan_id: planId }),
       cache: 'no-store', // Disable caching to get fresh data
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {

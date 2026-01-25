@@ -1,39 +1,32 @@
 import { SWRConfiguration } from 'swr';
+import { fetchWithRetry, createRetryFetcher } from './fetchWithRetry';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 /**
- * Default fetcher for SWR
- * Handles GET requests with proper headers
+ * Default fetcher for SWR with retry logic
+ * Handles GET requests with automatic retry and exponential backoff
  */
-export const fetcher = async (url: string) => {
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return response.json();
-};
+export const fetcher = createRetryFetcher({
+  retries: 3,
+  retryDelay: 1000,
+  retryOn: [408, 429, 500, 502, 503, 504],
+});
 
 /**
- * Authenticated fetcher for SWR
+ * Authenticated fetcher for SWR with retry logic
  * Handles GET requests with authentication token
  */
 export const authenticatedFetcher = async (url: string, token: string) => {
-  const response = await fetch(url, {
+  const response = await fetchWithRetry(url, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
+    retries: 3,
+    retryDelay: 1000,
   });
 
   if (!response.ok) {

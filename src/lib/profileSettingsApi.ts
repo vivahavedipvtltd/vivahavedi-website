@@ -5,6 +5,8 @@
  * Base URL: http://127.0.0.1:8000/api
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface ProfileSettingsResponse {
@@ -28,7 +30,7 @@ export async function lockUnlockPhoto(
   lock: boolean
 ): Promise<ProfileSettingsResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/profile-settings/lock-photo`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/profile-settings/lock-photo`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -38,6 +40,8 @@ export async function lockUnlockPhoto(
       body: JSON.stringify({
         status: lock ? 'true' : 'false',
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     const data = await response.json();
@@ -63,7 +67,7 @@ export async function hideShowProfile(
   hide: boolean
 ): Promise<ProfileSettingsResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/profile-settings/hide-profile`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/profile-settings/hide-profile`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -73,6 +77,8 @@ export async function hideShowProfile(
       body: JSON.stringify({
         status: hide ? 'true' : 'false',
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     const data = await response.json();

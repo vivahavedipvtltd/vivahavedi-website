@@ -1,4 +1,6 @@
 // Master Data API Functions
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface MasterDataResponse {
@@ -39,16 +41,18 @@ export interface LocationsResponse {
 }
 
 /**
- * Fetch all master data for dropdowns
+ * Fetch all master data for dropdowns with automatic retry
  */
 export async function getMasterData(): Promise<MasterDataResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/masters`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/masters`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -63,13 +67,13 @@ export async function getMasterData(): Promise<MasterDataResponse> {
 }
 
 /**
- * Fetch locations by district ID
+ * Fetch locations by district ID with automatic retry
  */
 export async function getLocationsByDistrict(
   districtId: number
 ): Promise<LocationsResponse> {
   try {
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${API_BASE_URL}/masters/locations?district_id=${districtId}`,
       {
         method: 'GET',
@@ -77,6 +81,8 @@ export async function getLocationsByDistrict(
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
+        retries: 3,
+        retryDelay: 1000,
       }
     );
 

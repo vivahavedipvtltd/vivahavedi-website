@@ -7,6 +7,8 @@
  * Endpoint: GET /api/success-stories/paginated
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 /**
@@ -64,7 +66,7 @@ export async function getPaginatedSuccessStories(
     url.searchParams.append('per_page', validPerPage.toString());
 
     // Fetch data from Laravel API
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRetry(url.toString(), {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -72,6 +74,8 @@ export async function getPaginatedSuccessStories(
       },
       // Disable cache for fresh data
       cache: 'no-store',
+      retries: 3,
+      retryDelay: 1000,
     });
 
     // Check if response is ok

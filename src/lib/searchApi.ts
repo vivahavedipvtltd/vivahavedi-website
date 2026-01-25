@@ -1,4 +1,6 @@
 // Search API Functions
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface SearchFilters {
@@ -80,7 +82,7 @@ export async function searchProfiles(
       };
     }
 
-    const response = await fetch(`${API_BASE_URL}/search-profiles`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/search-profiles`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -88,6 +90,8 @@ export async function searchProfiles(
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(requestBody),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -109,7 +113,7 @@ export async function getSearchCount(
   filters: SearchFilters
 ): Promise<SearchCountResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/search-profiles`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/search-profiles`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -120,6 +124,8 @@ export async function getSearchCount(
         type: 'advance_search_count',
         ...filters,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -143,7 +149,7 @@ export async function saveSearch(
   sortBy: 'featured' | 'new' | 'photo' = 'featured'
 ): Promise<{ status: 'success' | 'failed'; message: string }> {
   try {
-    const response = await fetch(`${API_BASE_URL}/saved-searches`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/saved-searches`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -158,6 +164,8 @@ export async function saveSearch(
           sort_by: sortBy,
         },
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -180,7 +188,7 @@ export async function getSavedSearches(
   token: string
 ): Promise<{ status: 'success' | 'failed'; data: Array<{ id: number; name: string }> }> {
   try {
-    const response = await fetch(`${API_BASE_URL}/saved-searches`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/saved-searches`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -190,6 +198,8 @@ export async function getSavedSearches(
       body: JSON.stringify({
         type: 'saved_search_list',
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -214,7 +224,7 @@ export async function executeSavedSearch(
   page: number = 1
 ): Promise<SearchResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/saved-searches`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/saved-searches`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -226,6 +236,8 @@ export async function executeSavedSearch(
         search_id: searchId,
         page,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -247,7 +259,7 @@ export async function getSavedSearchCount(
   searchId: number
 ): Promise<SearchCountResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/saved-searches`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/saved-searches`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -258,6 +270,8 @@ export async function getSavedSearchCount(
         type: 'saved_search_result_count',
         search_id: searchId,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -279,7 +293,7 @@ export async function deleteSavedSearch(
   searchId: number
 ): Promise<{ status: 'success' | 'failed'; message: string }> {
   try {
-    const response = await fetch(`${API_BASE_URL}/saved-searches`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/saved-searches`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -290,6 +304,8 @@ export async function deleteSavedSearch(
         type: 'delete_search',
         search_id: searchId,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {

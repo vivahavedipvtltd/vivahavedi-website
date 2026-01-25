@@ -5,6 +5,8 @@
  * Base URL: http://127.0.0.1:8000/api/profile-block
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/profile-block`;
 
 export interface BlockProfileResponse {
@@ -40,7 +42,7 @@ export async function blockProfile(
   matchId: number
 ): Promise<BlockProfileResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/block`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/block`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -50,6 +52,8 @@ export async function blockProfile(
       body: JSON.stringify({
         match_id: matchId,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     const data = await response.json();
@@ -75,7 +79,7 @@ export async function unblockProfile(
   matchId: number
 ): Promise<BlockProfileResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/unblock`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/unblock`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -85,6 +89,8 @@ export async function unblockProfile(
       body: JSON.stringify({
         match_id: matchId,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     const data = await response.json();
@@ -108,12 +114,14 @@ export async function getBlockedProfiles(
   token: string
 ): Promise<BlockedProfilesResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/list`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/list`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     const data = await response.json();

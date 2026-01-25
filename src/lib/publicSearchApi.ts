@@ -1,4 +1,6 @@
 // Public Search API Functions (API 24 - No Authentication Required)
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface PublicSearchParams {
@@ -70,12 +72,14 @@ export async function publicSearch(
 
     const url = `${API_BASE_URL}/public-search?${queryParams.toString()}`;
 
-    const response = await fetch(url, {
+    const response = await fetchWithRetry(url, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {

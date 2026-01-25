@@ -11,6 +11,8 @@
  * 2. GET /api/contact-us/branches - Get all active company branches
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 /**
@@ -65,12 +67,14 @@ interface ApiResponse<T> {
  */
 export async function getHomeContactDetails(): Promise<ContactDetails> {
   try {
-    const response = await fetch(`${API_BASE_URL}/contact-us/home`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/contact-us/home`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
       cache: 'no-store', // Disable caching to get fresh data
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {
@@ -109,12 +113,14 @@ export async function getHomeContactDetails(): Promise<ContactDetails> {
  */
 export async function getBranches(): Promise<Branch[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/contact-us/branches`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/contact-us/branches`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
       },
       cache: 'no-store', // Disable caching to get fresh data
+      retries: 3,
+      retryDelay: 1000,
     });
 
     if (!response.ok) {

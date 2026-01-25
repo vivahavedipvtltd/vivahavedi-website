@@ -5,6 +5,8 @@
  * Base URL: http://127.0.0.1:8000/api
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface MatchingProfile {
@@ -86,12 +88,14 @@ export async function getMatchingProfilesCount(
   try {
     const params = new URLSearchParams({ type });
 
-    const response = await fetch(`${API_BASE_URL}/matching-profiles?${params}`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/matching-profiles?${params}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     const data = await response.json();

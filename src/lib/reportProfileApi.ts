@@ -5,6 +5,8 @@
  * Base URL: http://127.0.0.1:8000/api
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface ReportProfileResponse {
@@ -51,7 +53,7 @@ export async function reportProfile(
   reportType: number
 ): Promise<ReportProfileResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/report-profile`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/report-profile`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -62,6 +64,8 @@ export async function reportProfile(
         match_id: matchId,
         report_type: reportType,
       }),
+      retries: 2,
+      retryDelay: 1000,
     });
 
     const data = await response.json();

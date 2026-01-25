@@ -7,6 +7,8 @@
  * Endpoint: GET /api/homepage-profiles
  */
 
+import { fetchWithRetry } from './fetchWithRetry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 /**
@@ -67,7 +69,7 @@ export async function getHomepageProfiles(
     url.searchParams.append('per_page', validPerPage.toString());
 
     // Fetch data from Laravel API
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRetry(url.toString(), {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -75,6 +77,8 @@ export async function getHomepageProfiles(
       },
       // Disable cache for fresh data
       cache: 'no-store',
+      retries: 3,
+      retryDelay: 1000,
     });
 
     // Check if response is ok
