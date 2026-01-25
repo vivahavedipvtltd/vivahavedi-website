@@ -19,7 +19,6 @@ import {
   Menu,
   X,
   Search,
-  Filter,
   Ban,
   Crown
 } from 'lucide-react';

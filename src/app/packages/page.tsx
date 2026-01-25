@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Check, Sparkles, Crown, Shield, MessageCircle, Eye, Heart, Star } from 'lucide-react';
+import { Check, Sparkles, MessageCircle, Eye, Heart, Star } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import {
   getAllPlans,
-  formatPrice,
   formatValidity,
   getPlanFeatures,
   isPlanPopular,

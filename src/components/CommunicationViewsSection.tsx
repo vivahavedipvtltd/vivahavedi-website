@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, Bookmark, PhoneCall, Check, X } from 'lucide-react';
+import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, PhoneCall, Check, X } from 'lucide-react';
 import ProfileRequestsSection from './ProfileRequestsSection';
 import ChatListSection from './ChatListSection';
 

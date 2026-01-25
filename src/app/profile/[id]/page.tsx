@@ -13,17 +13,13 @@ import {
   Heart,
   Star,
   MapPin,
-  Briefcase,
   GraduationCap,
   Users,
   Home,
   Calendar,
-  Ruler,
-  Weight,
   Eye,
   MessageCircle,
   Phone,
-  Mail,
   Loader2,
   ArrowLeft,
   Ban,
@@ -35,7 +31,7 @@ import {
 } from 'lucide-react';
 import ChatModal from '@/components/ChatModal';
 import { blockProfile, unblockProfile } from '@/lib/profileBlockApi';
-import { reportProfile, REPORT_REASONS, ReportType } from '@/lib/reportProfileApi';
+import { reportProfile, REPORT_REASONS } from '@/lib/reportProfileApi';
 
 interface ProfileData {
   basic: {

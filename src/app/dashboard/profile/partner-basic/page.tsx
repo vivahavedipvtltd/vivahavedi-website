@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardSidebar from '@/components/DashboardSidebar';
-import { Heart, Loader2, Save, ArrowLeft, Users } from 'lucide-react';
+import { Loader2, Save, ArrowLeft, Users } from 'lucide-react';
 import FilterableMultiSelect from '@/components/FilterableMultiSelect';
 
 interface MasterData {
