@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -610,11 +611,14 @@ const ProfileDetailsPage = () => {
               <div className="lg:col-span-1 space-y-6">
                 {/* Photo Gallery */}
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <div className="aspect-w-3 aspect-h-4 bg-gray-200">
-                    <img
-                      src={photo.photo[selectedPhoto] || photo.photo[0]}
+                  <div className="aspect-w-3 aspect-h-4 bg-gray-200 relative h-96">
+                    <Image
+                      src={photo.photo[selectedPhoto] || photo.photo[0] || '/placeholder-avatar.png'}
                       alt={`${basic.user_fname} ${basic.user_lname}`}
-                      className="w-full h-96 object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover"
+                      unoptimized={photo.photo[selectedPhoto]?.includes('vivahavedimatrimony.com') || photo.photo[0]?.includes('vivahavedimatrimony.com')}
                     />
                   </div>
                   {photo.photo.length > 1 && (
@@ -623,14 +627,17 @@ const ProfileDetailsPage = () => {
                         <button
                           key={index}
                           onClick={() => setSelectedPhoto(index)}
-                          className={`aspect-square rounded-lg overflow-hidden border-2 ${
+                          className={`aspect-square rounded-lg overflow-hidden border-2 relative ${
                             selectedPhoto === index ? 'border-red-500' : 'border-gray-300'
                           }`}
                         >
-                          <img
-                            src={photoUrl}
+                          <Image
+                            src={photoUrl || '/placeholder-avatar.png'}
                             alt={`Photo ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="100px"
+                            className="object-cover"
+                            unoptimized={photoUrl?.includes('vivahavedimatrimony.com')}
                           />
                         </button>
                       ))}

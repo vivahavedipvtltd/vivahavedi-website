@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Upload, X, Loader2, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { MyPhotos } from '@/types/dashboard';
@@ -193,13 +194,13 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
               <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-gray-200 hover:border-red-500 transition-colors relative group">
                 {photoUrl ? (
                   <>
-                    <img
-                      src={photoUrl}
+                    <Image
+                      src={photoUrl || '/placeholder-avatar.png'}
                       alt={`Photo ${slotNumber}`}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/avathar/male_l.png';
-                      }}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 20vw"
+                      className="object-cover"
+                      unoptimized={photoUrl?.includes('vivahavedimatrimony.com')}
                     />
                     {/* Delete button overlay - only visible on hover */}
                     <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-200 pointer-events-none"></div>

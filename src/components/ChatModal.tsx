@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { X, Send, Loader2, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -231,15 +232,14 @@ const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModa
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-red-500 to-pink-500">
           <div className="flex items-center space-x-3">
-            <div className="relative">
-              <img
-                src={matchPhoto}
+            <div className="relative w-12 h-12">
+              <Image
+                src={matchPhoto || '/placeholder-avatar.png'}
                 alt={matchName}
-                className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/images/default-avatar.png';
-                }}
+                fill
+                sizes="48px"
+                className="rounded-full object-cover border-2 border-white shadow-md"
+                unoptimized={matchPhoto?.includes('vivahavedimatrimony.com')}
               />
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
             </div>

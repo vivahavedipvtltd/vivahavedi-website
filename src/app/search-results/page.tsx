@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -835,11 +836,14 @@ const SearchResultsPage = () => {
                           className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer"
                           onClick={() => router.push(`/profile/${profile.id}`)}
                         >
-                          <div className="aspect-w-16 aspect-h-12 bg-gray-200">
-                            <img
-                              src={profile.photo}
+                          <div className="aspect-w-16 aspect-h-12 bg-gray-200 relative h-[22rem]">
+                            <Image
+                              src={profile.photo || '/placeholder-avatar.png'}
                               alt={profile.name}
-                              className="w-full h-[22rem] object-cover"
+                              fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              className="object-cover"
+                              unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
                             />
                           </div>
                           <div className="p-4">

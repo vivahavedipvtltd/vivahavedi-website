@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Phone, Loader2, ChevronLeft, ChevronRight, Check, X, Image as ImageIcon } from 'lucide-react';
 
@@ -198,12 +199,19 @@ const ProfileRequestsSection = () => {
               >
                 <div className="flex items-start space-x-4">
                   {/* Profile Photo */}
-                  <img
-                    src={request.photo}
-                    alt={request.name}
+                  <div
+                    className="relative w-16 h-16 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => handleProfileClick(request.id)}
-                    className="w-16 h-16 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                  />
+                  >
+                    <Image
+                      src={request.photo || '/placeholder-avatar.png'}
+                      alt={request.name}
+                      fill
+                      sizes="64px"
+                      className="rounded-full object-cover"
+                      unoptimized={request.photo?.includes('vivahavedimatrimony.com')}
+                    />
+                  </div>
 
                   {/* Request Details */}
                   <div className="flex-1 min-w-0">

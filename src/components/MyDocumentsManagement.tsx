@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Upload, X, Loader2, CheckCircle2, AlertCircle, FileText, Star, Eye } from 'lucide-react';
 import { MyPhotos } from '@/types/dashboard';
@@ -261,13 +262,13 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
           {myPhotos.horoscope_status === 'yes' && myPhotos.horoscope !== 'no' ? (
             <div className="space-y-3">
               <div className="relative h-48 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                <img
-                  src={myPhotos.horoscope}
+                <Image
+                  src={myPhotos.horoscope || '/placeholder-avatar.png'}
                   alt="Horoscope"
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    e.currentTarget.src = '/images/avathar/male_l.png';
-                  }}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain"
+                  unoptimized={myPhotos.horoscope?.includes('vivahavedimatrimony.com')}
                 />
               </div>
               <div className="flex gap-2">
@@ -351,13 +352,13 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
           {myPhotos.id_proof_status === 'yes' && myPhotos.id_proof !== 'no' ? (
             <div className="space-y-3">
               <div className="relative h-48 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                <img
-                  src={myPhotos.id_proof}
+                <Image
+                  src={myPhotos.id_proof || '/placeholder-avatar.png'}
                   alt="ID Proof"
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    e.currentTarget.src = '/images/avathar/male_l.png';
-                  }}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain"
+                  unoptimized={myPhotos.id_proof?.includes('vivahavedimatrimony.com')}
                 />
               </div>
               <div className="flex gap-2">
@@ -445,11 +446,16 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <img
-              src={viewingDocument.url}
-              alt={viewingDocument.type === 'horoscope' ? 'Horoscope' : 'ID Proof'}
-              className="w-full h-full object-contain"
-            />
+            <div className="relative w-full h-full min-h-[400px]">
+              <Image
+                src={viewingDocument.url}
+                alt={viewingDocument.type === 'horoscope' ? 'Horoscope' : 'ID Proof'}
+                fill
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                className="object-contain"
+                unoptimized={viewingDocument.url?.includes('vivahavedimatrimony.com')}
+              />
+            </div>
           </div>
         </div>
       )}

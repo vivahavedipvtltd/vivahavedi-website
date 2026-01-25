@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { MessageCircle, Loader2, ChevronLeft, ChevronRight, ArrowLeft, Send, ChevronDown } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
@@ -343,11 +344,14 @@ const ChatListSection = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <div className="relative">
-              <img
-                src={selectedChat.photo}
+            <div className="relative w-12 h-12">
+              <Image
+                src={selectedChat.photo || '/placeholder-avatar.png'}
                 alt={selectedChat.name}
-                className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
+                fill
+                sizes="48px"
+                className="rounded-full object-cover border-2 border-white shadow-md"
+                unoptimized={selectedChat.photo?.includes('vivahavedimatrimony.com')}
               />
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
@@ -506,11 +510,14 @@ const ChatListSection = () => {
               >
                 <div className="flex items-center space-x-4 flex-1 min-w-0">
                   {/* Profile Photo */}
-                  <div className="relative flex-shrink-0">
-                    <img
-                      src={chatUser.photo}
+                  <div className="relative flex-shrink-0 w-14 h-14">
+                    <Image
+                      src={chatUser.photo || '/placeholder-avatar.png'}
                       alt={chatUser.name}
-                      className="w-14 h-14 rounded-full object-cover"
+                      fill
+                      sizes="56px"
+                      className="rounded-full object-cover"
+                      unoptimized={chatUser.photo?.includes('vivahavedimatrimony.com')}
                     />
                     {/* Unseen Count Badge */}
                     {chatUser.count > 0 && (

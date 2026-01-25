@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, Bookmark, PhoneCall, Check, X } from 'lucide-react';
 import ProfileRequestsSection from './ProfileRequestsSection';
@@ -263,11 +264,16 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                 onClick={() => handleProfileClick(profile.id)}
                 className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
               >
-                <img
-                  src={profile.photo}
-                  alt={profile.name}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
+                <div className="relative w-16 h-16 flex-shrink-0">
+                  <Image
+                    src={profile.photo || '/placeholder-avatar.png'}
+                    alt={profile.name}
+                    fill
+                    sizes="64px"
+                    className="rounded-full object-cover"
+                    unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <h4 className="font-semibold text-gray-900 truncate">
