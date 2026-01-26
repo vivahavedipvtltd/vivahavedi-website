@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
@@ -38,19 +38,7 @@ const MatchingProfilesPage = () => {
   const totalCount = activeTab === 'latest' ? latestCount : perfectCount;
   const totalPages = Math.ceil(totalCount / perPage);
 
-  useEffect(() => {
-    if (token) {
-      fetchCounts();
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (token) {
-      fetchProfiles();
-    }
-  }, [token, activeTab, currentPage]);
-
-  const fetchCounts = async () => {
+  const fetchCounts = useCallback(async () => {
     if (!token) return;
 
     try {
@@ -69,9 +57,9 @@ const MatchingProfilesPage = () => {
     } catch (error) {
       console.error('Error fetching counts:', error);
     }
-  };
+  }, [token]);
 
-  const fetchProfiles = async () => {
+  const fetchProfiles = useCallback(async () => {
     if (!token) return;
 
     try {
@@ -92,7 +80,19 @@ const MatchingProfilesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, activeTab, currentPage]);
+
+  useEffect(() => {
+    if (token) {
+      fetchCounts();
+    }
+  }, [token, fetchCounts]);
+
+  useEffect(() => {
+    if (token) {
+      fetchProfiles();
+    }
+  }, [token, fetchProfiles]);
 
   const handleTabChange = (tab: MatchTab) => {
     setActiveTab(tab);
@@ -118,7 +118,7 @@ const MatchingProfilesPage = () => {
         <div className="flex-grow flex bg-gray-50">
           <DashboardSidebar
             activeSection="matching-profiles"
-            onSectionChange={(section) => {
+            onSectionChange={() => {
               // Navigate to dashboard for sections handled there
               router.push('/dashboard');
             }}

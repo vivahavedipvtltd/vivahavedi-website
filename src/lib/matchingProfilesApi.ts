@@ -55,12 +55,14 @@ export async function getMatchingProfiles(
       page: page.toString(),
     });
 
-    const response = await fetch(`${API_BASE_URL}/matching-profiles?${params}`, {
+    const response = await fetchWithRetry(`${API_BASE_URL}/matching-profiles?${params}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      retries: 3,
+      retryDelay: 1000,
     });
 
     const data = await response.json();
