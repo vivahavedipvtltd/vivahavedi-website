@@ -1,11 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronLeft } from 'lucide-react';
-import { RegistrationFormData, MasterData } from '@/types/registration';
+import { RegistrationFormData } from '@/types/registration';
 import { useToast } from '@/contexts/ToastContext';
+import { useMasterData } from '@/hooks/useMasterData';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+// Static arrays - moved outside component to avoid recreation on every render
+const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
+
+const MONTHS = [
+  { value: 1, label: 'January' },
+  { value: 2, label: 'February' },
+  { value: 3, label: 'March' },
+  { value: 4, label: 'April' },
+  { value: 5, label: 'May' },
+  { value: 6, label: 'June' },
+  { value: 7, label: 'July' },
+  { value: 8, label: 'August' },
+  { value: 9, label: 'September' },
+  { value: 10, label: 'October' },
+  { value: 11, label: 'November' },
+  { value: 12, label: 'December' },
+];
 
 interface RegistrationStepTwoProps {
   formData: RegistrationFormData;
@@ -14,7 +31,7 @@ interface RegistrationStepTwoProps {
 }
 
 const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepTwoProps) => {
-  const { showSuccess, showError, showWarning, showInfo } = useToast();
+  const { showError } = useToast();
   const [localFormData, setLocalFormData] = useState({
     birth_day: formData.birth_day,
     birth_month: formData.birth_month,
@@ -24,33 +41,18 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [masterData, setMasterData] = useState<MasterData | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch master data
-  useEffect(() => {
-    const fetchMasterData = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/masters`, {
-          headers: {
-            'Accept': 'application/json',
-          },
-        });
-        const result = await response.json();
+  // Use SWR hook for master data (automatically cached and deduplicated)
+  const { data: masterDataResponse, isLoading, error: masterError } = useMasterData();
 
-        if (result.status === 'success') {
-          setMasterData(result.data);
-        }
-      } catch (error) {
-        console.error('Error fetching master data:', error);
-        showError('Failed to load form data. Please refresh the page.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Extract master data from response
+  const masterData = masterDataResponse?.data;
+  const loading = isLoading;
 
-    fetchMasterData();
-  }, []);
+  // Show error if master data fetch failed
+  if (masterError && !loading) {
+    showError('Failed to load form data. Please refresh the page.');
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -109,33 +111,18 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
     }
   };
 
-  // Generate days array
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  // Memoize years array - only recalculates if needed (once per session typically)
+  const years = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: currentYear - 1950 - 18 + 1 }, (_, i) => currentYear - 18 - i);
+  }, []); // Empty dependency array - year rarely changes during a session
 
-  // Generate months array
-  const months = [
-    { value: 1, label: 'January' },
-    { value: 2, label: 'February' },
-    { value: 3, label: 'March' },
-    { value: 4, label: 'April' },
-    { value: 5, label: 'May' },
-    { value: 6, label: 'June' },
-    { value: 7, label: 'July' },
-    { value: 8, label: 'August' },
-    { value: 9, label: 'September' },
-    { value: 10, label: 'October' },
-    { value: 11, label: 'November' },
-    { value: 12, label: 'December' },
-  ];
-
-  // Generate years array (18+ years from current year)
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 1950 - 18 + 1 }, (_, i) => currentYear - 18 - i);
-
-  // Filter castes based on selected religion
-  const filteredCastes = masterData?.caste.filter(
-    (caste) => caste.masterId === localFormData.religion
-  ) || [];
+  // Memoize filtered castes - only recalculates when masterData or religion changes
+  const filteredCastes = useMemo(() => {
+    return masterData?.caste.filter(
+      (caste) => caste.masterId === localFormData.religion
+    ) || [];
+  }, [masterData?.caste, localFormData.religion]);
 
   if (loading) {
     return (
@@ -166,7 +153,7 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
               }`}
             >
               <option value="">Day</option>
-              {days.map((day) => (
+              {DAYS.map((day) => (
                 <option key={day} value={day}>
                   {day}
                 </option>
@@ -186,7 +173,7 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
               }`}
             >
               <option value="">Month</option>
-              {months.map((month) => (
+              {MONTHS.map((month) => (
                 <option key={month.value} value={month.value}>
                   {month.label}
                 </option>

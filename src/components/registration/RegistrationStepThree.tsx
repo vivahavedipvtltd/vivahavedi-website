@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { MapPin, ChevronLeft } from 'lucide-react';
-import { RegistrationFormData, MasterData, Location } from '@/types/registration';
+import { RegistrationFormData } from '@/types/registration';
 import { useToast } from '@/contexts/ToastContext';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { useMasterData, useLocationsByDistrict } from '@/hooks/useMasterData';
 
 interface RegistrationStepThreeProps {
   formData: RegistrationFormData;
@@ -14,7 +13,7 @@ interface RegistrationStepThreeProps {
 }
 
 const RegistrationStepThree = ({ formData, onComplete, onBack }: RegistrationStepThreeProps) => {
-  const { showSuccess, showError, showWarning, showInfo } = useToast();
+  const { showError } = useToast();
   const [localFormData, setLocalFormData] = useState({
     country: formData.country,
     state: formData.state,
@@ -23,63 +22,29 @@ const RegistrationStepThree = ({ formData, onComplete, onBack }: RegistrationSte
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [masterData, setMasterData] = useState<MasterData | null>(null);
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Fetch master data
-  useEffect(() => {
-    const fetchMasterData = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/masters`, {
-          headers: {
-            'Accept': 'application/json',
-          },
-        });
-        const result = await response.json();
+  // Use SWR hook for master data (automatically cached and deduplicated with Step 2)
+  const { data: masterDataResponse, isLoading: masterLoading, error: masterError } = useMasterData();
 
-        if (result.status === 'success') {
-          setMasterData(result.data);
-        }
-      } catch (error) {
-        console.error('Error fetching master data:', error);
-        showError('Failed to load form data. Please refresh the page.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Use SWR hook for locations (automatically fetched when district changes)
+  const { data: locationsResponse, isLoading: locationsLoading, error: locationsError } = useLocationsByDistrict(
+    localFormData.district || null
+  );
 
-    fetchMasterData();
-  }, []);
+  // Extract data from responses
+  const masterData = masterDataResponse?.data;
+  const locations = locationsResponse?.data || [];
+  const loading = masterLoading;
 
-  // Fetch locations when district changes
-  useEffect(() => {
-    if (localFormData.district) {
-      fetchLocations(localFormData.district);
-    } else {
-      setLocations([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localFormData.district]);
+  // Show error if data fetch failed
+  if (masterError && !masterLoading) {
+    showError('Failed to load form data. Please refresh the page.');
+  }
 
-  const fetchLocations = async (districtId: number) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/masters/locations?district_id=${districtId}`, {
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        setLocations(result.data);
-      }
-    } catch (error) {
-      console.error('Error fetching locations:', error);
-      showError('Failed to load locations. Please try again.');
-    }
-  };
+  if (locationsError && !locationsLoading && localFormData.district) {
+    showError('Failed to load locations. Please try again.');
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -136,15 +101,19 @@ const RegistrationStepThree = ({ formData, onComplete, onBack }: RegistrationSte
     }
   };
 
-  // Filter states based on selected country
-  const filteredStates = masterData?.state.filter(
-    (state) => state.masterId === localFormData.country
-  ) || [];
+  // Memoize filtered states - only recalculates when masterData or country changes
+  const filteredStates = useMemo(() => {
+    return masterData?.state.filter(
+      (state) => state.masterId === localFormData.country
+    ) || [];
+  }, [masterData?.state, localFormData.country]);
 
-  // Filter districts based on selected state
-  const filteredDistricts = masterData?.district.filter(
-    (district) => district.masterId === localFormData.state
-  ) || [];
+  // Memoize filtered districts - only recalculates when masterData or state changes
+  const filteredDistricts = useMemo(() => {
+    return masterData?.district.filter(
+      (district) => district.masterId === localFormData.state
+    ) || [];
+  }, [masterData?.district, localFormData.state]);
 
   if (loading) {
     return (
