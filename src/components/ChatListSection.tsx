@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { MessageCircle, Loader2, ChevronLeft, ChevronRight, ArrowLeft, Send, ChevronDown } from 'lucide-react';
@@ -33,7 +32,6 @@ interface Message {
 }
 
 const ChatListSection = () => {
-  const router = useRouter();
   const { token, userId } = useAuth();
   const { showSuccess, showError } = useToast();
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
@@ -52,28 +50,8 @@ const ChatListSection = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (token && !selectedChat) {
-      fetchChatList();
-    }
-  }, [token, currentPage, selectedChat]);
-
-  useEffect(() => {
-    if (selectedChat && token) {
-      loadInitialMessages();
-      startPolling();
-    }
-
-    return () => {
-      stopPolling();
-    };
-  }, [selectedChat, token]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const fetchChatList = async () => {
+  // Memoized function to fetch chat list
+  const fetchChatList = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/chat/list?page=${currentPage}`, {
@@ -100,27 +78,60 @@ const ChatListSection = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, currentPage]);
 
-  const handleChatClick = (chatUser: ChatUser) => {
-    setSelectedChat(chatUser);
-  };
+  // Memoized function to load new messages (used by polling)
+  const loadNewMessages = useCallback(async () => {
+    if (!selectedChat) return;
 
-  const handleBackToList = () => {
-    setSelectedChat(null);
-    setMessages([]);
-    stopPolling();
-    // Refresh chat list to update unseen counts
-    fetchChatList();
-  };
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat/load-new`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ match_id: selectedChat.id }),
+      });
 
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      const result = await response.json();
+
+      if (result.status === 'success' && result.data?.length > 0) {
+        setMessages((prev) => {
+          // Filter out messages that already exist to prevent duplicates
+          const existingIds = new Set(prev.map(m => m.plan_chat_id));
+          const newMessages = result.data.filter((msg: Message) => !existingIds.has(msg.plan_chat_id));
+          return [...prev, ...newMessages];
+        });
+      }
+    } catch (error) {
+      console.error('Error loading new messages:', error);
     }
-  };
+  }, [selectedChat, token]);
 
-  const loadInitialMessages = async () => {
+  // Memoized function to start polling
+  const startPolling = useCallback(() => {
+    // Clear any existing interval first to prevent multiple intervals
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+    }
+
+    pollingIntervalRef.current = setInterval(() => {
+      loadNewMessages();
+    }, 5000); // Poll every 5 seconds
+  }, [loadNewMessages]);
+
+  // Memoized function to stop polling
+  const stopPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  }, []);
+
+  // Memoized function to load initial messages
+  const loadInitialMessages = useCallback(async () => {
     if (!selectedChat) return;
 
     try {
@@ -146,9 +157,10 @@ const ChatListSection = () => {
     } finally {
       setLoadingMessages(false);
     }
-  };
+  }, [selectedChat, token]);
 
-  const loadOldMessages = async () => {
+  // Memoized function to load old messages
+  const loadOldMessages = useCallback(async () => {
     if (messages.length === 0 || loadingMore || !selectedChat) return;
 
     try {
@@ -186,51 +198,56 @@ const ChatListSection = () => {
     } finally {
       setLoadingMore(false);
     }
-  };
+  }, [messages, loadingMore, selectedChat, token]);
 
-  const loadNewMessages = async () => {
-    if (!selectedChat) return;
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat/load-new`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ match_id: selectedChat.id }),
-      });
-
-      const result = await response.json();
-
-      if (result.status === 'success' && result.data?.length > 0) {
-        setMessages((prev) => {
-          // Filter out messages that already exist to prevent duplicates
-          const existingIds = new Set(prev.map(m => m.plan_chat_id));
-          const newMessages = result.data.filter((msg: Message) => !existingIds.has(msg.plan_chat_id));
-          return [...prev, ...newMessages];
-        });
-      }
-    } catch (error) {
-      console.error('Error loading new messages:', error);
+  // Memoized scroll function
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }
-  };
+  }, []);
 
-  const startPolling = () => {
-    pollingIntervalRef.current = setInterval(() => {
-      loadNewMessages();
-    }, 5000); // Poll every 5 seconds
-  };
+  // Memoized chat click handler
+  const handleChatClick = useCallback((chatUser: ChatUser) => {
+    setSelectedChat(chatUser);
+  }, []);
 
-  const stopPolling = () => {
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-      pollingIntervalRef.current = null;
+  // Memoized back to list handler
+  const handleBackToList = useCallback(() => {
+    setSelectedChat(null);
+    setMessages([]);
+    stopPolling();
+    // Refresh chat list to update unseen counts
+    fetchChatList();
+  }, [stopPolling, fetchChatList]);
+
+  // Effect to fetch chat list when dependencies change
+  useEffect(() => {
+    if (token && !selectedChat) {
+      fetchChatList();
     }
-  };
+  }, [token, selectedChat, fetchChatList]);
 
-  const sendMessage = async () => {
+  // Effect to load messages and start polling when chat is selected
+  useEffect(() => {
+    if (selectedChat && token) {
+      loadInitialMessages();
+      startPolling();
+    }
+
+    // Cleanup: stop polling when chat is deselected or component unmounts
+    return () => {
+      stopPolling();
+    };
+  }, [selectedChat, token, loadInitialMessages, startPolling, stopPolling]);
+
+  // Effect to scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  // Memoized function to send message
+  const sendMessage = useCallback(async () => {
     if (!newMessage.trim() || sending || !selectedChat) return;
 
     const messageContent = newMessage.trim();
@@ -294,16 +311,18 @@ const ChatListSection = () => {
     } finally {
       setSending(false);
     }
-  };
+  }, [newMessage, sending, selectedChat, userId, token, loadNewMessages, showSuccess, showError]);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  // Memoized key press handler
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
-  };
+  }, [sendMessage]);
 
-  const formatTime = (timestamp: number) => {
+  // Memoized time formatting function
+  const formatTime = useCallback((timestamp: number) => {
     const date = new Date(timestamp * 1000);
     const now = new Date();
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
@@ -316,19 +335,20 @@ const ChatListSection = () => {
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' +
              date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     }
-  };
+  }, []);
 
-  const handlePrevious = () => {
+  // Memoized pagination handlers
+  const handlePrevious = useCallback(() => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  };
+  }, [currentPage]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (pagination && currentPage < pagination.total_pages) {
       setCurrentPage(currentPage + 1);
     }
-  };
+  }, [pagination, currentPage]);
 
   // If a chat is selected, show the chat interface
   if (selectedChat) {
@@ -399,7 +419,7 @@ const ChatListSection = () => {
               <p className="text-sm text-gray-500">Start the conversation by sending a message!</p>
             </div>
           ) : (
-            messages.map((message, index) => {
+            messages.map((message) => {
               const isMyMessage = message.user_from === userId;
               return (
                 <div
