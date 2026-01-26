@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,13 +35,7 @@ const ProfileRequestsSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [respondingTo, setRespondingTo] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (token) {
-      fetchProfileRequests();
-    }
-  }, [token, currentPage]);
-
-  const fetchProfileRequests = async () => {
+  const fetchProfileRequests = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/profile-request/list?page=${currentPage}`, {
@@ -68,9 +62,15 @@ const ProfileRequestsSection = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, currentPage]);
 
-  const handlePhotoResponse = async (matchId: number, status: 'accept' | 'reject') => {
+  useEffect(() => {
+    if (token) {
+      fetchProfileRequests();
+    }
+  }, [token, fetchProfileRequests]);
+
+  const handlePhotoResponse = useCallback(async (matchId: number, status: 'accept' | 'reject') => {
     try {
       setRespondingTo(matchId);
       const response = await fetch(`${API_BASE_URL}/profile-request/photo-respond`, {
@@ -99,23 +99,23 @@ const ProfileRequestsSection = () => {
     } finally {
       setRespondingTo(null);
     }
-  };
+  }, [token, fetchProfileRequests]);
 
-  const handleProfileClick = (profileId: number) => {
+  const handleProfileClick = useCallback((profileId: number) => {
     router.push(`/profile/${profileId}`);
-  };
+  }, [router]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  };
+  }, [currentPage]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (pagination && currentPage < pagination.last_page) {
       setCurrentPage(currentPage + 1);
     }
-  };
+  }, [pagination, currentPage]);
 
   const getRequestTypeLabel = (type: string) => {
     const typeLabels: Record<string, string> = {

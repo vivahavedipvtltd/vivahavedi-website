@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
@@ -98,28 +98,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   // Get current view type based on active tab
   const currentViewType = activeTab === 'by_me' ? config.byMeType : config.toMeType;
 
-  useEffect(() => {
-    if (token) {
-      fetchProfiles();
-    }
-  }, [token, currentViewType, currentPage]);
-
-  // Reset to page 1 when changing tabs
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab]);
-
-  // If the section is 'requests', render ProfileRequestsSection instead
-  if (initialSection === 'requests') {
-    return <ProfileRequestsSection />;
-  }
-
-  // If the section is 'messages', render ChatListSection instead
-  if (initialSection === 'messages') {
-    return <ChatListSection />;
-  }
-
-  const fetchProfiles = async () => {
+  const fetchProfiles = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/communication-views`, {
@@ -150,13 +129,13 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, currentViewType, currentPage]);
 
-  const handleProfileClick = (profileId: number) => {
+  const handleProfileClick = useCallback((profileId: number) => {
     router.push(`/profile/${profileId}`);
-  };
+  }, [router]);
 
-  const handleInterestResponse = async (matchId: number, status: 'accepted' | 'rejected') => {
+  const handleInterestResponse = useCallback(async (matchId: number, status: 'accepted' | 'rejected') => {
     try {
       setRespondingTo(matchId);
       const response = await fetch(`${API_BASE_URL}/interest-response`, {
@@ -185,19 +164,40 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
     } finally {
       setRespondingTo(null);
     }
-  };
+  }, [token, fetchProfiles]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  };
+  }, [currentPage]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (hasMore) {
       setCurrentPage(currentPage + 1);
     }
-  };
+  }, [hasMore, currentPage]);
+
+  // Reset to page 1 when changing tabs
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (token) {
+      fetchProfiles();
+    }
+  }, [token, fetchProfiles]);
+
+  // If the section is 'requests', render ProfileRequestsSection instead
+  if (initialSection === 'requests') {
+    return <ProfileRequestsSection />;
+  }
+
+  // If the section is 'messages', render ChatListSection instead
+  if (initialSection === 'messages') {
+    return <ChatListSection />;
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
