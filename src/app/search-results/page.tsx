@@ -1,28 +1,26 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import { useMasterData } from '@/hooks/useMasterData';
+import ProfileCard from '@/components/search-results/ProfileCard';
+import FilterSidebar from '@/components/search-results/FilterSidebar';
+import SaveSearchModal from '@/components/search-results/SaveSearchModal';
 import {
   Search,
-  SlidersHorizontal,
-  User,
   Loader2,
   ChevronLeft,
   ChevronRight,
-  X,
   Filter,
   ArrowLeft,
   Bookmark,
 } from 'lucide-react';
 import { searchProfiles, getSearchCount, saveSearch, executeSavedSearch, getSavedSearchCount } from '@/lib/searchApi';
-import MultiSelectCheckbox from '@/components/MultiSelectCheckbox';
 
 interface MasterData {
   religion: Array<{ id: number; name: string }>;
@@ -78,6 +76,18 @@ interface ProfileResult {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
+// Constants for dropdown options (defined outside component to avoid recreation on every render)
+const AGE_OPTIONS = Array.from({ length: 53 }, (_, i) => i + 18); // 18-70 years
+const HEIGHT_OPTIONS = Array.from({ length: 71 }, (_, i) => i + 140); // 140-210 cm
+
+// Helper function to convert cm to feet and inches
+const cmToFeetInches = (cm: number): string => {
+  const inches = cm / 2.54;
+  const feet = Math.floor(inches / 12);
+  const remainingInches = Math.round(inches % 12);
+  return `${feet}'${remainingInches}"`;
+};
+
 const SearchResultsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -105,14 +115,89 @@ const SearchResultsPage = () => {
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  useEffect(() => {
-    if (token) {
-      loadUserGender();
-      loadSearchFromParams();
+  // Memoized function to execute advanced search
+  const executeAdvancedSearch = useCallback(async (searchFilters: SearchFilters, sort: 'featured' | 'new' | 'photo', page: number) => {
+    if (!token) return;
+
+    setLoading(true);
+    try {
+      // Execute count and search in parallel for better performance
+      const [countResult, result] = await Promise.all([
+        getSearchCount(token, searchFilters),
+        searchProfiles(token, searchFilters, sort, page)
+      ]);
+
+      // Update state with results
+      if (countResult.status === 'success') {
+        setTotalCount(countResult.data);
+      }
+
+      if (result.status === 'success') {
+        setSearchResults(result.data);
+        setCurrentPage(page);
+      }
+    } catch (error) {
+      console.error('Search failed:', error);
+    } finally {
+      setLoading(false);
     }
   }, [token]);
 
-  const loadUserGender = async () => {
+  // Memoized function to execute ID search
+  const executeIdSearch = useCallback(async (id: string) => {
+    if (!token || !id) return;
+
+    setLoading(true);
+    try {
+      const result = await searchProfiles(
+        token,
+        { user_id: id },
+        'featured',
+        1,
+        'id_search'
+      );
+      if (result.status === 'success') {
+        setSearchResults(result.data);
+        setTotalCount(result.data.length);
+        setCurrentPage(1);
+      }
+    } catch (error) {
+      console.error('ID search failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  // Memoized function to execute saved search
+  const executeSavedSearchById = useCallback(async (searchId: number, page: number) => {
+    if (!token) return;
+
+    setLoading(true);
+    try {
+      // Execute count and search in parallel for better performance
+      const [countResult, result] = await Promise.all([
+        getSavedSearchCount(token, searchId),
+        executeSavedSearch(token, searchId, page)
+      ]);
+
+      // Update state with results
+      if (countResult.status === 'success') {
+        setTotalCount(countResult.data);
+      }
+
+      if (result.status === 'success') {
+        setSearchResults(result.data);
+        setCurrentPage(page);
+      }
+    } catch (error) {
+      console.error('Saved search failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  // Memoized function to load user gender
+  const loadUserGender = useCallback(async () => {
     if (!token) return;
 
     try {
@@ -132,9 +217,10 @@ const SearchResultsPage = () => {
     } catch (error) {
       console.error('Failed to load user gender:', error);
     }
-  };
+  }, [token]);
 
-  const loadSearchFromParams = () => {
+  // Memoized function to load search parameters from URL
+  const loadSearchFromParams = useCallback(() => {
     const type = searchParams.get('type') as 'advanced' | 'id' | 'saved' || 'advanced';
     const sort = searchParams.get('sort') as 'featured' | 'new' | 'photo' || 'featured';
 
@@ -213,79 +299,15 @@ const SearchResultsPage = () => {
       setFilters(parsedFilters);
       executeAdvancedSearch(parsedFilters, sort, 1);
     }
-  };
+  }, [searchParams, executeIdSearch, executeSavedSearchById, executeAdvancedSearch]);
 
-  const executeAdvancedSearch = async (searchFilters: SearchFilters, sort: 'featured' | 'new' | 'photo', page: number) => {
-    if (!token) return;
-
-    setLoading(true);
-    try {
-      // Get count
-      const countResult = await getSearchCount(token, searchFilters);
-      if (countResult.status === 'success') {
-        setTotalCount(countResult.data);
-      }
-
-      // Get results
-      const result = await searchProfiles(token, searchFilters, sort, page);
-      if (result.status === 'success') {
-        setSearchResults(result.data);
-        setCurrentPage(page);
-      }
-    } catch (error) {
-      console.error('Search failed:', error);
-    } finally {
-      setLoading(false);
+  // Effect to load data when token or search params change
+  useEffect(() => {
+    if (token) {
+      loadUserGender();
+      loadSearchFromParams();
     }
-  };
-
-  const executeIdSearch = async (id: string) => {
-    if (!token || !id) return;
-
-    setLoading(true);
-    try {
-      const result = await searchProfiles(
-        token,
-        { user_id: id },
-        'featured',
-        1,
-        'id_search'
-      );
-      if (result.status === 'success') {
-        setSearchResults(result.data);
-        setTotalCount(result.data.length);
-        setCurrentPage(1);
-      }
-    } catch (error) {
-      console.error('ID search failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const executeSavedSearchById = async (searchId: number, page: number) => {
-    if (!token) return;
-
-    setLoading(true);
-    try {
-      // Get count first
-      const countResult = await getSavedSearchCount(token, searchId);
-      if (countResult.status === 'success') {
-        setTotalCount(countResult.data);
-      }
-
-      // Get results
-      const result = await executeSavedSearch(token, searchId, page);
-      if (result.status === 'success') {
-        setSearchResults(result.data);
-        setCurrentPage(page);
-      }
-    } catch (error) {
-      console.error('Saved search failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [token, loadUserGender, loadSearchFromParams]);
 
   const handlePageChange = (page: number) => {
     if (searchType === 'saved' && savedSearchId) {
@@ -357,35 +379,66 @@ const SearchResultsPage = () => {
 
   const totalPages = Math.ceil(totalCount / 6);
 
-  const getFilteredCastes = () => {
+  // Memoized filtered castes based on selected religion
+  const filteredCastes = useMemo(() => {
     if (!masterData || !filters.religion) return [];
     return masterData.caste.filter((c) => c.masterId === filters.religion);
-  };
+  }, [masterData, filters.religion]);
 
-  const getFilteredStates = () => {
+  // Memoized filtered states based on selected country
+  const filteredStates = useMemo(() => {
     if (!masterData || !filters.country) return [];
     return masterData.state.filter((s) => s.masterId === filters.country);
-  };
+  }, [masterData, filters.country]);
 
-  const getFilteredDistricts = () => {
+  // Memoized filtered districts based on selected state
+  const filteredDistricts = useMemo(() => {
     if (!masterData || !filters.state) return [];
     return masterData.district.filter((d) => d.masterId === filters.state);
-  };
+  }, [masterData, filters.state]);
 
-  const getFilteredQualifications = () => {
+  // Memoized filtered qualifications based on selected qualification levels
+  const filteredQualifications = useMemo(() => {
     if (!masterData || !filters.q_level || filters.q_level.length === 0) return [];
     return masterData.qualification.filter((q) =>
       filters.q_level?.includes(q.masterId)
     );
-  };
+  }, [masterData, filters.q_level]);
 
-  // Helper function to convert cm to feet and inches
-  const cmToFeetInches = (cm: number): string => {
-    const inches = cm / 2.54;
-    const feet = Math.floor(inches / 12);
-    const remainingInches = Math.round(inches % 12);
-    return `${feet}'${remainingInches}"`;
-  };
+  // Memoized transformed marital status options
+  const maritalStatusOptions = useMemo(() => {
+    if (!masterData?.marital_status) return [];
+    return masterData.marital_status.map(ms => ({
+      id: ms.name.toLowerCase(),
+      name: ms.name
+    }));
+  }, [masterData?.marital_status]);
+
+  // Memoized transformed manglik options
+  const manglikOptions = useMemo(() => {
+    if (!masterData?.manglik) return [];
+    return masterData.manglik.map(m => ({
+      id: m.name.toLowerCase(),
+      name: m.name
+    }));
+  }, [masterData?.manglik]);
+
+  // Memoized transformed physical status options
+  const physicalStatusOptions = useMemo(() => {
+    if (!masterData?.physical_status) return [];
+    return masterData.physical_status.map(ps => ({
+      id: ps.name.toLowerCase(),
+      name: ps.name
+    }));
+  }, [masterData?.physical_status]);
+
+  // Memoized working sector options (static data)
+  const workingSectorOptions = useMemo(() => [
+    { id: 'private', name: 'Private' },
+    { id: 'government', name: 'Government' },
+    { id: 'business', name: 'Business' },
+    { id: 'defence', name: 'Defence' }
+  ], []);
 
   return (
     <AuthGuard requireAuth={true} redirectTo="/login">
@@ -436,353 +489,31 @@ const SearchResultsPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Left Sidebar - Refine Filters (Hide for saved searches) */}
               {searchType !== 'saved' && (
-              <div className={`lg:col-span-1 ${showMobileFilters ? 'fixed inset-0 z-50 lg:relative' : 'hidden lg:block'}`}>
-                <div className={`${showMobileFilters ? 'h-full overflow-y-auto bg-white' : ''}`}>
-                  {/* Mobile Filter Header */}
-                  {showMobileFilters && (
-                    <div className="lg:hidden sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
-                      <h2 className="text-xl font-bold text-gray-900">Refine Search</h2>
-                      <button
-                        onClick={() => setShowMobileFilters(false)}
-                        className="text-gray-600 hover:text-gray-900"
-                      >
-                        <X className="h-6 w-6" />
-                      </button>
-                    </div>
-                  )}
-
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div className="p-4 bg-red-50 border-b border-red-100">
-                      <h2 className="text-lg font-bold text-gray-900 flex items-center">
-                        <SlidersHorizontal className="h-5 w-5 mr-2 text-red-600" />
-                        Refine Your Search
-                      </h2>
-                    </div>
-
-                    {searchType === 'advanced' && masterData && (
-                      <div className="p-4 space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto">
-                        {/* Age Range */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Age Range
-                          </label>
-                          <div className="grid grid-cols-2 gap-2">
-                            <select
-                              value={filters.age_from || ''}
-                              onChange={(e) =>
-                                handleFilterChange('age_from', parseInt(e.target.value) || undefined)
-                              }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            >
-                              <option value="">From</option>
-                              {Array.from({ length: 53 }, (_, i) => i + 18).map((age) => (
-                                <option key={age} value={age}>
-                                  {age}
-                                </option>
-                              ))}
-                            </select>
-                            <select
-                              value={filters.age_to || ''}
-                              onChange={(e) =>
-                                handleFilterChange('age_to', parseInt(e.target.value) || undefined)
-                              }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            >
-                              <option value="">To</option>
-                              {Array.from({ length: 53 }, (_, i) => i + 18).map((age) => (
-                                <option key={age} value={age}>
-                                  {age}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Height Range */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Height (ft)
-                          </label>
-                          <div className="grid grid-cols-2 gap-2">
-                            <select
-                              value={filters.height_from || ''}
-                              onChange={(e) =>
-                                handleFilterChange('height_from', e.target.value)
-                              }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            >
-                              <option value="">From</option>
-                              {Array.from({ length: 71 }, (_, i) => i + 140).map((height) => (
-                                <option key={height} value={height}>
-                                  {height} cm ({cmToFeetInches(height)})
-                                </option>
-                              ))}
-                            </select>
-                            <select
-                              value={filters.height_to || ''}
-                              onChange={(e) =>
-                                handleFilterChange('height_to', e.target.value)
-                              }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            >
-                              <option value="">To</option>
-                              {Array.from({ length: 71 }, (_, i) => i + 140).map((height) => (
-                                <option key={height} value={height}>
-                                  {height} cm ({cmToFeetInches(height)})
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Religion */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Religion
-                          </label>
-                          <select
-                            value={filters.religion || ''}
-                            onChange={(e) =>
-                              handleFilterChange('religion', parseInt(e.target.value) || undefined)
-                            }
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                          >
-                            <option value="">All Religions</option>
-                            {masterData.religion.map((r) => (
-                              <option key={r.id} value={r.id}>
-                                {r.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        {/* Caste */}
-                        {filters.religion && (
-                          <MultiSelectCheckbox
-                            label="Caste"
-                            options={getFilteredCastes()}
-                            selectedValues={filters.caste || []}
-                            onChange={(values) => handleFilterChange('caste', values as number[])}
-                            placeholder="Select castes"
-                          />
-                        )}
-
-                        {/* Country */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Country
-                          </label>
-                          <select
-                            value={filters.country || ''}
-                            onChange={(e) =>
-                              handleFilterChange('country', parseInt(e.target.value) || undefined)
-                            }
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                          >
-                            <option value="">All Countries</option>
-                            {masterData.country.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        {/* State */}
-                        {filters.country && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              State
-                            </label>
-                            <select
-                              value={filters.state || ''}
-                              onChange={(e) =>
-                                handleFilterChange('state', parseInt(e.target.value) || undefined)
-                              }
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            >
-                              <option value="">All States</option>
-                              {getFilteredStates().map((s) => (
-                                <option key={s.id} value={s.id}>
-                                  {s.name}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-
-                        {/* District */}
-                        {filters.state && (
-                          <MultiSelectCheckbox
-                            label="District"
-                            options={getFilteredDistricts()}
-                            selectedValues={filters.district || []}
-                            onChange={(values) => handleFilterChange('district', values as number[])}
-                            placeholder="Select districts"
-                          />
-                        )}
-
-                        {/* Marital Status */}
-                        <MultiSelectCheckbox
-                          label="Marital Status"
-                          options={masterData.marital_status?.map(ms => ({ id: ms.name.toLowerCase(), name: ms.name })) || []}
-                          selectedValues={filters.marital_status || []}
-                          onChange={(values) => handleFilterChange('marital_status', values as string[])}
-                          placeholder="Select marital status"
-                        />
-
-                        {/* Nakshatra */}
-                        <MultiSelectCheckbox
-                          label="Nakshatra"
-                          options={masterData.nakshathra || []}
-                          selectedValues={filters.nakshatra || []}
-                          onChange={(values) => handleFilterChange('nakshatra', values as number[])}
-                          placeholder="Select nakshatras"
-                        />
-
-                        {/* Manglik */}
-                        <MultiSelectCheckbox
-                          label="Manglik"
-                          options={masterData.manglik?.map(m => ({ id: m.name.toLowerCase(), name: m.name })) || []}
-                          selectedValues={filters.manglik || []}
-                          onChange={(values) => handleFilterChange('manglik', values as string[])}
-                          placeholder="Select manglik status"
-                        />
-
-                        {/* Qualification Level */}
-                        <MultiSelectCheckbox
-                          label="Qualification Level"
-                          options={masterData.qualification_level || []}
-                          selectedValues={filters.q_level || []}
-                          onChange={(values) => handleFilterChange('q_level', values as number[])}
-                          placeholder="Select qualification levels"
-                        />
-
-                        {/* Qualification */}
-                        {filters.q_level && filters.q_level.length > 0 && (
-                          <MultiSelectCheckbox
-                            label="Qualification"
-                            options={getFilteredQualifications()}
-                            selectedValues={filters.qualification || []}
-                            onChange={(values) => handleFilterChange('qualification', values as number[])}
-                            placeholder="Select qualifications"
-                          />
-                        )}
-
-                        {/* Specialization */}
-                        <MultiSelectCheckbox
-                          label="Specialization"
-                          options={masterData.specialization || []}
-                          selectedValues={filters.specialization || []}
-                          onChange={(values) => handleFilterChange('specialization', values as number[])}
-                          placeholder="Select specializations"
-                        />
-
-                        {/* Profession */}
-                        <MultiSelectCheckbox
-                          label="Profession"
-                          options={masterData.profession || []}
-                          selectedValues={filters.profession || []}
-                          onChange={(values) => handleFilterChange('profession', values as number[])}
-                          placeholder="Select professions"
-                        />
-
-                        {/* Working In */}
-                        <MultiSelectCheckbox
-                          label="Working In"
-                          options={[
-                            { id: 'private', name: 'Private' },
-                            { id: 'government', name: 'Government' },
-                            { id: 'business', name: 'Business' },
-                            { id: 'defence', name: 'Defence' }
-                          ]}
-                          selectedValues={filters.workedin || []}
-                          onChange={(values) => handleFilterChange('workedin', values as string[])}
-                          placeholder="Select work sectors"
-                        />
-
-                        {/* Physical Status */}
-                        <MultiSelectCheckbox
-                          label="Physical Status"
-                          options={masterData.physical_status?.map(ps => ({ id: ps.name.toLowerCase(), name: ps.name })) || []}
-                          selectedValues={filters.physicalstatus || []}
-                          onChange={(values) => handleFilterChange('physicalstatus', values as string[])}
-                          placeholder="Select physical status"
-                        />
-
-                        {/* Sort By */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Sort By
-                          </label>
-                          <select
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value as 'featured' | 'new' | 'photo')}
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                          >
-                            <option value="featured">Featured Profiles</option>
-                            <option value="new">Newest First</option>
-                            <option value="photo">With Photos</option>
-                          </select>
-                        </div>
-
-                        {/* Apply Filters Button */}
-                        <button
-                          onClick={handleRefineSearch}
-                          disabled={loading}
-                          className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                              Searching...
-                            </>
-                          ) : (
-                            <>
-                              <Search className="h-5 w-5 mr-2" />
-                              Apply Filters
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    )}
-
-                    {searchType === 'id' && (
-                      <div className="p-4 space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Profile ID
-                          </label>
-                          <input
-                            type="text"
-                            value={searchId}
-                            onChange={(e) => setSearchId(e.target.value)}
-                            placeholder="Enter Profile ID"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                          />
-                        </div>
-                        <button
-                          onClick={handleRefineSearch}
-                          disabled={loading || !searchId}
-                          className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                              Searching...
-                            </>
-                          ) : (
-                            <>
-                              <Search className="h-5 w-5 mr-2" />
-                              Search by ID
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+                <FilterSidebar
+                  searchType={searchType}
+                  searchId={searchId}
+                  filters={filters}
+                  loading={loading}
+                  showMobileFilters={showMobileFilters}
+                  masterData={masterData}
+                  filteredCastes={filteredCastes}
+                  filteredStates={filteredStates}
+                  filteredDistricts={filteredDistricts}
+                  filteredQualifications={filteredQualifications}
+                  maritalStatusOptions={maritalStatusOptions}
+                  manglikOptions={manglikOptions}
+                  physicalStatusOptions={physicalStatusOptions}
+                  workingSectorOptions={workingSectorOptions}
+                  sortBy={sortBy}
+                  ageOptions={AGE_OPTIONS}
+                  heightOptions={HEIGHT_OPTIONS}
+                  onCloseMobileFilters={() => setShowMobileFilters(false)}
+                  onFilterChange={handleFilterChange}
+                  onSortChange={setSortBy}
+                  onSearchIdChange={setSearchId}
+                  onRefineSearch={handleRefineSearch}
+                  cmToFeetInches={cmToFeetInches}
+                />
               )}
 
               {/* Right Side - Search Results */}
@@ -831,55 +562,7 @@ const SearchResultsPage = () => {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                       {searchResults.map((profile) => (
-                        <div
-                          key={profile.id}
-                          className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer"
-                          onClick={() => router.push(`/profile/${profile.id}`)}
-                        >
-                          <div className="aspect-w-16 aspect-h-12 bg-gray-200 relative h-[22rem]">
-                            <Image
-                              src={profile.photo || '/placeholder-avatar.png'}
-                              alt={profile.name}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              className="object-cover"
-                              unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
-                            />
-                          </div>
-                          <div className="p-4">
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">
-                              {profile.name}
-                            </h3>
-                            <div className="space-y-1 text-sm text-gray-600">
-                              <p>
-                                <span className="font-medium">Age:</span> {profile.age} years
-                              </p>
-                              <p>
-                                <span className="font-medium">Height:</span> {profile.height}
-                              </p>
-                              <p>
-                                <span className="font-medium">Status:</span>{' '}
-                                {profile.marital_status}
-                              </p>
-                              <p>
-                                <span className="font-medium">Religion:</span> {profile.religion}
-                              </p>
-                              <p>
-                                <span className="font-medium">Caste:</span> {profile.caste}
-                              </p>
-                              <p>
-                                <span className="font-medium">Location:</span> {profile.district}
-                              </p>
-                              <p>
-                                <span className="font-medium">Education:</span>{' '}
-                                {profile.qualification}
-                              </p>
-                            </div>
-                            <button className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
-                              View Profile
-                            </button>
-                          </div>
-                        </div>
+                        <ProfileCard key={profile.id} profile={profile} />
                       ))}
                     </div>
 
@@ -943,90 +626,19 @@ const SearchResultsPage = () => {
         <Footer />
 
         {/* Save Search Modal */}
-        {showSaveModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                  <Bookmark className="h-5 w-5 mr-2 text-red-500" />
-                  Save This Search
-                </h3>
-                <button
-                  onClick={() => {
-                    setShowSaveModal(false);
-                    setSearchName('');
-                    setSaveMessage(null);
-                  }}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-
-              <p className="text-sm text-gray-600 mb-4">
-                Save your current search filters to quickly access them later from your dashboard.
-              </p>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Search Name
-                </label>
-                <input
-                  type="text"
-                  value={searchName}
-                  onChange={(e) => setSearchName(e.target.value)}
-                  placeholder="e.g., Young Professionals in Mumbai"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  maxLength={50}
-                  disabled={saving}
-                />
-              </div>
-
-              {saveMessage && (
-                <div
-                  className={`mb-4 p-3 rounded-lg ${
-                    saveMessage.type === 'success'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}
-                >
-                  {saveMessage.text}
-                </div>
-              )}
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowSaveModal(false);
-                    setSearchName('');
-                    setSaveMessage(null);
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                  disabled={saving}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveSearch}
-                  disabled={saving || !searchName.trim()}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {saving ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Bookmark className="h-5 w-5 mr-2" />
-                      Save
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <SaveSearchModal
+          isOpen={showSaveModal}
+          searchName={searchName}
+          saving={saving}
+          saveMessage={saveMessage}
+          onClose={() => {
+            setShowSaveModal(false);
+            setSearchName('');
+            setSaveMessage(null);
+          }}
+          onSearchNameChange={setSearchName}
+          onSave={handleSaveSearch}
+        />
       </div>
     </AuthGuard>
   );
