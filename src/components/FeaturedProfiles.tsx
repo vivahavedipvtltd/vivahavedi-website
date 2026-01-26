@@ -23,6 +23,7 @@ const FeaturedProfiles = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(true);
 
   // Load profiles from API
   const loadProfiles = async (page: number) => {
@@ -51,9 +52,28 @@ const FeaturedProfiles = () => {
     loadProfiles(1);
   }, []);
 
-  // Auto-slide functionality
+  // Page Visibility API - Pause auto-slide when page is hidden
   useEffect(() => {
-    if (loading || error || isPaused || pagination.total_pages <= 1) {
+    const handleVisibilityChange = () => {
+      // Update state based on page visibility
+      setIsPageVisible(!document.hidden);
+    };
+
+    // Set initial visibility state
+    setIsPageVisible(!document.hidden);
+
+    // Listen for visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup listener on unmount
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Auto-slide functionality - Pauses when page is hidden, on hover, or during loading/error
+  useEffect(() => {
+    if (loading || error || isPaused || !isPageVisible || pagination.total_pages <= 1) {
       return;
     }
 
@@ -66,7 +86,7 @@ const FeaturedProfiles = () => {
     }, 5000); // Change page every 5 seconds
 
     return () => clearInterval(interval);
-  }, [loading, error, isPaused, pagination.total_pages, pagination.current_page]);
+  }, [loading, error, isPaused, isPageVisible, pagination.total_pages, pagination.current_page]);
 
   // Go to specific page
   const goToPage = (page: number) => {

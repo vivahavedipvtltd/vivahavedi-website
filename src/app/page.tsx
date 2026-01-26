@@ -1,5 +1,3 @@
-'use client';
-
 import { lazy, Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -8,6 +6,7 @@ import HeroSection from '@/components/HeroSection';
 import BackToTop from '@/components/BackToTop';
 import ClientScrollManager from '@/components/ClientScrollManager';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import SectionErrorFallback from '@/components/SectionErrorFallback';
 
 // Keep essential sections with animations for elegant experience
 const SearchSection = lazy(() => import('@/components/SearchSection'));
@@ -21,21 +20,6 @@ const FAQ = lazy(() => import('@/components/FAQ'));
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center py-16">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-  </div>
-);
-
-// Fallback component for section errors
-const SectionErrorFallback = ({ message }: { message: string }) => (
-  <div className="flex items-center justify-center py-16 px-4">
-    <div className="text-center">
-      <p className="text-gray-600 mb-4">{message}</p>
-      <button
-        onClick={() => window.location.reload()}
-        className="text-red-600 hover:text-red-700 font-medium"
-      >
-        Reload Page
-      </button>
-    </div>
   </div>
 );
 
