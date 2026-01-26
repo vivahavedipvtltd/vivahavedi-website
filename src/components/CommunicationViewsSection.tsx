@@ -1,31 +1,16 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, PhoneCall, Check, X } from 'lucide-react';
 import ProfileRequestsSection from './ProfileRequestsSection';
 import ChatListSection from './ChatListSection';
+import { useCommunicationViews } from '@/hooks/useDashboardData';
+import type { CommunicationViewType } from '@/types/dashboard';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-
-interface Profile {
-  id: number;
-  name: string;
-  age: number;
-  height: string;
-  marital_status: string;
-  religion: string;
-  caste: string;
-  district: string;
-  qualification: string;
-  photo: string;
-  content?: string | null;
-  status?: string | null;
-  mobile?: string | null;
-  phone?: string | null;
-}
 
 interface CommunicationViewsSectionProps {
   initialSection?: string;
@@ -87,10 +72,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   const [activeTab, setActiveTab] = useState<'by_me' | 'to_me'>('to_me');
   const router = useRouter();
   const { token } = useAuth();
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
   const [respondingTo, setRespondingTo] = useState<number | null>(null);
 
   const config = sectionConfig[initialSection] || sectionConfig['interests'];
@@ -98,38 +80,12 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   // Get current view type based on active tab
   const currentViewType = activeTab === 'by_me' ? config.byMeType : config.toMeType;
 
-  const fetchProfiles = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/communication-views`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          type: currentViewType,
-          page: currentPage
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        setProfiles(result.data || []);
-        // Pagination: 5 items per page
-        setHasMore(result.data?.length === 5);
-      } else {
-        setProfiles([]);
-      }
-    } catch (error) {
-      console.error(`Error fetching ${currentViewType}:`, error);
-      setProfiles([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [token, currentViewType, currentPage]);
+  // Use SWR hook for data fetching with automatic caching and deduplication
+  const { data: profiles, isLoading: loading, mutate, hasMore } = useCommunicationViews(
+    token,
+    currentViewType as CommunicationViewType,
+    currentPage
+  );
 
   const handleProfileClick = useCallback((profileId: number) => {
     router.push(`/profile/${profileId}`);
@@ -154,8 +110,8 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
       const result = await response.json();
 
       if (result.status === 'success') {
-        // Refresh the profiles list to show updated status
-        await fetchProfiles();
+        // Refresh the profiles list using SWR mutate
+        await mutate();
       } else {
         console.error('Failed to respond to interest:', result.message);
       }
@@ -164,7 +120,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
     } finally {
       setRespondingTo(null);
     }
-  }, [token, fetchProfiles]);
+  }, [token, mutate]);
 
   const handlePrevious = useCallback(() => {
     if (currentPage > 1) {
@@ -178,16 +134,11 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
     }
   }, [hasMore, currentPage]);
 
-  // Reset to page 1 when changing tabs
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab]);
-
-  useEffect(() => {
-    if (token) {
-      fetchProfiles();
-    }
-  }, [token, fetchProfiles]);
+  // Handle tab changes - reset page and update tab
+  const handleTabChange = useCallback((tab: 'by_me' | 'to_me') => {
+    setActiveTab(tab);
+    setCurrentPage(1); // Reset to first page when switching tabs
+  }, []);
 
   // If the section is 'requests', render ProfileRequestsSection instead
   if (initialSection === 'requests') {
@@ -211,7 +162,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
       <div className="border-b border-gray-200 mb-6">
         <div className="flex space-x-8">
           <button
-            onClick={() => setActiveTab('to_me')}
+            onClick={() => handleTabChange('to_me')}
             className={`pb-4 px-1 relative ${
               activeTab === 'to_me'
                 ? 'text-red-600 font-semibold'
@@ -224,7 +175,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
             )}
           </button>
           <button
-            onClick={() => setActiveTab('by_me')}
+            onClick={() => handleTabChange('by_me')}
             className={`pb-4 px-1 relative ${
               activeTab === 'by_me'
                 ? 'text-red-600 font-semibold'
@@ -244,7 +195,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
         <div className="flex justify-center items-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-red-500" />
         </div>
-      ) : profiles.length === 0 ? (
+      ) : !profiles || profiles.length === 0 ? (
         <div className="text-center py-12">
           <div className="mb-4 text-gray-400">
             {config.icon}

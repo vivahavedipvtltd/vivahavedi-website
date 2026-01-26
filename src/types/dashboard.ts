@@ -99,3 +99,31 @@ export interface MyPhotos {
   horoscope: string;
   horoscope_status: string;
 }
+
+export interface CommunicationProfile {
+  id: number;
+  name: string;
+  age: number;
+  height: string;
+  marital_status: string;
+  religion: string;
+  caste: string;
+  district: string;
+  qualification: string;
+  photo: string;
+  content?: string | null;
+  status?: string | null;
+  mobile?: string | null;
+  phone?: string | null;
+}
+
+export type CommunicationViewType =
+  | 'profile_viewed_by_me'
+  | 'profile_viewed_to_me'
+  | 'shortlised_by_me'
+  | 'shortlised_to_me'
+  | 'contacted_by_me'
+  | 'contacted_to_me'
+  | 'interested_by_me'
+  | 'interested_to_me'
+  | 'communication_statistics';

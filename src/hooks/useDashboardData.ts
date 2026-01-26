@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { buildApiUrl, semiStaticDataConfig } from '@/lib/swrConfig';
 import { fetchWithRetry } from '@/lib/fetchWithRetry';
 import { logSwrActivity } from '@/lib/swrDevLogger';
-import type { MyDetails, CommunicationStats, MyPlan, MyPhotos } from '@/types/dashboard';
+import type { MyDetails, CommunicationStats, MyPlan, MyPhotos, CommunicationProfile, CommunicationViewType } from '@/types/dashboard';
 import type { ApiResponse } from '@/lib/api';
 
 /**
@@ -285,5 +285,91 @@ export function useDashboardData(token: string | null) {
       plan: plan.mutate,
       photos: photos.mutate,
     },
+  };
+}
+
+/**
+ * Fetcher for communication views (POST request with type and page)
+ */
+const communicationViewsFetcher = async (url: string, token: string, type: CommunicationViewType, page: number) => {
+  logSwrActivity(`${url}?type=${type}&page=${page}`, 'FETCH');
+
+  const response = await fetchWithRetry(url, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ type, page }),
+    retries: 3,
+    retryDelay: 1000,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+/**
+ * Hook to fetch communication views (interests, profile views, shortlisted, etc.) with SWR
+ * Implements STALE-WHILE-REVALIDATE pattern for optimal UX
+ *
+ * BENEFITS:
+ * - Automatic caching: Switch tabs and return = instant display from cache
+ * - Deduplication: Multiple calls with same params = 1 network request
+ * - Stale-while-revalidate: Show cached data, update in background
+ * - Pagination support: Each page cached separately
+ *
+ * DEDUPLICATION EXAMPLE:
+ * - User views "Interests Received" page 1 → Fetch → Cache
+ * - User switches to "Sent by Me" → Fetch → Cache
+ * - User switches back to "Interests Received" page 1 → Instant from cache (0ms)
+ * - Background revalidation ensures data stays fresh
+ *
+ * @param token - Authentication token
+ * @param type - Communication view type (e.g., 'interested_to_me')
+ * @param page - Page number for pagination
+ * @param enabled - Whether to fetch (default: true)
+ * @returns Communication profiles data, loading state, error, and mutate function
+ *
+ * @example
+ * const { data, isLoading, error, mutate } = useCommunicationViews(
+ *   token,
+ *   'interested_to_me',
+ *   1
+ * );
+ */
+export function useCommunicationViews(
+  token: string | null,
+  type: CommunicationViewType,
+  page: number = 1,
+  enabled: boolean = true
+) {
+  const { data, error, isLoading, mutate } = useSWR<ApiResponse<CommunicationProfile[]>>(
+    // SWR key: Include all parameters for proper cache separation
+    // Each type+page combination gets its own cache entry
+    token && enabled ? [buildApiUrl('/communication-views'), token, type, page] : null,
+    ([url, tkn, t, p]: [string, string, CommunicationViewType, number]) =>
+      communicationViewsFetcher(url, tkn, t, p),
+    {
+      ...semiStaticDataConfig,
+      // Refresh every 2 minutes for communication data (more frequent than dashboard)
+      refreshInterval: 120000,
+      // Keep previous data while fetching new page
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    data: data?.status === 'success' ? data.data : null,
+    isLoading,
+    error,
+    mutate,
+    hasData: !isLoading && !error && data?.status === 'success',
+    // Pagination helper: Check if there's more data (API returns 5 items per page)
+    hasMore: data?.data && data.data.length === 5,
   };
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, Suspense, useTransition } from 'react';
+import { useState, useEffect, useCallback, Suspense, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
@@ -35,9 +35,6 @@ function DashboardContent() {
   const [activeSection, setActiveSection] = useState('overview');
   const [, startTransition] = useTransition();
 
-  // Ref to track if we've already processed URL params (prevents infinite loops)
-  const processedParamsRef = useRef<string | null>(null);
-
   // Use SWR for data fetching with automatic caching, revalidation, and retry
   const {
     myDetails,
@@ -49,59 +46,52 @@ function DashboardContent() {
     refresh,
   } = useDashboardData(token);
 
-  // Centralized navigation handler - handles redirects for specific sections
-  // Memoized to prevent recreation on every render
-  const handleSectionNavigation = useCallback((section: string) => {
+  // Optimized section change handler - combines state update + navigation + URL update
+  // updateUrl parameter prevents infinite loops when called from useEffect
+  const handleSectionChange = useCallback((section: string, updateUrl = true) => {
+    // Update state
+    setActiveSection(section);
+
+    // Handle redirects for sections with dedicated pages
     const redirectPath = REDIRECT_SECTIONS[section];
     if (redirectPath) {
       router.push(redirectPath);
+      return;
     }
-  }, [router]);
 
-  // Optimized section change handler - combines state update + navigation
-  // This prevents the need for a second useEffect watching activeSection
-  const handleSectionChange = useCallback((section: string) => {
-    setActiveSection(section);
-    // Immediately handle redirect if needed (no waiting for re-render)
-    handleSectionNavigation(section);
-  }, [handleSectionNavigation]);
+    // Update URL to reflect current section (for browser history and deep linking)
+    // This enables: browser back/forward, bookmarks, sharing links, page refresh
+    if (updateUrl) {
+      const url = section === 'overview' ? '/dashboard' : `/dashboard?section=${section}`;
 
-  // Check for section parameter from URL and reset parameter
-  // Optimized to prevent infinite loops and unnecessary re-renders
+      startTransition(() => {
+        router.replace(url, { scroll: false });
+      });
+    }
+  }, [router, startTransition]);
+
+  // Sync state with URL on mount and when URL changes
+  // Optimized to prevent infinite loops
   useEffect(() => {
     const resetParam = searchParams.get('reset');
     const sectionParam = searchParams.get('section');
 
-    // Create a unique key for current params
-    const paramsKey = `${resetParam || ''}-${sectionParam || ''}`;
-
-    // Skip if we've already processed these exact params
-    if (processedParamsRef.current === paramsKey) {
+    // Handle reset parameter (return to overview)
+    if (resetParam === 'true') {
+      // Don't update URL here, let handleSectionChange do it
+      handleSectionChange('overview', true);
       return;
     }
 
-    // Process params
-    if (resetParam === 'true') {
-      processedParamsRef.current = paramsKey;
-      handleSectionChange('overview');
+    // Get target section from URL or default to overview
+    const targetSection = sectionParam || 'overview';
 
-      // Use startTransition for non-blocking URL update
-      startTransition(() => {
-        router.replace('/dashboard');
-      });
-    } else if (sectionParam) {
-      processedParamsRef.current = paramsKey;
-      handleSectionChange(sectionParam);
-
-      // Use startTransition for non-blocking URL update
-      startTransition(() => {
-        router.replace('/dashboard');
-      });
-    } else {
-      // Mark empty params as processed to prevent re-processing
-      processedParamsRef.current = paramsKey;
+    // Only update if section actually changed (prevents infinite loops)
+    if (targetSection !== activeSection) {
+      // Pass false to prevent URL update (URL is already correct)
+      handleSectionChange(targetSection, false);
     }
-  }, [searchParams, router, startTransition, handleSectionChange]);
+  }, [searchParams, activeSection, handleSectionChange]);
 
   // Loading state - uses DashboardLayout with centered content
   if (isLoading) {
