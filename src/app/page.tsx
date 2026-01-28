@@ -16,6 +16,7 @@ const WhyChooseUs = lazy(() => import('@/components/WhyChooseUs'));
 const SuccessStories = lazy(() => import('@/components/SuccessStories'));
 const MobileAppDownload = lazy(() => import('@/components/MobileAppDownload'));
 const FAQ = lazy(() => import('@/components/FAQ'));
+const CasteMatrimonySection = lazy(() => import('@/components/CasteMatrimonySection'));
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center py-16">
@@ -88,6 +89,14 @@ export default function Home() {
           <Suspense fallback={<LoadingSpinner />}>
             <div id="faq">
               <FAQ />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
+
+        <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load matrimony section" />}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <div id="caste-matrimony">
+              <CasteMatrimonySection />
             </div>
           </Suspense>
         </ErrorBoundary>

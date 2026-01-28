@@ -63,6 +63,15 @@ const PublicSearchResultsPage = () => {
       const caste = searchParams.get('caste');
       if (caste) params.caste = parseInt(caste);
 
+      const maritalStatus = searchParams.get('marital_status');
+      if (maritalStatus) params.marital_status = maritalStatus;
+
+      const state = searchParams.get('state');
+      if (state) params.state = parseInt(state);
+
+      const district = searchParams.get('district');
+      if (district) params.district = parseInt(district);
+
       // Execute search
       const result = await publicSearch(params);
 

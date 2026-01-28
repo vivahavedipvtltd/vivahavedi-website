@@ -11,7 +11,10 @@ const SearchSection = () => {
   const { data: masterDataResponse, isLoading: loading } = useMasterData();
   const masterData = masterDataResponse?.data ? {
     religion: masterDataResponse.data.religion,
-    caste: masterDataResponse.data.caste
+    caste: masterDataResponse.data.caste,
+    marital_status: masterDataResponse.data.marital_status,
+    state: masterDataResponse.data.state,
+    district: masterDataResponse.data.district
   } : null;
 
   const [searchData, setSearchData] = useState({
@@ -21,8 +24,19 @@ const SearchSection = () => {
     heightFrom: '150',
     heightTo: '180',
     religion: '',
-    caste: ''
+    caste: '',
+    marital_status: '',
+    state: '',
+    district: ''
   });
+
+  interface District {
+    id: number;
+    name: string;
+    masterId: number;
+  }
+
+  const [filteredDistricts, setFilteredDistricts] = useState<District[]>([]);
 
   // Helper function to convert cm to feet and inches
   const cmToFeetInches = (cm: number): string => {
@@ -46,12 +60,25 @@ const SearchSection = () => {
     if (field === 'religion') {
       setSearchData(prev => ({ ...prev, caste: '' }));
     }
+
+    // Reset district when state changes and filter districts
+    if (field === 'state') {
+      setSearchData(prev => ({ ...prev, district: '' }));
+      if (value && masterData?.district) {
+        const filtered = masterData.district.filter(
+          (d: District) => d.masterId === parseInt(value)
+        );
+        setFilteredDistricts(filtered);
+      } else {
+        setFilteredDistricts([]);
+      }
+    }
   };
 
   const handleSearch = () => {
-    // Validate all fields are filled
-    if (!searchData.religion || !searchData.caste) {
-      alert('Please select Religion and Caste to search');
+    // Validate all required fields are filled
+    if (!searchData.religion || !searchData.caste || !searchData.marital_status || !searchData.state || !searchData.district) {
+      alert('Please fill all required fields');
       return;
     }
 
@@ -69,6 +96,9 @@ const SearchSection = () => {
     if (searchData.heightTo) params.append('height_to', searchData.heightTo);
     if (searchData.religion) params.append('religion', searchData.religion);
     if (searchData.caste) params.append('caste', searchData.caste);
+    if (searchData.marital_status) params.append('marital_status', searchData.marital_status);
+    if (searchData.state) params.append('state', searchData.state);
+    if (searchData.district) params.append('district', searchData.district);
 
     // Navigate to public search results page
     router.push(`/public-search-results?${params.toString()}`);
@@ -232,11 +262,80 @@ const SearchSection = () => {
               </select>
             </div>
 
+            {/* Marital Status */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                Marital Status <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={searchData.marital_status}
+                onChange={(e) => handleInputChange('marital_status', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                disabled={!mounted || loading}
+                required
+              >
+                <option value="" disabled>
+                  Select Marital Status
+                </option>
+                {mounted && masterData?.marital_status?.map((status: { id: number; name: string }) => (
+                  <option key={status.id} value={status.id}>
+                    {status.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* State */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                State <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={searchData.state}
+                onChange={(e) => handleInputChange('state', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                disabled={!mounted || loading}
+                required
+              >
+                <option value="" disabled>
+                  Select State
+                </option>
+                {mounted && masterData?.state?.map((state: { id: number; name: string }) => (
+                  <option key={state.id} value={state.id}>
+                    {state.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* District */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                District <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={searchData.district}
+                onChange={(e) => handleInputChange('district', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                disabled={!mounted || loading || !searchData.state}
+                required
+              >
+                <option value="" disabled>
+                  {!searchData.state ? 'Select State First' : 'Select District'}
+                </option>
+                {mounted && searchData.state && filteredDistricts.map((district) => (
+                  <option key={district.id} value={district.id}>
+                    {district.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Search Button */}
             <div className="flex items-end">
               <button
                 onClick={handleSearch}
-                disabled={loading || !searchData.religion || !searchData.caste}
+                disabled={loading || !searchData.religion || !searchData.caste || !searchData.marital_status || !searchData.state || !searchData.district}
                 className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 transition-colors duration-200 shadow-lg"
               >
                 <Search className="h-5 w-5" />

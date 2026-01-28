@@ -13,6 +13,9 @@ export interface PublicSearchParams {
   height_to?: number;
   religion?: number;
   caste?: number | number[];
+  marital_status?: string;
+  state?: number;
+  district?: number;
 }
 
 export interface ProfileResult {
@@ -69,6 +72,11 @@ export async function publicSearch(
         queryParams.append('caste', params.caste.toString());
       }
     }
+
+    // Add new filters
+    if (params.marital_status) queryParams.append('marital_status', params.marital_status);
+    if (params.state) queryParams.append('state', params.state.toString());
+    if (params.district) queryParams.append('district', params.district.toString());
 
     const url = `${API_BASE_URL}/public-search?${queryParams.toString()}`;
 
