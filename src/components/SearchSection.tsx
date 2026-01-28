@@ -5,15 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { useMasterData } from '@/hooks/useMasterData';
 
-interface MasterData {
-  religion: Array<{ id: number; name: string }>;
-  caste: Array<{ id: number; name: string; masterId: number }>;
-}
-
 const SearchSection = () => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const { data: masterDataResponse, isLoading: loading, hasData } = useMasterData();
+  const { data: masterDataResponse, isLoading: loading } = useMasterData();
   const masterData = masterDataResponse?.data ? {
     religion: masterDataResponse.data.religion,
     caste: masterDataResponse.data.caste

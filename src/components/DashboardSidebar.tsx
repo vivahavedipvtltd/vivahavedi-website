@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   User,
-  Image,
+  Image as ImageIcon,
   FileText,
   Shield,
   Heart,
@@ -47,7 +47,7 @@ interface DashboardSidebarProps {
   };
 }
 
-const DashboardSidebar = ({ activeSection, onSectionChange, stats }: DashboardSidebarProps) => {
+const DashboardSidebar = ({ activeSection, onSectionChange: _onSectionChange, stats }: DashboardSidebarProps) => {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -65,7 +65,7 @@ const DashboardSidebar = ({ activeSection, onSectionChange, stats }: DashboardSi
       icon: <User className="h-6 w-6" />,
       items: [
         { id: 'my-profile', label: 'My Profile', icon: <User className="h-5 w-5" /> },
-        { id: 'my-photos', label: 'My Photos', icon: <Image className="h-5 w-5" /> },
+        { id: 'my-photos', label: 'My Photos', icon: <ImageIcon className="h-5 w-5" /> },
         { id: 'my-documents', label: 'My Documents', icon: <FileText className="h-5 w-5" /> },
         { id: 'mobile-verification', label: 'Mobile Verification', icon: <Shield className="h-5 w-5" /> },
         { id: 'partner-preferences', label: 'Partner Preferences', icon: <Heart className="h-5 w-5" /> },

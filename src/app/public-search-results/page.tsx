@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
@@ -33,11 +33,7 @@ const PublicSearchResultsPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
-  useEffect(() => {
-    executeSearch(1);
-  }, [searchParams]);
-
-  const executeSearch = async (page: number) => {
+  const executeSearch = useCallback(async (page: number) => {
     setLoading(true);
     try {
       // Build search params from URL
@@ -81,7 +77,11 @@ const PublicSearchResultsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams]);
+
+  useEffect(() => {
+    executeSearch(1);
+  }, [executeSearch]);
 
   const handlePageChange = (page: number) => {
     executeSearch(page);

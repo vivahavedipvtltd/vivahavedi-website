@@ -7,7 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, Building2 } from 'lucide-react';
 import { getHomeContactDetails, getBranches, formatPhoneNumber, type ContactDetails, type Branch } from '@/lib/contactUsApi';
-import { contactUsSchema, type ContactUsFormData } from '@/lib/validation';
+import { contactUsSchema } from '@/lib/validation';
 
 export default function ContactUsPage() {
   const [formData, setFormData] = useState({
