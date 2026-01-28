@@ -154,55 +154,32 @@ const PublicSearchResultsPage = () => {
                 {searchResults.map((profile) => (
                   <div
                     key={profile.id}
-                    className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                    className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer flex flex-col"
                     onClick={() => handleProfileClick(profile.id)}
                   >
-                    <div className="aspect-w-16 aspect-h-12 bg-gray-200 relative h-48">
+                    <div className="bg-gray-200 flex-shrink-0 relative h-[18rem]">
                       <Image
                         src={profile.photo || '/placeholder-avatar.png'}
                         alt={profile.name}
                         fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                         className="object-cover"
                         unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
                       />
                     </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    <div className="p-4 flex flex-col h-[12rem]">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
                         {profile.name}
                       </h3>
-                      <div className="space-y-1 text-sm text-gray-600">
+                      <div className="space-y-1 text-sm text-gray-600 flex-grow overflow-y-auto">
                         <p>
-                          <span className="font-medium">Age:</span> {profile.age} years
-                        </p>
-                        {profile.height && (
-                          <p>
-                            <span className="font-medium">Height:</span> {profile.height} cm
-                          </p>
-                        )}
-                        {profile.marital_status && (
-                          <p>
-                            <span className="font-medium">Status:</span> {profile.marital_status}
-                          </p>
-                        )}
-                        <p>
-                          <span className="font-medium">Religion:</span> {profile.religion}
-                        </p>
-                        <p>
-                          <span className="font-medium">Caste:</span> {profile.caste}
+                          {profile.age} Yrs{profile.qualification && `, ${profile.qualification}`}
                         </p>
                         {profile.district && (
-                          <p>
-                            <span className="font-medium">Location:</span> {profile.district}
-                          </p>
-                        )}
-                        {profile.qualification && (
-                          <p>
-                            <span className="font-medium">Education:</span> {profile.qualification}
-                          </p>
+                          <p>{profile.district}</p>
                         )}
                       </div>
-                      <button className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                      <button className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex-shrink-0">
                         View Profile
                       </button>
                     </div>

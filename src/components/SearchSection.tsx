@@ -54,6 +54,12 @@ const SearchSection = () => {
   };
 
   const handleSearch = () => {
+    // Validate all fields are filled
+    if (!searchData.religion || !searchData.caste) {
+      alert('Please select Religion and Caste to search');
+      return;
+    }
+
     // Build query parameters for API 24 - Public Search
     const params = new URLSearchParams();
 
@@ -188,16 +194,17 @@ const SearchSection = () => {
             {/* Religion - From API 7 Masters */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700">
-                Religion
+                Religion <span className="text-red-500">*</span>
               </label>
               <select
                 value={searchData.religion}
                 onChange={(e) => handleInputChange('religion', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 disabled={!mounted || loading}
+                required
               >
-                <option value="">
-                  {loading ? 'Loading...' : 'Any Religion'}
+                <option value="" disabled>
+                  {loading ? 'Loading...' : 'Select Religion'}
                 </option>
                 {mounted && masterData?.religion.map((religion) => (
                   <option key={religion.id} value={religion.id}>
@@ -210,16 +217,17 @@ const SearchSection = () => {
             {/* Caste - From API 7 Masters (filtered by religion) */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700">
-                Caste
+                Caste <span className="text-red-500">*</span>
               </label>
               <select
                 value={searchData.caste}
                 onChange={(e) => handleInputChange('caste', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 disabled={!mounted || loading || !searchData.religion}
+                required
               >
-                <option value="">
-                  {!searchData.religion ? 'Select Religion First' : 'Any Caste'}
+                <option value="" disabled>
+                  {!searchData.religion ? 'Select Religion First' : 'Select Caste'}
                 </option>
                 {mounted && searchData.religion && getFilteredCastes().map((caste) => (
                   <option key={caste.id} value={caste.id}>
@@ -233,8 +241,8 @@ const SearchSection = () => {
             <div className="flex items-end">
               <button
                 onClick={handleSearch}
-                disabled={loading}
-                className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white px-8 py-3 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 transition-colors duration-200 shadow-lg"
+                disabled={loading || !searchData.religion || !searchData.caste}
+                className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 transition-colors duration-200 shadow-lg"
               >
                 <Search className="h-5 w-5" />
                 <span>Search</span>

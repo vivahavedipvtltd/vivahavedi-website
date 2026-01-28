@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
@@ -16,25 +16,36 @@ const FeaturedProfiles = () => {
   const [profiles, setProfiles] = useState<HomepageProfile[]>([]);
   const [pagination, setPagination] = useState<ProfilesPagination>({
     current_page: 1,
-    per_page: 8,
+    per_page: 5,
     total: 0,
     total_pages: 0
   });
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isPageVisible, setIsPageVisible] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Load profiles from API
-  const loadProfiles = async (page: number) => {
+  const loadProfiles = async (page: number, append: boolean = false) => {
     try {
-      setLoading(true);
+      if (append) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
 
-      const response = await getHomepageProfiles(page, 8);
+      const response = await getHomepageProfiles(page, 5);
 
       if (response.status === 'success') {
-        setProfiles(response.data);
+        if (append) {
+          setProfiles((prev) => [...prev, ...response.data]);
+        } else {
+          setProfiles(response.data);
+        }
         setPagination(response.pagination);
       } else {
         setError(response.message || 'Failed to load profiles');
@@ -44,6 +55,7 @@ const FeaturedProfiles = () => {
       setError('Unable to load profiles. Please try again later.');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -52,51 +64,60 @@ const FeaturedProfiles = () => {
     loadProfiles(1);
   }, []);
 
-  // Page Visibility API - Pause auto-slide when page is hidden
+  // Handle scroll event for infinite scroll
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      // Update state based on page visibility
-      setIsPageVisible(!document.hidden);
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+
+      // Check if scrolled near the end (within 100px)
+      if (scrollWidth - scrollLeft - clientWidth < 100) {
+        // Load more if there are more pages and not already loading
+        if (pagination.current_page < pagination.total_pages && !loadingMore && !loading) {
+          loadProfiles(pagination.current_page + 1, true);
+        }
+      }
     };
 
-    // Set initial visibility state
-    setIsPageVisible(!document.hidden);
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [pagination.current_page, pagination.total_pages, loadingMore, loading]);
 
-    // Listen for visibility changes
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+  // Handle mouse drag to scroll
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+  };
 
-    // Cleanup listener on unmount
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX;
+    const walk = (x - startX) * 1.5; // Scroll speed multiplier
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
 
-  // Auto-slide functionality - Pauses when page is hidden, on hover, or during loading/error
-  useEffect(() => {
-    if (loading || error || isPaused || !isPageVisible || pagination.total_pages <= 1) {
-      return;
-    }
+  const handleMouseUp = () => {
+    // Small delay to prevent click event from firing immediately after drag
+    setTimeout(() => setIsDragging(false), 100);
+  };
 
-    const interval = setInterval(() => {
-      setPagination((prev) => {
-        const nextPage = prev.current_page >= prev.total_pages ? 1 : prev.current_page + 1;
-        loadProfiles(nextPage);
-        return prev;
-      });
-    }, 5000); // Change page every 5 seconds
-
-    return () => clearInterval(interval);
-  }, [loading, error, isPaused, isPageVisible, pagination.total_pages, pagination.current_page]);
-
-  // Go to specific page
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= pagination.total_pages) {
-      loadProfiles(page);
-    }
+  const handleMouseLeave = () => {
+    setIsDragging(false);
   };
 
   // Handle View Profile - Check authentication and redirect accordingly
-  const handleViewProfile = (profileId: number) => {
+  const handleViewProfile = (profileId: number, e: React.MouseEvent) => {
+    // Prevent navigation if user was dragging
+    if (isDragging) {
+      e.preventDefault();
+      return;
+    }
+
     if (isAuthenticated) {
       router.push(`/profile/${profileId}`);
     } else {
@@ -145,17 +166,21 @@ const FeaturedProfiles = () => {
         {!loading && !error && profiles.length > 0 && (
           <>
             <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[700px]"
-              onMouseEnter={() => setIsPaused(true)}
-              onMouseLeave={() => setIsPaused(false)}
+              ref={scrollContainerRef}
+              className="flex gap-6 min-h-[500px] overflow-x-auto pb-4 scrollbar-hide select-none"
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
             >
               {profiles.map((profile) => (
                 <div
                   key={profile.id}
-                  className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer flex flex-col"
-                  onClick={() => handleViewProfile(profile.id)}
+                  className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer flex flex-col flex-shrink-0 w-64"
+                  onClick={(e) => handleViewProfile(profile.id, e)}
                 >
-                  <div className="bg-gray-200 flex-shrink-0 relative h-[22rem]">
+                  <div className="bg-gray-200 flex-shrink-0 relative h-[18rem]">
                     <Image
                       src={profile.photo || '/placeholder-avatar.png'}
                       alt={profile.name}
@@ -165,39 +190,16 @@ const FeaturedProfiles = () => {
                       unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
                     />
                   </div>
-                  <div className="p-4 flex flex-col h-[19rem]">
+                  <div className="p-4 flex flex-col h-[12rem]">
                     <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
                       {profile.name}
                     </h3>
                     <div className="space-y-1 text-sm text-gray-600 flex-grow overflow-y-auto">
                       <p>
-                        <span className="font-medium">Age:</span> {profile.age} years
-                      </p>
-                      {profile.height && (
-                        <p>
-                          <span className="font-medium">Height:</span> {profile.height} cm
-                        </p>
-                      )}
-                      {profile.marital_status && (
-                        <p>
-                          <span className="font-medium">Status:</span> {profile.marital_status}
-                        </p>
-                      )}
-                      <p>
-                        <span className="font-medium">Religion:</span> {profile.religion}
-                      </p>
-                      <p>
-                        <span className="font-medium">Caste:</span> {profile.caste}
+                        {profile.age} Yrs{profile.qualification && `, ${profile.qualification}`}
                       </p>
                       {profile.district && (
-                        <p>
-                          <span className="font-medium">Location:</span> {profile.district}
-                        </p>
-                      )}
-                      {profile.qualification && (
-                        <p>
-                          <span className="font-medium">Education:</span> {profile.qualification}
-                        </p>
+                        <p>{profile.district}</p>
                       )}
                     </div>
                     <button className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex-shrink-0">
@@ -206,25 +208,13 @@ const FeaturedProfiles = () => {
                   </div>
                 </div>
               ))}
+              {/* Loading more indicator */}
+              {loadingMore && (
+                <div className="flex items-center justify-center w-64 flex-shrink-0">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+                </div>
+              )}
             </div>
-
-            {/* Pagination Dots */}
-            {pagination.total_pages > 1 && (
-              <div className="flex items-center justify-center mt-8 space-x-2">
-                {Array.from({ length: pagination.total_pages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => goToPage(page)}
-                    className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                      page === pagination.current_page
-                        ? 'bg-red-500 w-8'
-                        : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
-                    aria-label={`Go to page ${page}`}
-                  />
-                ))}
-              </div>
-            )}
 
             {/* View All Button */}
             <div className="text-center mt-8">
