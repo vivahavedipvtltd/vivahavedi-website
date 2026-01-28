@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardSidebar from '@/components/DashboardSidebar';
@@ -442,10 +441,10 @@ const SearchResultsPage = () => {
 
   return (
     <AuthGuard requireAuth={true} redirectTo="/login">
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen flex flex-col">
         <Header />
 
-        <div className="flex-grow flex bg-gray-50">
+        <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="search"
             onSectionChange={(section) => {
@@ -455,7 +454,7 @@ const SearchResultsPage = () => {
             }}
           />
 
-          <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+          <main className="flex-1 p-4 lg:p-8 overflow-y-auto custom-scrollbar">
             <div className="max-w-7xl mx-auto">
             {/* Page Header */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -623,8 +622,6 @@ const SearchResultsPage = () => {
           </main>
         </div>
 
-        <Footer />
-
         {/* Save Search Modal */}
         <SaveSearchModal
           isOpen={showSaveModal}
@@ -647,12 +644,11 @@ const SearchResultsPage = () => {
 export default function SearchResultsPageWrapper() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen flex flex-col">
         <Header />
         <main className="flex-grow flex items-center justify-center bg-gray-50">
           <Loader2 className="h-12 w-12 animate-spin text-red-500" />
         </main>
-        <Footer />
       </div>
     }>
       <SearchResultsPage />

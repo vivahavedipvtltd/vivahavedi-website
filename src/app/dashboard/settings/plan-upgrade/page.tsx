@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -194,10 +193,10 @@ const PlanUpgradePage = () => {
 
   return (
     <AuthGuard requireAuth={true} redirectTo="/login">
-      <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="h-screen flex flex-col">
         <Header />
 
-        <div className="flex-grow flex">
+        <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="upgrade-plan"
             onSectionChange={(section) => {
@@ -206,7 +205,7 @@ const PlanUpgradePage = () => {
             }}
           />
 
-          <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+          <main className="flex-1 p-4 lg:p-8 overflow-y-auto custom-scrollbar">
             <div className="max-w-7xl mx-auto">
               {/* Page Header */}
               <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl shadow-lg p-8 mb-8 text-white">
@@ -350,8 +349,6 @@ const PlanUpgradePage = () => {
             </div>
           </main>
         </div>
-
-        <Footer />
       </div>
     </AuthGuard>
   );

@@ -10,6 +10,11 @@ interface DashboardLayoutProps {
    * Default: false (shows normal dashboard layout)
    */
   centered?: boolean;
+  /**
+   * Whether to show the footer
+   * Default: true (shows footer)
+   */
+  showFooter?: boolean;
 }
 
 /**
@@ -32,10 +37,10 @@ interface DashboardLayoutProps {
  *   <LoadingSpinner />
  * </DashboardLayout>
  */
-export default function DashboardLayout({ children, centered = false }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, centered = false, showFooter = true }: DashboardLayoutProps) {
   return (
     <AuthGuard requireAuth={true} redirectTo="/login">
-      <div className="min-h-screen flex flex-col">
+      <div className={showFooter ? "min-h-screen flex flex-col" : "h-screen flex flex-col"}>
         <Header />
 
         {centered ? (
@@ -48,7 +53,7 @@ export default function DashboardLayout({ children, centered = false }: Dashboar
           children
         )}
 
-        <Footer />
+        {showFooter && <Footer />}
       </div>
     </AuthGuard>
   );

@@ -117,7 +117,7 @@ const DashboardSidebar = ({ activeSection, onSectionChange, stats }: DashboardSi
     // Direct navigation for pages that have their own routes
     switch (itemId) {
       case 'search':
-        router.push('/search-results');
+        router.push('/search');
         break;
       case 'matching-profiles':
         router.push('/dashboard/matching-profiles');
@@ -168,7 +168,7 @@ const DashboardSidebar = ({ activeSection, onSectionChange, stats }: DashboardSi
       </div>
 
       {/* Navigation Groups */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
         {collapsed ? (
           // Collapsed view: Show only group icons
           <div className="space-y-3">

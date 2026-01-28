@@ -228,10 +228,10 @@ function DashboardContent() {
     }
   };
 
-  // Main dashboard view - uses DashboardLayout without centering
+  // Main dashboard view - uses DashboardLayout without centering and without footer
   return (
-    <DashboardLayout>
-      <div className="flex-grow flex bg-gray-50">
+    <DashboardLayout showFooter={false}>
+      <div className="flex-1 flex bg-gray-50 overflow-hidden">
         {/* Sidebar */}
         <DashboardSidebar
           activeSection={activeSection}
@@ -240,7 +240,7 @@ function DashboardContent() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+        <main className="flex-1 p-4 lg:p-8 overflow-y-auto custom-scrollbar">
           <div className="max-w-6xl mx-auto">
             {renderSection()}
           </div>

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -96,10 +95,10 @@ const BlockedProfilesPage = () => {
 
   return (
     <AuthGuard requireAuth={true} redirectTo="/login">
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen flex flex-col">
         <Header />
 
-        <div className="flex-grow flex bg-gray-50">
+        <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="blocked-profiles"
             onSectionChange={(section) => {
@@ -108,7 +107,7 @@ const BlockedProfilesPage = () => {
             }}
           />
 
-          <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+          <main className="flex-1 p-4 lg:p-8 overflow-y-auto custom-scrollbar">
             <div className="max-w-6xl mx-auto">
               {/* Page Header */}
               <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -258,8 +257,6 @@ const BlockedProfilesPage = () => {
             </div>
           </main>
         </div>
-
-        <Footer />
 
         {/* Confirm Dialog */}
         <ConfirmDialog
