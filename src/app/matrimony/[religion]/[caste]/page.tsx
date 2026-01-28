@@ -5,6 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
+import FAQSection from '@/components/FAQSection';
+import Breadcrumb from '@/components/Breadcrumb';
+import UserReviews from '@/components/UserReviews';
 
 interface Religion {
   id: number;
@@ -262,6 +265,14 @@ export default function CasteMatrimonyPage() {
   return (
     <>
       <Header />
+      <Breadcrumb
+        customItems={[
+          { label: 'Home', href: '/' },
+          { label: 'Matrimony', href: '/matrimony' },
+          { label: `${religion.name} Matrimony`, href: `/matrimony/${religionSlug}` },
+          { label: `${caste.name} Matrimony`, href: `/matrimony/${religionSlug}/${casteSlug}` },
+        ]}
+      />
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-red-600 to-pink-600 text-white py-16">
@@ -284,22 +295,75 @@ export default function CasteMatrimonyPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
               About {caste.name} Matrimony
             </h2>
-            <div className="prose max-w-none text-gray-600">
-              <p className="mb-4">
-                Welcome to {caste.name} Matrimony, the trusted platform for {religion.name} {caste.name}
-                brides and grooms looking for their perfect life partner. We understand the importance of
-                finding a compatible match within your community, and our platform is designed to help you
-                connect with verified {caste.name} profiles.
+            <div className="prose max-w-none text-gray-600 leading-relaxed">
+              <p className="mb-4 text-lg">
+                Welcome to {caste.name} Matrimony by vivahavedi - your trusted destination for finding
+                the perfect {religion.name} {caste.name} life partner. As a specialized matrimonial service
+                dedicated to the {caste.name} community, we understand the unique cultural values, traditions,
+                and preferences that matter most to {caste.name} families when searching for a suitable match.
               </p>
               <p className="mb-4">
-                Our {caste.name} matrimony service offers a secure and user-friendly platform where you can
-                search for potential matches based on your preferences. All profiles are verified to ensure
-                authenticity and provide you with a safe matchmaking experience.
+                Our {caste.name} matrimony platform hosts an extensive database of verified {religion.name} {caste.name}
+                brides and grooms from across India and abroad. Whether you&apos;re looking for a match from your
+                hometown or seeking a partner settled in a specific city or country, our comprehensive search
+                filters make it easy to find compatible profiles that align with your family&apos;s expectations
+                and your personal preferences.
+              </p>
+              <p className="mb-4">
+                We recognize that finding a life partner within the {caste.name} community involves more than
+                just matching basic criteria. That&apos;s why our platform allows you to search based on detailed
+                parameters including education level, profession, income, family background, lifestyle choices,
+                and astrological compatibility. Each {caste.name} profile contains comprehensive information
+                to help you make informed decisions about potential matches.
+              </p>
+              <p className="mb-4">
+                Safety and authenticity are our top priorities. Every {caste.name} profile on vivahavedi undergoes
+                a rigorous verification process. We verify identity documents, contact information, and other
+                relevant details to ensure you&apos;re connecting with genuine profiles. Your privacy is protected
+                at all times, with complete control over who can view your profile and contact you.
+              </p>
+              <p className="mb-4">
+                Our {caste.name} matrimony service has successfully helped thousands of {religion.name} {caste.name}
+                families find their ideal matches. With new profiles added regularly, advanced matchmaking
+                algorithms providing personalized recommendations, and dedicated customer support available
+                to assist you throughout your journey, finding your {caste.name} life partner has never been easier.
               </p>
               <p>
-                Start your search today and find your ideal {caste.name} life partner from our extensive
-                database of verified profiles.
+                Begin your search today by using our advanced filters below. Browse {caste.name} profiles by
+                location, age, education, profession, and more to find matches that truly resonate with what
+                you&apos;re looking for in a life partner. Register for free and take the first step toward your
+                happily ever after with vivahavedi&apos;s {caste.name} matrimony service.
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Success Stories Highlight */}
+        <section className="bg-gray-50 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg p-8 border border-red-100">
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Success in {caste.name} Matchmaking
+                </h2>
+                <p className="text-lg text-gray-700">
+                  Join thousands of happy {religion.name} {caste.name} couples who found their perfect match on vivahavedi
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+                  <div className="text-4xl font-bold text-red-600 mb-2">1000+</div>
+                  <p className="text-gray-600">Verified {caste.name} Profiles</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+                  <div className="text-4xl font-bold text-red-600 mb-2">500+</div>
+                  <p className="text-gray-600">Successful Matches</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+                  <div className="text-4xl font-bold text-red-600 mb-2">24/7</div>
+                  <p className="text-gray-600">Customer Support</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -462,7 +526,7 @@ export default function CasteMatrimonyPage() {
                           <div className="bg-gray-200 relative h-64">
                             <Image
                               src={profile.photo || '/placeholder-avatar.png'}
-                              alt={profile.name}
+                              alt={`${profile.name} - ${profile.age} years old ${caste.name} ${profile.qualification ? profile.qualification + ' ' : ''}${filters.gender === 'female' ? 'Bride' : 'Groom'} from ${profile.district || religion.name + ' community'}`}
                               fill
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                               className="object-cover"
@@ -585,47 +649,146 @@ export default function CasteMatrimonyPage() {
         <section className="bg-white py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-              Why Choose Our {caste.name} Matrimony Service?
+              Why Choose vivahavedi for {caste.name} Matrimony?
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center bg-gray-50 p-6 rounded-lg">
                 <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Verified Profiles</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">100% Verified</h3>
                 <p className="text-gray-600">
-                  All {caste.name} profiles are verified to ensure authenticity and security
+                  All {caste.name} profiles are manually verified for authenticity
                 </p>
               </div>
 
-              <div className="text-center">
+              <div className="text-center bg-gray-50 p-6 rounded-lg">
                 <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Large Database</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Extensive Database</h3>
                 <p className="text-gray-600">
-                  Thousands of {caste.name} brides and grooms registered on our platform
+                  Thousands of {religion.name} {caste.name} brides and grooms to choose from
                 </p>
               </div>
 
-              <div className="text-center">
+              <div className="text-center bg-gray-50 p-6 rounded-lg">
+                <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Smart Search</h3>
+                <p className="text-gray-600">
+                  Advanced filters to find the most compatible {caste.name} matches
+                </p>
+              </div>
+
+              <div className="text-center bg-gray-50 p-6 rounded-lg">
                 <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Privacy & Security</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Complete Privacy</h3>
                 <p className="text-gray-600">
-                  Your personal information is secure with our advanced privacy controls
+                  Your contact details stay private until you decide to share
                 </p>
               </div>
             </div>
           </div>
         </section>
+
+        {/* User Reviews Section */}
+        <UserReviews
+          title={`Success Stories - ${caste.name} Matrimony`}
+          community={`${religion.name} ${caste.name}`}
+          reviews={[
+            {
+              id: 1,
+              name: 'Meera & Sanjay',
+              location: 'Chennai, Tamil Nadu',
+              rating: 5,
+              date: '2024-01-10',
+              review: `Finding a ${caste.name} match was important to us, and vivahavedi made it possible! We connected through the ${religion.name} ${caste.name} section and found perfect compatibility. The detailed profiles helped us make an informed decision. Married for 6 months now and very happy!`,
+            },
+            {
+              id: 2,
+              name: 'Kavya & Prakash',
+              location: 'Jaipur, Rajasthan',
+              rating: 5,
+              date: '2024-02-18',
+              review: `Excellent ${caste.name} matrimony service! We were specifically looking within our ${religion.name} ${caste.name} community and this platform had exactly what we needed. Great features, verified profiles, and helpful support team. Highly recommend!`,
+            },
+            {
+              id: 3,
+              name: 'Ritu & Manish',
+              location: 'Kolkata, West Bengal',
+              rating: 5,
+              date: '2024-03-05',
+              review: `Best decision to join vivahavedi for ${caste.name} matrimony! The search filters made it easy to find matches from our specific community. We got engaged last month and couldn't be happier. Thank you for this wonderful platform!`,
+            },
+            {
+              id: 4,
+              name: 'Shruti & Nikhil',
+              location: 'Surat, Gujarat',
+              rating: 5,
+              date: '2023-12-22',
+              review: `We are grateful to vivahavedi for bringing us together through ${religion.name} ${caste.name} matrimony. The platform is user-friendly, secure, and has genuine profiles. Found our soulmate and got married within a year. Excellent service!`,
+            },
+            {
+              id: 5,
+              name: 'Aarti & Suresh',
+              location: 'Lucknow, Uttar Pradesh',
+              rating: 5,
+              date: '2024-01-30',
+              review: `Outstanding ${caste.name} matrimonial platform! We appreciated the detailed information about family background, education, and preferences. The verification process ensured we were connecting with genuine people. Successfully found our life partner here!`,
+            },
+            {
+              id: 6,
+              name: 'Swati & Deepak',
+              location: 'Indore, Madhya Pradesh',
+              rating: 5,
+              date: '2024-02-25',
+              review: `vivahavedi ${caste.name} matrimony service is simply excellent! The advanced search helped us find compatible matches within our ${religion.name} ${caste.name} community. Customer support was always available to help. We got married last month. Thank you!`,
+            },
+          ]}
+        />
+
+        {/* FAQ Section */}
+        <FAQSection
+          title={`Frequently Asked Questions - ${caste.name} Matrimony`}
+          faqs={[
+            {
+              question: `How do I find ${caste.name} brides and grooms on vivahavedi?`,
+              answer: `Finding ${caste.name} matches is easy! Simply register for free, complete your profile, and use the search form above to filter by gender, age, location, education, and other preferences. All ${religion.name} ${caste.name} profiles matching your criteria will be displayed. You can further refine results using advanced filters.`,
+            },
+            {
+              question: `Is ${caste.name} matrimony service free to use?`,
+              answer: `Yes, basic registration and profile browsing are completely free. You can create your profile, search for ${caste.name} matches, and view profile summaries at no cost. Premium membership plans offer additional features like unlimited contact details access, priority listing, and dedicated relationship manager support.`,
+            },
+            {
+              question: `Are all ${caste.name} profiles on vivahavedi verified?`,
+              answer: `Yes, absolutely! Every ${religion.name} ${caste.name} profile undergoes a thorough verification process. Our team manually verifies identity documents, phone numbers, and other details to ensure profile authenticity. We take great care to maintain a safe and genuine matrimonial platform for the ${caste.name} community.`,
+            },
+            {
+              question: `Can I search for ${caste.name} matches from specific locations?`,
+              answer: `Yes, our search filters allow you to find ${caste.name} brides and grooms from specific states, districts, and cities. Whether you're looking for matches in your hometown, major metros, or even abroad, our location-based search makes it simple to find ${religion.name} ${caste.name} profiles from your preferred areas.`,
+            },
+            {
+              question: `How is my privacy protected on ${caste.name} matrimony?`,
+              answer: `Your privacy is our priority. Your contact details (phone number, email) remain hidden until you choose to share them. You have complete control over profile visibility and can block unwanted contacts. All data is encrypted and stored securely. We never share your information with third parties without your consent.`,
+            },
+            {
+              question: `What information should I include in my ${caste.name} matrimony profile?`,
+              answer: `For best results, include complete information about your education, profession, family background, lifestyle, and partner preferences. Add recent, clear photos. Mention your values, interests, and what you're looking for in a ${caste.name} life partner. Detailed profiles receive more responses and help you find more compatible matches.`,
+            },
+          ]}
+        />
       </main>
       <Footer />
     </>

@@ -26,6 +26,7 @@ const FeaturedProfiles = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [hasMoved, setHasMoved] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Load profiles from API
@@ -89,6 +90,7 @@ const FeaturedProfiles = () => {
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
     setIsDragging(true);
+    setHasMoved(false);
     setStartX(e.pageX);
     setScrollLeft(scrollContainerRef.current.scrollLeft);
   };
@@ -98,22 +100,28 @@ const FeaturedProfiles = () => {
     e.preventDefault();
     const x = e.pageX;
     const walk = (x - startX) * 1.5; // Scroll speed multiplier
+
+    // Mark as moved if mouse moved more than 5 pixels
+    if (Math.abs(walk) > 5) {
+      setHasMoved(true);
+    }
+
     scrollContainerRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const handleMouseUp = () => {
-    // Small delay to prevent click event from firing immediately after drag
-    setTimeout(() => setIsDragging(false), 100);
+    setIsDragging(false);
   };
 
   const handleMouseLeave = () => {
     setIsDragging(false);
+    setHasMoved(false);
   };
 
   // Handle View Profile - Check authentication and redirect accordingly
   const handleViewProfile = (profileId: number, e: React.MouseEvent) => {
-    // Prevent navigation if user was dragging
-    if (isDragging) {
+    // Prevent navigation if user was actually dragging (not just clicking)
+    if (hasMoved) {
       e.preventDefault();
       return;
     }
@@ -183,7 +191,7 @@ const FeaturedProfiles = () => {
                   <div className="bg-gray-200 flex-shrink-0 relative h-[18rem]">
                     <Image
                       src={profile.photo || '/placeholder-avatar.png'}
-                      alt={profile.name}
+                      alt={`${profile.name} - ${profile.age} years old ${profile.qualification ? profile.qualification + ' professional' : 'matrimonial profile'} from ${profile.district || 'India'}`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                       className="object-cover"
