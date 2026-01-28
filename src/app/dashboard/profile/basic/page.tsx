@@ -148,7 +148,7 @@ const BasicProfilePage = () => {
       if (result.status === 'success') {
         setSuccess('Basic profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/dashboard?refresh=true');
         }, 2000);
       } else {
         // Handle validation errors

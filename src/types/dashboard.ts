@@ -127,3 +127,13 @@ export type CommunicationViewType =
   | 'interested_by_me'
   | 'interested_to_me'
   | 'communication_statistics';
+
+export interface PartnerProfile {
+  completion: {
+    basic: string;      // '1' = complete, '0' = incomplete
+    religion: string;   // '1' = complete, '0' = incomplete
+    location: string;   // '1' = complete, '0' = incomplete
+    education: string;  // '1' = complete, '0' = incomplete
+  };
+  [key: string]: unknown; // Allow other fields from the API
+}

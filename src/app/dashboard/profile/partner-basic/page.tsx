@@ -200,7 +200,7 @@ const PartnerBasicUpdatePage = () => {
       if (result.status === 'success') {
         setSuccess('Partner basic profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/dashboard?refresh=true');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update partner profile');

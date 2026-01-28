@@ -4,16 +4,17 @@ import StatisticsCards from './StatisticsCards';
 import MyPlanCard from './MyPlanCard';
 import ProfileCompletionCard from './ProfileCompletionCard';
 import PartnerPreferencesCard from './PartnerPreferencesCard';
-import { MyDetails, CommunicationStats, MyPlan } from '@/types/dashboard';
+import { MyDetails, CommunicationStats, MyPlan, PartnerProfile } from '@/types/dashboard';
 
 interface OverviewSectionProps {
   myDetails: MyDetails;
   communicationStats: CommunicationStats | null;
   myPlan: MyPlan | null;
+  partnerProfile: PartnerProfile | null;
   onSectionChange?: (section: string) => void;
 }
 
-const OverviewSection: React.FC<OverviewSectionProps> = React.memo(({ myDetails, communicationStats, myPlan, onSectionChange }) => {
+const OverviewSection: React.FC<OverviewSectionProps> = React.memo(({ myDetails, communicationStats, myPlan, partnerProfile, onSectionChange }) => {
   return (
     <div className="space-y-6">
       <WelcomeCard firstName={myDetails.basic.user_fname} />
@@ -23,7 +24,7 @@ const OverviewSection: React.FC<OverviewSectionProps> = React.memo(({ myDetails,
         profileCompletion={myDetails.profile_completion}
         onSectionChange={onSectionChange}
       />
-      <PartnerPreferencesCard />
+      <PartnerPreferencesCard partnerProfile={partnerProfile} />
     </div>
   );
 });

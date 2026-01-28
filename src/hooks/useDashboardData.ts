@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { buildApiUrl, semiStaticDataConfig } from '@/lib/swrConfig';
 import { fetchWithRetry } from '@/lib/fetchWithRetry';
 import { logSwrActivity } from '@/lib/swrDevLogger';
-import type { MyDetails, CommunicationStats, MyPlan, MyPhotos, CommunicationProfile, CommunicationViewType } from '@/types/dashboard';
+import type { MyDetails, CommunicationStats, MyPlan, MyPhotos, CommunicationProfile, CommunicationViewType, PartnerProfile } from '@/types/dashboard';
 import type { ApiResponse } from '@/lib/api';
 
 /**
@@ -191,6 +191,31 @@ export function useMyPhotos(token: string | null) {
 }
 
 /**
+ * Hook to fetch user's partner profile with SWR
+ *
+ * @param token - Authentication token
+ * @returns Partner profile data, loading state, error, and mutate function
+ *
+ * @example
+ * const { data, isLoading, mutate } = usePartnerProfile(token);
+ */
+export function usePartnerProfile(token: string | null) {
+  const { data, error, isLoading, mutate } = useSWR<ApiResponse<PartnerProfile>>(
+    token ? [buildApiUrl('/partner-profile'), token] : null,
+    ([url, tkn]: [string, string]) => authenticatedFetcher(url, tkn),
+    semiStaticDataConfig
+  );
+
+  return {
+    data: data?.status === 'success' ? data.data : null,
+    isLoading,
+    error,
+    mutate,
+    hasData: !isLoading && !error && data?.status === 'success',
+  };
+}
+
+/**
  * Composite hook to fetch all dashboard data with STALE-WHILE-REVALIDATE pattern
  * Fetches all dashboard endpoints in parallel using SWR
  * Provides unified loading and error states
@@ -253,12 +278,13 @@ export function useDashboardData(token: string | null) {
   const stats = useCommunicationStats(token);
   const plan = useMyPlan(token);
   const photos = useMyPhotos(token);
+  const partnerProfile = usePartnerProfile(token);
 
   // Unified loading state - true if ANY request is loading
-  const isLoading = details.isLoading || stats.isLoading || plan.isLoading || photos.isLoading;
+  const isLoading = details.isLoading || stats.isLoading || plan.isLoading || photos.isLoading || partnerProfile.isLoading;
 
   // Unified error state - first error encountered
-  const error = details.error || stats.error || plan.error || photos.error;
+  const error = details.error || stats.error || plan.error || photos.error || partnerProfile.error;
 
   // Refresh all data - SWR handles deduplication automatically
   const refresh = async () => {
@@ -267,6 +293,7 @@ export function useDashboardData(token: string | null) {
       stats.mutate(),
       plan.mutate(),
       photos.mutate(),
+      partnerProfile.mutate(),
     ]);
   };
 
@@ -275,6 +302,7 @@ export function useDashboardData(token: string | null) {
     communicationStats: stats.data,
     myPlan: plan.data,
     myPhotos: photos.data,
+    partnerProfile: partnerProfile.data,
     isLoading,
     error,
     refresh,
@@ -284,6 +312,7 @@ export function useDashboardData(token: string | null) {
       stats: stats.mutate,
       plan: plan.mutate,
       photos: photos.mutate,
+      partnerProfile: partnerProfile.mutate,
     },
   };
 }

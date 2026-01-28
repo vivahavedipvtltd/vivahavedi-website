@@ -108,7 +108,7 @@ const FamilyProfilePage = () => {
       if (result.status === 'success') {
         setSuccess('Family profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/dashboard?refresh=true');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update profile');

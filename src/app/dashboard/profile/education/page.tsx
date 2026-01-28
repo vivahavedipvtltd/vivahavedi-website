@@ -132,7 +132,7 @@ const EducationProfilePage = () => {
       if (result.status === 'success') {
         setSuccess('Education profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/dashboard?refresh=true');
         }, 2000);
       } else {
         if (result.errors) {

@@ -168,7 +168,7 @@ const DashboardSidebar = ({ activeSection, onSectionChange, stats }: DashboardSi
       </div>
 
       {/* Navigation Groups */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         {collapsed ? (
           // Collapsed view: Show only group icons
           <div className="space-y-3">
@@ -258,9 +258,9 @@ const DashboardSidebar = ({ activeSection, onSectionChange, stats }: DashboardSi
 
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:block bg-white border-r border-gray-200 transition-all duration-300 ${
+        className={`hidden lg:block bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 ${
           collapsed ? 'w-20' : 'w-64'
-        } h-[calc(100vh-4rem)] sticky top-16`}
+        } h-full overflow-hidden`}
       >
         <SidebarContent />
       </aside>

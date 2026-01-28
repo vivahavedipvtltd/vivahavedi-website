@@ -41,6 +41,7 @@ function DashboardContent() {
     communicationStats,
     myPlan,
     myPhotos,
+    partnerProfile,
     isLoading,
     error,
     refresh,
@@ -74,7 +75,16 @@ function DashboardContent() {
   // Optimized to prevent infinite loops
   useEffect(() => {
     const resetParam = searchParams.get('reset');
+    const refreshParam = searchParams.get('refresh');
     const sectionParam = searchParams.get('section');
+
+    // Handle refresh parameter (invalidate cache and reload data)
+    if (refreshParam === 'true') {
+      refresh();
+      // Clear the refresh parameter from URL
+      router.replace('/dashboard', { scroll: false });
+      return;
+    }
 
     // Handle reset parameter (return to overview)
     if (resetParam === 'true') {
@@ -91,7 +101,7 @@ function DashboardContent() {
       // Pass false to prevent URL update (URL is already correct)
       handleSectionChange(targetSection, false);
     }
-  }, [searchParams, activeSection, handleSectionChange]);
+  }, [searchParams, activeSection, handleSectionChange, refresh, router]);
 
   // Loading state - uses DashboardLayout with centered content
   if (isLoading) {
@@ -134,6 +144,7 @@ function DashboardContent() {
             myDetails={myDetails}
             communicationStats={communicationStats || null}
             myPlan={myPlan || null}
+            partnerProfile={partnerProfile || null}
             onSectionChange={handleSectionChange}
           />
         );
@@ -150,7 +161,7 @@ function DashboardContent() {
       case 'mobile-verification':
         return <MobileVerification onVerificationComplete={refresh} />;
       case 'partner-preferences':
-        return <PartnerPreferencesCard />;
+        return <PartnerPreferencesCard partnerProfile={partnerProfile || null} />;
       case 'search':
         return (
           <PlaceholderSection
@@ -210,6 +221,7 @@ function DashboardContent() {
             myDetails={myDetails}
             communicationStats={communicationStats || null}
             myPlan={myPlan || null}
+            partnerProfile={partnerProfile || null}
             onSectionChange={handleSectionChange}
           />
         );

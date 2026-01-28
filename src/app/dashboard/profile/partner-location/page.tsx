@@ -153,7 +153,7 @@ const PartnerLocationUpdatePage = () => {
       if (result.status === 'success') {
         setSuccess('Partner location preferences updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/dashboard?refresh=true');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update partner location preferences');
