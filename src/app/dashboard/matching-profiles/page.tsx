@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -23,6 +23,7 @@ type MatchTab = 'latest' | 'perfect';
 
 const MatchingProfilesPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { token } = useAuth();
 
   const [loading, setLoading] = useState(false);
@@ -32,8 +33,9 @@ const MatchingProfilesPage = () => {
   const [latestCount, setLatestCount] = useState(0);
   const [perfectCount, setPerfectCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const perPage = 5;
+  const perPage = 6;
   const totalCount = activeTab === 'latest' ? latestCount : perfectCount;
   const totalPages = Math.ceil(totalCount / perPage);
 
@@ -81,26 +83,60 @@ const MatchingProfilesPage = () => {
     }
   }, [token, activeTab, currentPage]);
 
+  // Initialize from URL params on mount
   useEffect(() => {
-    if (token) {
-      fetchCounts();
+    if (!isInitialized) {
+      const tabParam = searchParams.get('tab') as MatchTab;
+      const pageParam = searchParams.get('page');
+
+      if (tabParam === 'latest' || tabParam === 'perfect') {
+        setActiveTab(tabParam);
+      }
+
+      if (pageParam) {
+        const page = parseInt(pageParam);
+        if (!isNaN(page) && page > 0) {
+          setCurrentPage(page);
+        }
+      }
+
+      setIsInitialized(true);
     }
-  }, [token, fetchCounts]);
+  }, [isInitialized, searchParams]);
 
   useEffect(() => {
-    if (token) {
+    if (token && isInitialized) {
+      fetchCounts();
+    }
+  }, [token, isInitialized, fetchCounts]);
+
+  useEffect(() => {
+    if (token && isInitialized) {
       fetchProfiles();
     }
-  }, [token, fetchProfiles]);
+  }, [token, isInitialized, fetchProfiles]);
 
   const handleTabChange = (tab: MatchTab) => {
     setActiveTab(tab);
     setCurrentPage(1);
+
+    // Update URL with new tab and reset page to 1
+    const params = new URLSearchParams();
+    params.set('tab', tab);
+    params.set('page', '1');
+    router.push(`/dashboard/matching-profiles?${params.toString()}`, { scroll: false });
   };
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+
+      // Update URL with new page number
+      const params = new URLSearchParams();
+      params.set('tab', activeTab);
+      params.set('page', page.toString());
+      router.push(`/dashboard/matching-profiles?${params.toString()}`, { scroll: false });
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -378,4 +414,17 @@ const MatchingProfilesPage = () => {
   );
 };
 
-export default MatchingProfilesPage;
+export default function MatchingProfilesPageWrapper() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow flex items-center justify-center bg-gray-50">
+          <Loader2 className="h-12 w-12 animate-spin text-red-500" />
+        </main>
+      </div>
+    }>
+      <MatchingProfilesPage />
+    </Suspense>
+  );
+}

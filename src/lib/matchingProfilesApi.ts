@@ -41,7 +41,7 @@ export type MatchType = 'latest_match' | 'perfect_match' | 'latest_match_count' 
  *
  * @param token - Authentication token
  * @param type - Match type (latest_match, perfect_match, etc.)
- * @param page - Page number for pagination (5 profiles per page)
+ * @param page - Page number for pagination (6 profiles per page)
  * @returns Promise with matching profiles
  */
 export async function getMatchingProfiles(

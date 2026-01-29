@@ -222,6 +222,8 @@ const SearchResultsPage = () => {
   const loadSearchFromParams = useCallback(() => {
     const type = searchParams.get('type') as 'advanced' | 'id' | 'saved' || 'advanced';
     const sort = searchParams.get('sort') as 'featured' | 'new' | 'photo' || 'featured';
+    const pageParam = searchParams.get('page');
+    const page = pageParam ? parseInt(pageParam) : 1;
 
     setSearchType(type);
     setSortBy(sort);
@@ -237,7 +239,7 @@ const SearchResultsPage = () => {
       if (savedId) {
         const id = parseInt(savedId);
         setSavedSearchId(id);
-        executeSavedSearchById(id, 1);
+        executeSavedSearchById(id, page);
       }
     } else {
       // Parse advanced search filters from URL
@@ -296,7 +298,7 @@ const SearchResultsPage = () => {
       if (physicalstatus) parsedFilters.physicalstatus = physicalstatus.split(',');
 
       setFilters(parsedFilters);
-      executeAdvancedSearch(parsedFilters, sort, 1);
+      executeAdvancedSearch(parsedFilters, sort, page);
     }
   }, [searchParams, executeIdSearch, executeSavedSearchById, executeAdvancedSearch]);
 
@@ -309,11 +311,12 @@ const SearchResultsPage = () => {
   }, [token, loadUserGender, loadSearchFromParams]);
 
   const handlePageChange = (page: number) => {
-    if (searchType === 'saved' && savedSearchId) {
-      executeSavedSearchById(savedSearchId, page);
-    } else {
-      executeAdvancedSearch(filters, sortBy, page);
-    }
+    // Update URL with the new page number
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/search-results?${params.toString()}`, { scroll: false });
+
+    // Scroll to top when pagination is clicked
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -328,6 +331,11 @@ const SearchResultsPage = () => {
   };
 
   const handleRefineSearch = () => {
+    // Reset to page 1 when refining search and update URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', '1');
+    router.push(`/search-results?${params.toString()}`, { scroll: false });
+
     if (searchType === 'id') {
       executeIdSearch(searchId);
     } else {
