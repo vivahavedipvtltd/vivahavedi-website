@@ -162,14 +162,14 @@ const MatchingProfilesPage = () => {
           <main className="flex-1 p-4 lg:p-8 overflow-y-auto custom-scrollbar">
             <div className="max-w-7xl mx-auto">
               {/* Page Header */}
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-                      <Heart className="h-6 w-6 mr-3 text-red-500" />
+                    <h1 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center">
+                      <Heart className="h-5 w-5 md:h-6 md:w-6 mr-2 md:mr-3 text-red-500" />
                       Matching Profiles
                     </h1>
-                    <p className="text-gray-600 mt-1">
+                    <p className="text-xs md:text-base text-gray-600 mt-1">
                       Profiles that match your partner preferences
                     </p>
                   </div>
@@ -182,17 +182,20 @@ const MatchingProfilesPage = () => {
                   <nav className="flex -mb-px">
                     <button
                       onClick={() => handleTabChange('latest')}
-                      className={`flex-1 py-4 px-6 text-center border-b-2 font-medium transition-colors ${
+                      className={`flex-1 py-3 md:py-4 px-2 md:px-6 text-center border-b-2 font-medium transition-colors ${
                         activeTab === 'latest'
                           ? 'border-red-500 text-red-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                     >
-                      <div className="flex items-center justify-center">
-                        <Users className="h-5 w-5 mr-2" />
-                        <span>Latest Matches</span>
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+                        <div className="flex items-center">
+                          <Users className="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" />
+                          <span className="text-xs md:text-base whitespace-nowrap">Latest</span>
+                          <span className="hidden sm:inline ml-1">Matches</span>
+                        </div>
                         {latestCount > 0 && (
-                          <span className="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">
+                          <span className="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold rounded-full bg-red-100 text-red-600">
                             {latestCount}
                           </span>
                         )}
@@ -200,17 +203,20 @@ const MatchingProfilesPage = () => {
                     </button>
                     <button
                       onClick={() => handleTabChange('perfect')}
-                      className={`flex-1 py-4 px-6 text-center border-b-2 font-medium transition-colors ${
+                      className={`flex-1 py-3 md:py-4 px-2 md:px-6 text-center border-b-2 font-medium transition-colors ${
                         activeTab === 'perfect'
                           ? 'border-red-500 text-red-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                     >
-                      <div className="flex items-center justify-center">
-                        <Sparkles className="h-5 w-5 mr-2" />
-                        <span>Perfect Matches</span>
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+                        <div className="flex items-center">
+                          <Sparkles className="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" />
+                          <span className="text-xs md:text-base whitespace-nowrap">Perfect</span>
+                          <span className="hidden sm:inline ml-1">Matches</span>
+                        </div>
                         {perfectCount > 0 && (
-                          <span className="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600">
+                          <span className="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold rounded-full bg-red-100 text-red-600">
                             {perfectCount}
                           </span>
                         )}
@@ -220,14 +226,14 @@ const MatchingProfilesPage = () => {
                 </div>
 
                 {/* Tab Info */}
-                <div className="p-4 bg-blue-50 border-t border-blue-100">
+                <div className="p-3 md:p-4 bg-blue-50 border-t border-blue-100">
                   {activeTab === 'latest' ? (
-                    <p className="text-sm text-blue-800">
+                    <p className="text-xs md:text-sm text-blue-800 leading-relaxed">
                       <strong>Latest Matches:</strong> Profiles matching your basic partner preferences
                       (age, height, religion, caste, marital status, state)
                     </p>
                   ) : (
-                    <p className="text-sm text-blue-800">
+                    <p className="text-xs md:text-sm text-blue-800 leading-relaxed">
                       <strong>Perfect Matches:</strong> Profiles with stricter matching criteria
                       (includes district and qualification level filters for better compatibility)
                     </p>

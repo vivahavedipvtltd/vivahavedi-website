@@ -109,7 +109,7 @@ export default function Home() {
         image: {
           '@id': 'https://vivahavedimatrimony.com/#logo',
         },
-        description: 'India\'s most trusted matrimonial service helping millions find their perfect life partner. With 10M+ verified profiles, 50,000+ success stories, and 15+ years of excellence.',
+        description: 'India\'s most trusted matrimonial service helping millions find their perfect life partner. With 10M+ verified profiles, 50,000+ success stories, and 19+ years of excellence.',
         foundingDate: '2009',
         slogan: 'Find Your Perfect Match',
         address: {

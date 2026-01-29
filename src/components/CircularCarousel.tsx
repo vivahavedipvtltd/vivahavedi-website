@@ -39,9 +39,9 @@ const CircularCarousel = () => {
     {
       id: 3,
       icon: Award,
-      title: "15+ Years of",
+      title: "19+ Years of",
       highlight: "Trust",
-      description: "With over 15 years of experience in matchmaking, we have successfully brought together thousands of couples. Our proven track record speaks for our commitment to your happiness.",
+      description: "With over 19 years of experience in matchmaking, we have successfully brought together thousands of couples. Our proven track record speaks for our commitment to your happiness.",
       buttonText: "Success Stories",
       color: "from-purple-500 to-violet-500"
     },

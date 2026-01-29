@@ -31,20 +31,20 @@ const HeroSection = () => {
 
               <p className="text-xl text-gray-600 mb-8 max-w-2xl lg:max-w-none">
                 Join millions of happy families who found their life partner through vivahavedi.
-                Simple, secure, and trusted for over 15 years.
+                Simple, secure, and trusted for over 19 years.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-12">
                 <Link
                   href="/register"
-                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base md:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
                 >
                   Register Free - Find Your Life Partner
                 </Link>
                 <Link
                   href="/search"
-                  className="border-2 border-gray-300 text-gray-700 hover:border-red-600 hover:text-red-600 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 text-center"
+                  className="border-2 border-gray-300 text-gray-700 hover:border-red-600 hover:text-red-600 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base md:text-lg transition-all duration-200 text-center"
                 >
                   Browse Verified Matrimonial Profiles
                 </Link>
@@ -70,7 +70,7 @@ const HeroSection = () => {
                   <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-2" aria-hidden="true">
                     <Star className="h-6 w-6 text-red-600" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-900">15+</p>
+                  <p className="text-2xl font-bold text-gray-900">19+</p>
                   <figcaption className="text-sm text-gray-600">Years</figcaption>
                 </figure>
               </aside>

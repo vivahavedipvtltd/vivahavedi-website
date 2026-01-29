@@ -354,7 +354,7 @@ export default function SuccessStoriesPage() {
                 <div className="text-lg text-white/90">Registered Members</div>
               </div>
               <div className="transform hover:scale-110 transition-transform duration-300">
-                <div className="text-4xl md:text-5xl font-bold mb-2">15+</div>
+                <div className="text-4xl md:text-5xl font-bold mb-2">19+</div>
                 <div className="text-lg text-white/90">Years of Trust</div>
               </div>
               <div className="transform hover:scale-110 transition-transform duration-300">
