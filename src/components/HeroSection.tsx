@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Heart, Users, Shield, Star } from 'lucide-react';
 
 const HeroSection = () => {
@@ -35,12 +36,18 @@ const HeroSection = () => {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
-                <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                  Start Free Registration
-                </button>
-                <button className="border-2 border-gray-300 text-gray-700 hover:border-red-600 hover:text-red-600 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200">
-                  Browse Profiles
-                </button>
+                <Link
+                  href="/register"
+                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+                >
+                  Register Free - Find Your Life Partner
+                </Link>
+                <Link
+                  href="/search"
+                  className="border-2 border-gray-300 text-gray-700 hover:border-red-600 hover:text-red-600 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 text-center"
+                >
+                  Browse Verified Matrimonial Profiles
+                </Link>
               </div>
 
               {/* Trust Indicators */}
