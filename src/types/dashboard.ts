@@ -23,39 +23,77 @@ export interface MyDetails {
     lpo_name: string;
   };
   detailed: {
-    up_height?: string;
-    up_weight?: string;
-    up_complexion?: string;
-    up_body_type?: string;
-    up_physical_status?: string;
-    up_mother_tongue?: string;
-    up_marital_status?: string;
-    up_no_of_children?: number;
-    up_qualification_level?: string;
-    up_qualification?: string;
-    up_specialization?: string;
-    up_profession?: string;
-    up_job_status?: string;
-    up_annual_income?: string;
-    up_company_name?: string;
-    up_company_address?: string;
-    up_about_profession?: string;
-    up_family_type?: string;
-    up_family_status?: string;
-    up_family_values?: string;
-    up_father_occupation?: string;
-    up_mother_occupation?: string;
-    up_no_of_brothers?: number;
-    up_no_of_sisters?: number;
-    up_about_family?: string;
-    up_hobbies?: string[] | string;
-    up_music?: string[] | string;
-    up_reads?: string[] | string;
-    up_cuisine?: string[] | string;
-    up_diet?: string;
-    up_drink?: string;
-    up_smoke?: string;
-    up_about_myself?: string;
+    // Physical & Personal Details
+    up_height?: string | null;
+    up_weight?: string | null;
+    up_body_weight?: string | null;
+    up_complexion?: string | null;
+    up_body_type?: string | null;
+    up_physical_status?: string | null;
+    up_mother_tongue?: string | null;
+    up_marital_status?: string | null;
+    up_no_of_children?: number | null;
+    up_children?: number | null;
+    up_personal_values?: string | null;
+
+    // Education & Career
+    up_qualification_level?: string | null;
+    up_qualification?: string | null;
+    up_specialization?: string | null;
+    up_profession?: string | null;
+    up_job_status?: string | null;
+    up_annual_income?: string | null;
+    up_annualincome?: string | null;
+    up_income?: string | null;
+    up_company_name?: string | null;
+    up_company_address?: string | null;
+    up_working_at?: string | null;
+    up_about_profession?: string | null;
+    up_working_as?: string | null;
+    up_working_in?: string | null;
+    up_workingin?: string | null;
+    up_designation?: string | null;
+
+    // Family Details
+    up_family_type?: string | null;
+    up_family_status?: string | null;
+    up_family_values?: string | null;
+    up_added_by?: string | null;
+    up_native?: string | null;
+    up_father_name?: string | null;
+    up_father_occupation?: string | null;
+    up_mother_name?: string | null;
+    up_mother_occupation?: string | null;
+    up_no_of_brothers?: number | null;
+    up_brothers?: number | null;
+    up_mbrothers?: number | null;
+    up_no_of_sisters?: number | null;
+    up_sisters?: number | null;
+    up_msisters?: number | null;
+    up_about_family?: string | null;
+
+    // Hobbies & Interests
+    up_hobbies?: string[] | string | null;
+    up_music?: string[] | string | null;
+    up_reads?: string[] | string | null;
+    up_cuisine?: string[] | string | null;
+    up_diet?: string | null;
+    up_drink?: string | null;
+    up_smoke?: string | null;
+    up_about_myself?: string | null;
+
+    // Completion flags
+    up_complete?: string | null;
+    up_education_complete?: string | null;
+    up_family_complete?: string | null;
+    up_hobbies_complete?: string | null;
+
+    // IDs for relationships
+    qual_id?: number | null;
+    speci_id?: number | null;
+    pro_id?: number | null;
+    ql_id?: number | null;
+    job_status?: string | null;
   };
   profile_completion: {
     registration: string; // '1' = complete, '0' = incomplete
