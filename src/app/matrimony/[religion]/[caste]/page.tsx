@@ -711,7 +711,7 @@ export default function CasteMatrimonyPage() {
             {
               id: 1,
               name: 'Meera & Sanjay',
-              location: 'Chennai, Tamil Nadu',
+              location: 'Thiruvananthapuram, Kerala',
               rating: 5,
               date: '2024-01-10',
               review: `Finding a ${caste.name} match was important to us, and vivahavedi made it possible! We connected through the ${religion.name} ${caste.name} section and found perfect compatibility. The detailed profiles helped us make an informed decision. Married for 6 months now and very happy!`,
@@ -719,7 +719,7 @@ export default function CasteMatrimonyPage() {
             {
               id: 2,
               name: 'Kavya & Prakash',
-              location: 'Jaipur, Rajasthan',
+              location: 'Kochi, Kerala',
               rating: 5,
               date: '2024-02-18',
               review: `Excellent ${caste.name} matrimony service! We were specifically looking within our ${religion.name} ${caste.name} community and this platform had exactly what we needed. Great features, verified profiles, and helpful support team. Highly recommend!`,
@@ -727,7 +727,7 @@ export default function CasteMatrimonyPage() {
             {
               id: 3,
               name: 'Ritu & Manish',
-              location: 'Kolkata, West Bengal',
+              location: 'Kozhikode, Kerala',
               rating: 5,
               date: '2024-03-05',
               review: `Best decision to join vivahavedi for ${caste.name} matrimony! The search filters made it easy to find matches from our specific community. We got engaged last month and couldn't be happier. Thank you for this wonderful platform!`,
@@ -735,7 +735,7 @@ export default function CasteMatrimonyPage() {
             {
               id: 4,
               name: 'Shruti & Nikhil',
-              location: 'Surat, Gujarat',
+              location: 'Thrissur, Kerala',
               rating: 5,
               date: '2023-12-22',
               review: `We are grateful to vivahavedi for bringing us together through ${religion.name} ${caste.name} matrimony. The platform is user-friendly, secure, and has genuine profiles. Found our soulmate and got married within a year. Excellent service!`,
@@ -743,7 +743,7 @@ export default function CasteMatrimonyPage() {
             {
               id: 5,
               name: 'Aarti & Suresh',
-              location: 'Lucknow, Uttar Pradesh',
+              location: 'Kannur, Kerala',
               rating: 5,
               date: '2024-01-30',
               review: `Outstanding ${caste.name} matrimonial platform! We appreciated the detailed information about family background, education, and preferences. The verification process ensured we were connecting with genuine people. Successfully found our life partner here!`,
@@ -751,7 +751,7 @@ export default function CasteMatrimonyPage() {
             {
               id: 6,
               name: 'Swati & Deepak',
-              location: 'Indore, Madhya Pradesh',
+              location: 'Malappuram, Kerala',
               rating: 5,
               date: '2024-02-25',
               review: `vivahavedi ${caste.name} matrimony service is simply excellent! The advanced search helped us find compatible matches within our ${religion.name} ${caste.name} community. Customer support was always available to help. We got married last month. Thank you!`,
