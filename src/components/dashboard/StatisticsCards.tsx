@@ -15,24 +15,28 @@ const StatisticsCards: React.FC<StatisticsCardsProps> = React.memo(({ stats }) =
         title="Profile Views"
         value={stats?.profile_view || 0}
         color="blue"
+        href="/dashboard?section=profile-views"
       />
       <StatCard
         icon={<Heart className="h-6 w-6" />}
         title="Interests"
         value={stats?.profile_interest || 0}
         color="red"
+        href="/dashboard?section=interests"
       />
       <StatCard
         icon={<MessageCircle className="h-6 w-6" />}
         title="Messages"
         value={stats?.profile_chat || 0}
         color="green"
+        href="/dashboard?section=messages"
       />
       <StatCard
         icon={<Phone className="h-6 w-6" />}
         title="Requests"
         value={stats?.profile_request || 0}
         color="purple"
+        href="/dashboard?section=requests"
       />
     </div>
   );

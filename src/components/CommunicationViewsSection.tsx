@@ -208,111 +208,157 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
         </div>
       ) : (
         <>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-5">
             {profiles.map((profile) => (
               <div
                 key={profile.id}
                 onClick={() => handleProfileClick(profile.id)}
-                className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                className="group relative bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-xl hover:border-red-200 cursor-pointer transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="relative w-16 h-16 flex-shrink-0">
-                  <Image
-                    src={profile.photo || '/placeholder-avatar.png'}
-                    alt={`${profile.name}'s matrimonial profile - View communication on vivahavedi`}
-                    fill
-                    sizes="64px"
-                    className="rounded-full object-cover"
-                    unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
-                  />
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-red-50/50 to-pink-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                <div className="relative flex items-start space-x-5">
+                  {/* Profile Photo with Badge */}
+                  <div className="relative flex-shrink-0">
+                    <div className="relative w-20 h-20 ring-4 ring-white shadow-lg rounded-2xl overflow-hidden">
+                      <Image
+                        src={profile.photo || '/placeholder-avatar.png'}
+                        alt={`${profile.name}'s matrimonial profile - View communication on vivahavedi`}
+                        fill
+                        sizes="80px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
+                      />
+                    </div>
+                    {/* Online Status Indicator */}
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-4 border-white shadow-md"></div>
+                  </div>
+
+                  {/* Profile Information */}
+                  <div className="flex-1 min-w-0">
+                    {/* Header Section */}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-gray-900 truncate group-hover:text-red-600 transition-colors">
+                          {profile.name}
+                        </h4>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-sm">
+                            {profile.age} years
+                          </span>
+                          {profile.status && (
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                              profile.status === 'accepted'
+                                ? 'bg-green-100 text-green-700'
+                                : profile.status === 'rejected'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {profile.status.charAt(0).toUpperCase() + profile.status.slice(1)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Details Grid */}
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span className="font-medium">{profile.height} cm</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <span className="font-medium">{profile.marital_status}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span className="font-medium truncate">{profile.district}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        <span className="font-medium truncate">{profile.religion}</span>
+                      </div>
+                    </div>
+
+                    {/* Contact Details */}
+                    {profile.mobile && (
+                      <div className="flex items-center space-x-2 text-sm bg-gray-50 rounded-lg px-3 py-2 mb-3">
+                        <Phone className="h-4 w-4 text-red-500" />
+                        <span className="font-medium text-gray-700">{profile.mobile}</span>
+                        {profile.phone && (
+                          <>
+                            <span className="text-gray-400">•</span>
+                            <span className="font-medium text-gray-700">{profile.phone}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Interest Content */}
+                    {profile.content && (
+                      <p className="text-sm text-gray-600 bg-blue-50 rounded-lg px-3 py-2 mb-3 line-clamp-2 italic">
+                        &ldquo;{profile.content}&rdquo;
+                      </p>
+                    )}
+
+                    {/* Action Buttons for Pending Interests (only if received and pending) */}
+                    {initialSection === 'interests' && activeTab === 'to_me' && profile.status === 'pending' && (
+                      <div className="flex items-center space-x-3 mt-4 pt-4 border-t border-gray-100">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleInterestResponse(profile.id, 'accepted');
+                          }}
+                          disabled={respondingTo === profile.id}
+                          className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {respondingTo === profile.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Check className="h-5 w-5" />
+                              <span>Accept</span>
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleInterestResponse(profile.id, 'rejected');
+                          }}
+                          disabled={respondingTo === profile.id}
+                          className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {respondingTo === profile.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <X className="h-5 w-5" />
+                              <span>Reject</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-gray-900 truncate">
-                      {profile.name}
-                    </h4>
-                    <span className="text-sm text-gray-500">{profile.age} yrs</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
-                    <span>{profile.height} cm</span>
-                    <span>•</span>
-                    <span>{profile.marital_status}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <span>{profile.district}</span>
-                    <span>•</span>
-                    <span>{profile.religion}</span>
-                  </div>
 
-                  {/* Interest Status */}
-                  {profile.status && (
-                    <div className="mt-2">
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        profile.status === 'accepted'
-                          ? 'bg-green-100 text-green-700'
-                          : profile.status === 'rejected'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {profile.status.charAt(0).toUpperCase() + profile.status.slice(1)}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Contact Details */}
-                  {profile.mobile && (
-                    <div className="mt-2 flex items-center space-x-2 text-sm text-gray-600">
-                      <Phone className="h-4 w-4" />
-                      <span>{profile.mobile}</span>
-                      {profile.phone && <span>• {profile.phone}</span>}
-                    </div>
-                  )}
-
-                  {/* Interest Content */}
-                  {profile.content && (
-                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                      {profile.content}
-                    </p>
-                  )}
-
-                  {/* Action Buttons for Pending Interests (only if received and pending) */}
-                  {initialSection === 'interests' && activeTab === 'to_me' && profile.status === 'pending' && (
-                    <div className="flex items-center space-x-3 mt-3">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleInterestResponse(profile.id, 'accepted');
-                        }}
-                        disabled={respondingTo === profile.id}
-                        className="flex items-center space-x-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {respondingTo === profile.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Check className="h-4 w-4" />
-                            <span className="text-sm font-medium">Accept</span>
-                          </>
-                        )}
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleInterestResponse(profile.id, 'rejected');
-                        }}
-                        disabled={respondingTo === profile.id}
-                        className="flex items-center space-x-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {respondingTo === profile.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <>
-                            <X className="h-4 w-4" />
-                            <span className="text-sm font-medium">Reject</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  )}
+                {/* View Profile Arrow */}
+                <div className="absolute top-5 right-5 w-8 h-8 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-red-500 transition-all duration-300">
+                  <svg className="w-4 h-4 text-red-500 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
             ))}

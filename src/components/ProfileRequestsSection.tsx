@@ -191,87 +191,107 @@ const ProfileRequestsSection = () => {
         </div>
       ) : (
         <>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-5">
             {requests.map((request) => (
               <div
                 key={request.request_id}
-                className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors"
+                className="group relative bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-xl hover:border-purple-200 transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="flex items-start space-x-4">
-                  {/* Profile Photo */}
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-50/50 to-indigo-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                <div className="relative flex items-start space-x-5">
+                  {/* Profile Photo with Badge */}
                   <div
-                    className="relative w-16 h-16 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                    className="relative flex-shrink-0 cursor-pointer"
                     onClick={() => handleProfileClick(request.id)}
                   >
-                    <Image
-                      src={request.photo || '/placeholder-avatar.png'}
-                      alt={`${request.name}'s matrimonial profile - ${request.request_status} profile request on vivahavedi`}
-                      fill
-                      sizes="64px"
-                      className="rounded-full object-cover"
-                      unoptimized={request.photo?.includes('vivahavedimatrimony.com')}
-                    />
+                    <div className="relative w-20 h-20 ring-4 ring-white shadow-lg rounded-2xl overflow-hidden">
+                      <Image
+                        src={request.photo || '/placeholder-avatar.png'}
+                        alt={`${request.name}'s matrimonial profile - ${request.request_status} profile request on vivahavedi`}
+                        fill
+                        sizes="80px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        unoptimized={request.photo?.includes('vivahavedimatrimony.com')}
+                      />
+                    </div>
+                    {/* Request Type Badge */}
+                    <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-purple-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                      <ImageIcon className="h-4 w-4 text-white" />
+                    </div>
                   </div>
 
                   {/* Request Details */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4
-                        onClick={() => handleProfileClick(request.id)}
-                        className="font-semibold text-gray-900 cursor-pointer hover:text-purple-600 transition-colors"
-                      >
-                        {request.name}
-                      </h4>
-                      {getStatusBadge(request.request_status)}
-                    </div>
-
-                    {/* Request Type */}
-                    <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                      <ImageIcon className="h-4 w-4" />
-                      <span className="font-medium">{getRequestTypeLabel(request.request_type)}</span>
+                    {/* Header Section */}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h4
+                          onClick={() => handleProfileClick(request.id)}
+                          className="text-lg font-bold text-gray-900 cursor-pointer hover:text-purple-600 transition-colors truncate"
+                        >
+                          {request.name}
+                        </h4>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm">
+                            {getRequestTypeLabel(request.request_type)}
+                          </span>
+                          {getStatusBadge(request.request_status)}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Request Message */}
                     {request.request_messgae && (
-                      <p className="text-sm text-gray-600 mb-3">
-                        {request.request_messgae}
-                      </p>
+                      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl px-4 py-3 mb-3 border-l-4 border-purple-500">
+                        <p className="text-sm text-gray-700 italic">
+                          &ldquo;{request.request_messgae}&rdquo;
+                        </p>
+                      </div>
                     )}
 
                     {/* Action Buttons for Photo Requests (only if pending) */}
                     {isPhotoRequest(request.request_type) && (request.request_status === '0' || request.request_status === 0) && (
-                      <div className="flex items-center space-x-3 mt-3">
+                      <div className="flex items-center space-x-3 mt-4 pt-4 border-t border-gray-100">
                         <button
                           onClick={() => handlePhotoResponse(request.id, 'accept')}
                           disabled={respondingTo === request.id}
-                          className="flex items-center space-x-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {respondingTo === request.id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
                             <>
-                              <Check className="h-4 w-4" />
-                              <span className="text-sm font-medium">Accept</span>
+                              <Check className="h-5 w-5" />
+                              <span>Accept</span>
                             </>
                           )}
                         </button>
                         <button
                           onClick={() => handlePhotoResponse(request.id, 'reject')}
                           disabled={respondingTo === request.id}
-                          className="flex items-center space-x-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {respondingTo === request.id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
                             <>
-                              <X className="h-4 w-4" />
-                              <span className="text-sm font-medium">Reject</span>
+                              <X className="h-5 w-5" />
+                              <span>Reject</span>
                             </>
                           )}
                         </button>
                       </div>
                     )}
                   </div>
+                </div>
+
+                {/* View Profile Arrow */}
+                <div className="absolute top-5 right-5 w-8 h-8 bg-purple-50 rounded-full flex items-center justify-center group-hover:bg-purple-500 transition-all duration-300">
+                  <svg className="w-4 h-4 text-purple-500 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
             ))}

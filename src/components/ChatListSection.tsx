@@ -521,60 +521,76 @@ const ChatListSection = () => {
         </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-4">
             {chatUsers.map((chatUser) => (
               <div
                 key={chatUser.id}
                 onClick={() => handleChatClick(chatUser)}
-                className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border border-gray-200 hover:border-green-300"
+                className="group relative bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-xl hover:border-green-200 cursor-pointer transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="flex items-center space-x-4 flex-1 min-w-0">
-                  {/* Profile Photo */}
-                  <div className="relative flex-shrink-0 w-14 h-14">
-                    <Image
-                      src={chatUser.photo || '/placeholder-avatar.png'}
-                      alt={`${chatUser.name}'s matrimonial profile photo - Chat connection on vivahavedi`}
-                      fill
-                      sizes="56px"
-                      className="rounded-full object-cover"
-                      unoptimized={chatUser.photo?.includes('vivahavedimatrimony.com')}
-                    />
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-green-50/50 to-emerald-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                <div className="relative flex items-center space-x-4">
+                  {/* Profile Photo with Badge */}
+                  <div className="relative flex-shrink-0">
+                    <div className="relative w-16 h-16 ring-4 ring-white shadow-lg rounded-2xl overflow-hidden">
+                      <Image
+                        src={chatUser.photo || '/placeholder-avatar.png'}
+                        alt={`${chatUser.name}'s matrimonial profile photo - Chat connection on vivahavedi`}
+                        fill
+                        sizes="64px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        unoptimized={chatUser.photo?.includes('vivahavedimatrimony.com')}
+                      />
+                    </div>
+
                     {/* Unseen Count Badge */}
                     {chatUser.count > 0 && (
-                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-md">
+                      <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full min-w-[24px] h-6 px-1.5 flex items-center justify-center shadow-lg ring-4 ring-white animate-pulse">
                         {chatUser.count > 9 ? '9+' : chatUser.count}
                       </div>
                     )}
+
+                    {/* Online Status Indicator */}
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-4 border-white shadow-md"></div>
                   </div>
 
-                  {/* User Name */}
+                  {/* User Info */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900 truncate">
+                    <h4 className="text-lg font-bold text-gray-900 truncate group-hover:text-green-600 transition-colors">
                       {chatUser.name}
                     </h4>
                     {chatUser.count > 0 ? (
-                      <p className="text-sm text-green-600 font-medium">
-                        {chatUser.count} new {chatUser.count === 1 ? 'message' : 'messages'}
-                      </p>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <div className="flex items-center space-x-1">
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <p className="text-sm font-semibold text-green-600">
+                            {chatUser.count} new {chatUser.count === 1 ? 'message' : 'messages'}
+                          </p>
+                        </div>
+                      </div>
                     ) : (
-                      <p className="text-sm text-gray-500">No new messages</p>
+                      <p className="text-sm text-gray-500 mt-1">No new messages</p>
                     )}
                   </div>
-                </div>
 
-                {/* Arrow Icon */}
-                <div className="flex-shrink-0 ml-4">
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path d="M9 5l7 7-7 7"></path>
-                  </svg>
+                  {/* Arrow Icon */}
+                  <div className="flex-shrink-0 ml-4">
+                    <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center group-hover:bg-green-500 transition-all duration-300">
+                      <svg
+                        className="h-5 w-5 text-green-500 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
