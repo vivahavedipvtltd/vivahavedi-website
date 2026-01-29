@@ -93,6 +93,19 @@ const MobileAppDownload = () => {
               </div>
               <div className="text-sm text-gray-600">1M+ Downloads</div>
             </div>
+
+            {/* Learn More Link */}
+            <div className="mt-6">
+              <a
+                href="/mobile-app"
+                className="inline-flex items-center text-red-600 hover:text-red-700 font-semibold transition-colors"
+              >
+                Learn More About Our App
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           </div>
 
           {/* Right Content - Phone Mockups */}

@@ -175,6 +175,11 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white">Company</h3>
             <ul className="space-y-2">
               <li>
+                <Link href="/" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Home
+                </Link>
+              </li>
+              <li>
                 <Link href="/about-us" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
                   About Us
                 </Link>
@@ -197,11 +202,6 @@ const Footer = () => {
               <li>
                 <Link href="/mobile-app" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
                   Mobile App
-                </Link>
-              </li>
-              <li>
-                <Link href="/help" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Help & Support
                 </Link>
               </li>
             </ul>

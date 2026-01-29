@@ -401,9 +401,12 @@ const SuccessStories = () => {
         `}</style>
 
         <div className="text-center mt-12">
-          <button className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full font-semibold text-lg transition-colors duration-200 shadow-lg">
+          <a
+            href="/success-stories"
+            className="inline-block bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full font-semibold text-lg transition-colors duration-200 shadow-lg"
+          >
             Read More Stories
-          </button>
+          </a>
         </div>
       </div>
     </section>
