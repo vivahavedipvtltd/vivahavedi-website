@@ -367,7 +367,7 @@ const ChatListSection = () => {
             <div className="relative w-12 h-12">
               <Image
                 src={selectedChat.photo || '/placeholder-avatar.png'}
-                alt={selectedChat.name}
+                alt={`${selectedChat.name}'s profile picture - Matrimonial match on vivahavedi`}
                 fill
                 sizes="48px"
                 className="rounded-full object-cover border-2 border-white shadow-md"
@@ -533,7 +533,7 @@ const ChatListSection = () => {
                   <div className="relative flex-shrink-0 w-14 h-14">
                     <Image
                       src={chatUser.photo || '/placeholder-avatar.png'}
-                      alt={chatUser.name}
+                      alt={`${chatUser.name}'s matrimonial profile photo - Chat connection on vivahavedi`}
                       fill
                       sizes="56px"
                       className="rounded-full object-cover"

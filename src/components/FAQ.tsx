@@ -97,9 +97,9 @@ const FAQ = () => {
                   onClick={() => toggleFAQ(faq.id)}
                   className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded-2xl"
                 >
-                  <span className="text-lg font-semibold text-gray-900 pr-4">
+                  <h3 className="text-lg font-semibold text-gray-900 pr-4">
                     {faq.question}
-                  </span>
+                  </h3>
                   <div className="flex-shrink-0">
                     {openFAQ === faq.id ? (
                       <ChevronUp className="h-5 w-5 text-red-600 transition-transform duration-200" />

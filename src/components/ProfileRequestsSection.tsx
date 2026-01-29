@@ -205,7 +205,7 @@ const ProfileRequestsSection = () => {
                   >
                     <Image
                       src={request.photo || '/placeholder-avatar.png'}
-                      alt={request.name}
+                      alt={`${request.name}'s matrimonial profile - ${request.request_status} profile request on vivahavedi`}
                       fill
                       sizes="64px"
                       className="rounded-full object-cover"

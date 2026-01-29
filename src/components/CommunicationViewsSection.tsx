@@ -218,7 +218,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                 <div className="relative w-16 h-16 flex-shrink-0">
                   <Image
                     src={profile.photo || '/placeholder-avatar.png'}
-                    alt={profile.name}
+                    alt={`${profile.name}'s matrimonial profile - View communication on vivahavedi`}
                     fill
                     sizes="64px"
                     className="rounded-full object-cover"

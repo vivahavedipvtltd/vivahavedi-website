@@ -29,7 +29,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       <div className="aspect-w-16 aspect-h-12 bg-gray-200 relative h-[22rem]">
         <Image
           src={profile.photo || '/placeholder-avatar.png'}
-          alt={profile.name}
+          alt={`${profile.name} - ${profile.age} years old ${profile.marital_status} ${profile.religion} ${profile.caste} from ${profile.district}, ${profile.qualification} - Matrimonial profile on vivahavedi`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover"

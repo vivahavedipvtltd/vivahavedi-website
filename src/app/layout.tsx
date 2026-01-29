@@ -59,30 +59,76 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://vivamatrimony.com"),
   title: "vivahavedi - Find Your Perfect Life Partner | Indian Matrimonial Site",
   description: "Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform. Browse verified profiles, connect with compatible matches, and find your soulmate today.",
   keywords: "matrimony, marriage, wedding, indian matrimony, life partner, bride, groom, matrimonial site",
   authors: [{ name: "vivahavedi" }],
   creator: "vivahavedi",
   publisher: "vivahavedi",
+  applicationName: "vivahavedi Matrimony",
   robots: "index, follow",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
     shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      {
+        rel: "android-chrome-192x192",
+        url: "/android-chrome-192x192.png",
+      },
+      {
+        rel: "android-chrome-512x512",
+        url: "/android-chrome-512x512.png",
+      },
+    ],
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "vivahavedi",
+  },
+  alternates: {
+    canonical: "https://vivamatrimony.com",
+    languages: {
+      "en-IN": "https://vivamatrimony.com",
+      "hi-IN": "https://vivamatrimony.com/hi",
+      "ta-IN": "https://vivamatrimony.com/ta",
+      "te-IN": "https://vivamatrimony.com/te",
+      "kn-IN": "https://vivamatrimony.com/kn",
+      "ml-IN": "https://vivamatrimony.com/ml",
+    },
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: "https://vivamatrimony.com",
     siteName: "vivahavedi",
     title: "vivahavedi - Find Your Perfect Life Partner",
     description: "Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform.",
+    images: [
+      {
+        url: "https://vivamatrimony.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "vivahavedi - India's Most Trusted Matrimonial Platform",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "vivahavedi - Find Your Perfect Life Partner",
     description: "Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform.",
+    images: ["https://vivamatrimony.com/og-image.png"],
+    creator: "@vivahavedi",
+    site: "@vivahavedi",
   },
 };
 
@@ -95,7 +141,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#dc2626" />
+        <meta name="theme-color" content="#dc2626" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#991b1b" media="(prefers-color-scheme: dark)" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="vivahavedi" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <link rel="canonical" href="https://vivamatrimony.com" />
+        <link rel="manifest" href="/manifest.json" />
         <script dangerouslySetInnerHTML={{ __html: performanceScript }} />
       </head>
       <body

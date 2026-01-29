@@ -235,7 +235,7 @@ const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModa
             <div className="relative w-12 h-12">
               <Image
                 src={matchPhoto || '/placeholder-avatar.png'}
-                alt={matchName}
+                alt={`${matchName}'s profile picture - Chat on vivahavedi matrimony`}
                 fill
                 sizes="48px"
                 className="rounded-full object-cover border-2 border-white shadow-md"

@@ -264,7 +264,7 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
               <div className="relative h-48 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
                 <Image
                   src={myPhotos.horoscope || '/placeholder-avatar.png'}
-                  alt="Horoscope"
+                  alt="Horoscope document for matrimonial profile - Birth chart for marriage matching on vivahavedi"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-contain"
@@ -354,7 +354,7 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
               <div className="relative h-48 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
                 <Image
                   src={myPhotos.id_proof || '/placeholder-avatar.png'}
-                  alt="ID Proof"
+                  alt="ID Proof document for matrimonial verification - Government ID for profile authentication on vivahavedi"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-contain"
@@ -449,7 +449,7 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
             <div className="relative w-full h-full min-h-[400px]">
               <Image
                 src={viewingDocument.url}
-                alt={viewingDocument.type === 'horoscope' ? 'Horoscope' : 'ID Proof'}
+                alt={viewingDocument.type === 'horoscope' ? 'Horoscope document preview - Birth chart for marriage compatibility on vivahavedi' : 'ID Proof document preview - Government identification for matrimonial profile verification'}
                 fill
                 sizes="(max-width: 1024px) 100vw, 1024px"
                 className="object-contain"

@@ -196,7 +196,7 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
                   <>
                     <Image
                       src={photoUrl || '/placeholder-avatar.png'}
-                      alt={`Photo ${slotNumber}`}
+                      alt={`Your matrimonial profile photo ${slotNumber} - Vivahavedi wedding profile picture`}
                       fill
                       sizes="(max-width: 768px) 50vw, 20vw"
                       className="object-cover"
