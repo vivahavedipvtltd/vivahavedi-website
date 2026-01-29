@@ -133,38 +133,38 @@ const Footer = () => {
             )}
           </div>
 
-          {/* Services */}
+          {/* Matrimony */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Services</h3>
+            <h3 className="text-lg font-semibold text-white">Matrimony</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/packages" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Membership Plans
+                <Link href="/matrimony-in/kerala" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Kerala Matrimony
                 </Link>
               </li>
               <li>
-                <Link href="/success-stories" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Success Stories
+                <Link href="/matrimony-in/tamilnadu" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Tamilnadu Matrimony
                 </Link>
               </li>
               <li>
-                <Link href="/wedding-services" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Wedding Services
+                <Link href="/matrimony-in/karnataka" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Karnataka Matrimony
                 </Link>
               </li>
               <li>
-                <Link href="/astrology" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Astrology
+                <Link href="/matrimony-in/andhra-pradesh" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Andhra Pradesh Matrimony
                 </Link>
               </li>
               <li>
-                <Link href="/mobile-app" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Mobile App
+                <Link href="/matrimony-in/telangana" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Telangana Matrimony
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Help & Support
+                <Link href="/matrimony-in/maharashtra" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Maharashtra Matrimony
                 </Link>
               </li>
             </ul>
@@ -185,23 +185,23 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Careers
+                <Link href="/packages" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Membership Plans
                 </Link>
               </li>
               <li>
-                <Link href="/media" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Media
+                <Link href="/success-stories" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Success Stories
                 </Link>
               </li>
               <li>
-                <Link href="/testimonials" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Testimonials
+                <Link href="/mobile-app" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Mobile App
                 </Link>
               </li>
               <li>
-                <Link href="/awards" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Awards
+                <Link href="/help" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
+                  Help & Support
                 </Link>
               </li>
             </ul>
