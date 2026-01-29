@@ -1,6 +1,6 @@
 # SEO Guide
 
-This document outlines the SEO strategy, implementation details, and best practices for the VivaMatrimony website.
+This document outlines the SEO strategy, implementation details, and best practices for the Vivahavedi Matrimony website.
 
 ## SEO Strategy Overview
 
@@ -23,12 +23,12 @@ This document outlines the SEO strategy, implementation details, and best practi
 #### Root Layout (`/src/app/layout.tsx`)
 ```tsx
 export const metadata: Metadata = {
-  title: "VivaMatrimony - Find Your Perfect Life Partner | Indian Matrimonial Site",
-  description: "Discover your ideal life partner on VivaMatrimony, a trusted Indian matrimonial platform. Browse verified profiles, connect with compatible matches, and find your soulmate today.",
+  title: "Vivahavedi Matrimony - Find Your Perfect Life Partner | Indian Matrimonial Site",
+  description: "Discover your ideal life partner on Vivahavedi Matrimony, a trusted Indian matrimonial platform. Browse verified profiles, connect with compatible matches, and find your soulmate today.",
   keywords: "matrimony, marriage, wedding, indian matrimony, life partner, bride, groom, matrimonial site",
-  authors: [{ name: "VivaMatrimony" }],
-  creator: "VivaMatrimony",
-  publisher: "VivaMatrimony",
+  authors: [{ name: "Vivahavedi Matrimony" }],
+  creator: "Vivahavedi Matrimony",
+  publisher: "Vivahavedi Matrimony",
   robots: "index, follow",
 
   // Open Graph for social sharing
@@ -36,15 +36,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://vivamatrimony.com",
-    siteName: "VivaMatrimony",
-    title: "VivaMatrimony - Find Your Perfect Life Partner",
-    description: "Discover your ideal life partner on VivaMatrimony, a trusted Indian matrimonial platform.",
+    siteName: "Vivahavedi Matrimony",
+    title: "Vivahavedi Matrimony - Find Your Perfect Life Partner",
+    description: "Discover your ideal life partner on Vivahavedi Matrimony, a trusted Indian matrimonial platform.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "VivaMatrimony - Find Your Life Partner",
+        alt: "Vivahavedi Matrimony - Find Your Life Partner",
       }
     ],
   },
@@ -52,8 +52,8 @@ export const metadata: Metadata = {
   // Twitter Cards
   twitter: {
     card: "summary_large_image",
-    title: "VivaMatrimony - Find Your Perfect Life Partner",
-    description: "Discover your ideal life partner on VivaMatrimony, a trusted Indian matrimonial platform.",
+    title: "Vivahavedi Matrimony - Find Your Perfect Life Partner",
+    description: "Discover your ideal life partner on Vivahavedi Matrimony, a trusted Indian matrimonial platform.",
     images: ["/twitter-card.jpg"],
     creator: "@vivamatrimony",
   },
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
 ```tsx
 // app/page.tsx
 export const metadata = {
-  title: "VivaMatrimony - Find Your Perfect Life Partner | Indian Matrimonial Site",
+  title: "Vivahavedi Matrimony - Find Your Perfect Life Partner | Indian Matrimonial Site",
   description: "India's most trusted matrimonial site with millions of verified profiles. Find your ideal life partner from your community. Join free and start your journey to find love.",
   alternates: {
     canonical: "https://vivamatrimony.com",
@@ -86,7 +86,7 @@ export const metadata = {
 ```tsx
 // app/profiles/page.tsx
 export const metadata = {
-  title: "Browse Matrimonial Profiles | VivaMatrimony",
+  title: "Browse Matrimonial Profiles | Vivahavedi Matrimony",
   description: "Browse through thousands of verified matrimonial profiles. Filter by age, location, education, profession and more to find your perfect match.",
   alternates: {
     canonical: "https://vivamatrimony.com/profiles",
@@ -101,8 +101,8 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   const profile = await fetchProfile(params.id);
 
   return {
-    title: `${profile.name} - ${profile.age} years, ${profile.city} | VivaMatrimony`,
-    description: `View ${profile.name}'s matrimonial profile. ${profile.education}, ${profile.profession} from ${profile.city}. Connect now on VivaMatrimony.`,
+    title: `${profile.name} - ${profile.age} years, ${profile.city} | Vivahavedi Matrimony`,
+    description: `View ${profile.name}'s matrimonial profile. ${profile.education}, ${profile.profession} from ${profile.city}. Connect now on Vivahavedi Matrimony.`,
     alternates: {
       canonical: `https://vivamatrimony.com/profiles/${params.id}`,
     },
@@ -123,7 +123,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "VivaMatrimony",
+  "name": "Vivahavedi Matrimony",
   "url": "https://vivamatrimony.com",
   "logo": "https://vivamatrimony.com/logo.png",
   "description": "Trusted Indian matrimonial site helping people find their life partners",
@@ -146,7 +146,7 @@ const organizationSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "VivaMatrimony",
+  "name": "Vivahavedi Matrimony",
   "url": "https://vivamatrimony.com",
   "potentialAction": {
     "@type": "SearchAction",
@@ -164,7 +164,7 @@ const serviceSchema = {
   "name": "Matrimonial Services",
   "provider": {
     "@type": "Organization",
-    "name": "VivaMatrimony"
+    "name": "Vivahavedi Matrimony"
   },
   "description": "Professional matrimonial services to help you find your life partner",
   "serviceType": "Matrimonial",
@@ -202,7 +202,7 @@ https://vivamatrimony.com/success-stories      # Success stories
 ### Header Tags Hierarchy
 ```tsx
 // Page structure example
-<h1>Find Your Perfect Life Partner - VivaMatrimony</h1>
+<h1>Find Your Perfect Life Partner - Vivahavedi Matrimony</h1>
   <h2>Browse Profiles by Community</h2>
     <h3>Punjabi Matrimony</h3>
     <h3>Tamil Matrimony</h3>
@@ -313,8 +313,8 @@ export default function RootLayout({ children }) {
 export async function generateMetadata({ params }) {
   const city = params.city;
   return {
-    title: `${city} Matrimony - Find Life Partner in ${city} | VivaMatrimony`,
-    description: `Find your perfect life partner in ${city}. Browse verified matrimonial profiles from ${city}. Join VivaMatrimony today.`,
+    title: `${city} Matrimony - Find Life Partner in ${city} | Vivahavedi Matrimony`,
+    description: `Find your perfect life partner in ${city}. Browse verified matrimonial profiles from ${city}. Join Vivahavedi Matrimony today.`,
   };
 }
 ```
@@ -324,7 +324,7 @@ export async function generateMetadata({ params }) {
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": "VivaMatrimony",
+  "name": "Vivahavedi Matrimony",
   "description": "Matrimonial services in India",
   "address": {
     "@type": "PostalAddress",
@@ -360,14 +360,14 @@ const localBusinessSchema = {
 ```tsx
 // app/blog/[slug]/page.tsx
 export const metadata = {
-  title: "How to Write the Perfect Matrimonial Profile | VivaMatrimony Blog",
+  title: "How to Write the Perfect Matrimonial Profile | Vivahavedi Matrimony Blog",
   description: "Learn expert tips to create an attractive matrimonial profile that gets more matches. Step-by-step guide with examples.",
   keywords: "matrimonial profile, marriage profile, dating profile tips",
-  authors: [{ name: "VivaMatrimony Editorial Team" }],
+  authors: [{ name: "Vivahavedi Matrimony Editorial Team" }],
   openGraph: {
     type: "article",
     publishedTime: "2025-01-01T00:00:00.000Z",
-    authors: ["VivaMatrimony Editorial Team"],
+    authors: ["Vivahavedi Matrimony Editorial Team"],
     tags: ["matrimony", "profile tips", "marriage"]
   }
 };

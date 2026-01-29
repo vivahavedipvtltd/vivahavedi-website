@@ -1,7 +1,7 @@
 # User Dashboard Documentation
 
 ## Overview
-This document provides comprehensive documentation for the user dashboard feature implemented in the VivaMatrimony Next.js application. The dashboard displays user profile information and communication statistics after successful login or registration.
+This document provides comprehensive documentation for the user dashboard feature implemented in the Vivahavedi Matrimony Next.js application. The dashboard displays user profile information and communication statistics after successful login or registration.
 
 ## Table of Contents
 1. [Features](#features)

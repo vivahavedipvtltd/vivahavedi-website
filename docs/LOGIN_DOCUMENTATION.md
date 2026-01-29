@@ -467,14 +467,14 @@ auth.isAuthenticated(): boolean
 **Not Authenticated**:
 ```
 ┌──────────────────────────────────────────┐
-│ ❤️ VivaMatrimony  [Nav] [Login][Register]│
+│ ❤️ Vivahavedi Matrimony  [Nav] [Login][Register]│
 └──────────────────────────────────────────┘
 ```
 
 **Authenticated**:
 ```
 ┌──────────────────────────────────────────┐
-│ ❤️ VivaMatrimony  [Nav] [Dashboard][Logout]│
+│ ❤️ Vivahavedi Matrimony  [Nav] [Dashboard][Logout]│
 └──────────────────────────────────────────┘
 ```
 

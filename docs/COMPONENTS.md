@@ -1,6 +1,6 @@
 # Component Documentation
 
-This document provides detailed information about the components used in the VivaMatrimony website.
+This document provides detailed information about the components used in the Vivahavedi Matrimony website.
 
 ## Component Architecture
 

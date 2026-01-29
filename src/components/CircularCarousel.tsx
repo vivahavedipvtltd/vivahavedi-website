@@ -154,7 +154,7 @@ const CircularCarousel = () => {
           <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
             WHY CHOOSE{' '}
             <span className="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 bg-clip-text text-transparent animate-gradient-x">
-              VIVAMATRIMONY
+              VIVAHAVEDI MATRIMONY
             </span>
           </h2>
         </div>

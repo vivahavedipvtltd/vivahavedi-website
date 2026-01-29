@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This document provides comprehensive instructions for deploying the VivaMatrimony Next.js application to various platforms and environments.
+This document provides comprehensive instructions for deploying the Vivahavedi Matrimony Next.js application to various platforms and environments.
 
 ## Pre-Deployment Checklist
 

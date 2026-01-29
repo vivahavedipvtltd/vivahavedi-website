@@ -1,8 +1,69 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { getHomeContactDetails, formatPhoneNumber, type ContactDetails } from '@/lib/contactUsApi';
+
+interface Religion {
+  id: number;
+  name: string;
+}
 
 const Footer = () => {
+  const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null);
+  const [religions, setReligions] = useState<Religion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [religionsLoading, setReligionsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContactDetails = async () => {
+      try {
+        const details = await getHomeContactDetails();
+        setContactDetails(details);
+      } catch (error) {
+        console.error('Error fetching contact details for footer:', error);
+        // Fallback to default values if API fails
+        setContactDetails({
+          name: 'vivahavedi',
+          mobile: 'XXXXXXXXXX',
+          email: 'info@vivahavedimatrimony.com'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContactDetails();
+  }, []);
+
+  useEffect(() => {
+    const fetchReligions = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/masters`);
+        const data = await response.json();
+
+        if (data.status === 'success' && data.data.religion) {
+          setReligions(data.data.religion.slice(0, 6)); // Limit to 6 religions
+        }
+      } catch (error) {
+        console.error('Error fetching religions for footer:', error);
+      } finally {
+        setReligionsLoading(false);
+      }
+    };
+
+    fetchReligions();
+  }, []);
+
+  const createSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
   return (
     <footer className="bg-gray-900 text-white">
       {/* Main Footer Content */}
@@ -12,62 +73,64 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Heart className="h-6 w-6 text-red-500" />
-              <span className="text-xl font-bold">vivahavedi</span>
+              <span className="text-xl font-bold">{contactDetails?.name || 'vivahavedi Pvt Ltd'}</span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               India&apos;s most trusted matrimonial site. Find your perfect life partner from millions of verified profiles.
             </p>
-            <div className="space-y-2">
+            {loading ? (
               <div className="flex items-center space-x-2 text-sm">
-                <Phone className="h-4 w-4 text-red-500" />
-                <span>+91-XXXXXXXXXX</span>
+                <div className="animate-pulse h-4 bg-gray-700 rounded w-40"></div>
               </div>
-              <div className="flex items-center space-x-2 text-sm">
-                <Mail className="h-4 w-4 text-red-500" />
-                <span>info@vivamatrimony.com</span>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-sm">
+                  <Phone className="h-4 w-4 text-red-500" />
+                  <a
+                    href={`tel:+91${contactDetails?.mobile}`}
+                    className="hover:text-red-400 transition-colors"
+                  >
+                    {contactDetails?.mobile ? formatPhoneNumber(contactDetails.mobile) : '+91-XXXXXXXXXX'}
+                  </a>
+                </div>
+                <div className="flex items-center space-x-2 text-sm">
+                  <Mail className="h-4 w-4 text-red-500" />
+                  <a
+                    href={`mailto:${contactDetails?.email}`}
+                    className="hover:text-red-400 transition-colors"
+                  >
+                    {contactDetails?.email || 'info@vivahavedimatrimony.com'}
+                  </a>
+                </div>
+                <div className="flex items-center space-x-2 text-sm">
+                  <MapPin className="h-4 w-4 text-red-500" />
+                  <span>Kochi, Kerala, India</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2 text-sm">
-                <MapPin className="h-4 w-4 text-red-500" />
-                <span>Mumbai, Maharashtra, India</span>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Browse Profiles */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Browse Profiles</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/profiles" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  All Profiles
-                </Link>
-              </li>
-              <li>
-                <Link href="/community/punjabi" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Punjabi Matrimony
-                </Link>
-              </li>
-              <li>
-                <Link href="/community/tamil" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Tamil Matrimony
-                </Link>
-              </li>
-              <li>
-                <Link href="/community/gujarati" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Gujarati Matrimony
-                </Link>
-              </li>
-              <li>
-                <Link href="/community/marathi" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Marathi Matrimony
-                </Link>
-              </li>
-              <li>
-                <Link href="/community/bengali" className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm">
-                  Bengali Matrimony
-                </Link>
-              </li>
-            </ul>
+            {religionsLoading ? (
+              <div className="flex items-center space-x-2">
+                <div className="animate-pulse h-4 bg-gray-700 rounded w-32"></div>
+              </div>
+            ) : (
+              <ul className="space-y-2">
+                {religions.map((religion) => (
+                  <li key={religion.id}>
+                    <Link
+                      href={`/matrimony/${createSlug(religion.name)}`}
+                      className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm"
+                    >
+                      {religion.name} Matrimony
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Services */}

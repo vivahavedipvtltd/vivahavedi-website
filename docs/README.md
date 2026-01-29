@@ -1,4 +1,4 @@
-# VivaMatrimony - Next.js Matrimonial Website
+# Vivahavedi Matrimony - Next.js Matrimonial Website
 
 A modern, mobile-friendly, SEO-optimized matrimonial website built with Next.js 15, TypeScript, and Tailwind CSS.
 
