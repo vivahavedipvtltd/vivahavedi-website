@@ -457,28 +457,28 @@ const SearchResultsPage = () => {
           <main className="flex-1 p-4 lg:p-8 overflow-y-auto custom-scrollbar">
             <div className="max-w-7xl mx-auto">
             {/* Page Header */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
+            <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center space-x-2 md:space-x-4 flex-wrap">
                   <button
                     onClick={() => router.push('/search')}
-                    className="text-gray-600 hover:text-gray-900 flex items-center"
+                    className="text-gray-600 hover:text-gray-900 flex items-center text-sm md:text-base whitespace-nowrap"
                   >
-                    <ArrowLeft className="h-5 w-5 mr-1" />
+                    <ArrowLeft className="h-4 w-4 md:h-5 md:w-5 mr-1" />
                     Back to Search
                   </button>
-                  <div className="h-6 w-px bg-gray-300"></div>
-                  <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-                    <Search className="h-6 w-6 mr-2 text-red-500" />
+                  <div className="h-6 w-px bg-gray-300 hidden sm:block"></div>
+                  <h1 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center">
+                    <Search className="h-5 w-5 md:h-6 md:w-6 mr-2 text-red-500" />
                     Search Results
                   </h1>
                 </div>
                 {/* Mobile Filter Toggle */}
                 <button
                   onClick={() => setShowMobileFilters(true)}
-                  className="lg:hidden bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center"
+                  className="lg:hidden bg-red-500 hover:bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center text-sm md:text-base whitespace-nowrap"
                 >
-                  <Filter className="h-5 w-5 mr-2" />
+                  <Filter className="h-4 w-4 md:h-5 md:w-5 mr-1.5" />
                   Refine
                 </button>
               </div>
@@ -520,21 +520,21 @@ const SearchResultsPage = () => {
                 {/* Search Count Banner */}
                 {totalCount > 0 && (
                   <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-                    <div className="flex items-center justify-between">
-                      <div className="text-lg font-semibold text-gray-900">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="text-base md:text-lg font-semibold text-gray-900">
                         {searchType === 'saved' ? 'Saved Search Results: ' : 'Total Results: '}
                         <span className="text-red-600">{totalCount}</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-sm text-gray-600">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <div className="text-xs md:text-sm text-gray-600">
                           Page {currentPage} of {totalPages || 1}
                         </div>
                         {searchType === 'advanced' && (
                           <button
                             onClick={() => setShowSaveModal(true)}
-                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg flex items-center transition-colors duration-200 text-sm md:text-base whitespace-nowrap w-full sm:w-auto justify-center"
                           >
-                            <Bookmark className="h-4 w-4 mr-2" />
+                            <Bookmark className="h-3 w-3 md:h-4 md:w-4 mr-1.5 md:mr-2" />
                             Save Search
                           </button>
                         )}

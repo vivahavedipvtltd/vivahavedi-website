@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import {
   User,
   Users,
@@ -8,7 +9,9 @@ import {
   Calendar,
   Briefcase,
   GraduationCap,
-  Star
+  Star,
+  Edit2,
+  Heart
 } from 'lucide-react';
 import ProfileItem from './ProfileItem';
 import { MyDetails } from '@/types/dashboard';
@@ -25,12 +28,32 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
   return (
     <div className="space-y-6">
       {/* Basic Information */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <User className="h-5 w-5 mr-2 text-red-500" />
-          Basic Information
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="relative bg-gradient-to-br from-white via-white to-red-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        {/* Decorative corner */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-100 to-pink-100 rounded-bl-full opacity-20"></div>
+
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+              <User className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                Basic Information
+              </h2>
+              <p className="text-xs text-gray-500">Personal & Contact Details</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile/basic"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <span className="text-sm font-semibold">Edit</span>
+          </Link>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <ProfileItem icon={<User />} label="Name" value={`${basic.user_fname || ''} ${basic.user_lname || ''}`} />
           <ProfileItem icon={<Calendar />} label="Age" value={basic.age ? `${basic.age} years` : 'N/A'} />
           <ProfileItem icon={<User />} label="Gender" value={basic.user_gender || 'N/A'} />
@@ -50,12 +73,31 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
       </div>
 
       {/* Physical & Personal Details */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <User className="h-5 w-5 mr-2 text-red-500" />
-          Physical & Personal Details
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="relative bg-gradient-to-br from-white via-white to-blue-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-bl-full opacity-20"></div>
+
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Heart className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Physical & Personal Details
+              </h2>
+              <p className="text-xs text-gray-500">Physical Attributes & Personal Info</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile/basic"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <span className="text-sm font-semibold">Edit</span>
+          </Link>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <ProfileItem icon={<User />} label="Height" value={detailed.up_height ? `${detailed.up_height} cm` : 'N/A'} />
           <ProfileItem icon={<User />} label="Weight" value={detailed.up_weight ? `${detailed.up_weight} kg` : 'N/A'} />
           <ProfileItem icon={<User />} label="Complexion" value={detailed.up_complexion || 'N/A'} />
@@ -70,12 +112,31 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
       </div>
 
       {/* Education & Career */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <GraduationCap className="h-5 w-5 mr-2 text-red-500" />
-          Education & Career
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="relative bg-gradient-to-br from-white via-white to-green-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-100 to-emerald-100 rounded-bl-full opacity-20"></div>
+
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+              <GraduationCap className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Education & Career
+              </h2>
+              <p className="text-xs text-gray-500">Academic & Professional Details</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile/education"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <span className="text-sm font-semibold">Edit</span>
+          </Link>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <ProfileItem icon={<GraduationCap />} label="Qualification Level" value={detailed.up_qualification_level || 'N/A'} />
           <ProfileItem icon={<GraduationCap />} label="Qualification" value={detailed.up_qualification || 'N/A'} />
           <ProfileItem icon={<GraduationCap />} label="Specialization" value={detailed.up_specialization || 'N/A'} />
@@ -97,12 +158,31 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
       </div>
 
       {/* Family Details */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <Users className="h-5 w-5 mr-2 text-red-500" />
-          Family Details
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="relative bg-gradient-to-br from-white via-white to-purple-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-100 to-pink-100 rounded-bl-full opacity-20"></div>
+
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Users className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Family Details
+              </h2>
+              <p className="text-xs text-gray-500">Family Background & Information</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile/family"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <span className="text-sm font-semibold">Edit</span>
+          </Link>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <ProfileItem icon={<Users />} label="Family Type" value={detailed.up_family_type || 'N/A'} />
           <ProfileItem icon={<Users />} label="Family Status" value={detailed.up_family_status || 'N/A'} />
           <ProfileItem icon={<Users />} label="Family Values" value={detailed.up_family_values || 'N/A'} />
@@ -119,16 +199,35 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
       </div>
 
       {/* Hobbies & Interests */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <Star className="h-5 w-5 mr-2 text-red-500" />
-          Hobbies & Interests
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="relative bg-gradient-to-br from-white via-white to-yellow-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-bl-full opacity-20"></div>
+
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Star className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                Hobbies & Interests
+              </h2>
+              <p className="text-xs text-gray-500">Personal Interests & Lifestyle</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile/hobbies"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <span className="text-sm font-semibold">Edit</span>
+          </Link>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-2 gap-4">
           {detailed.up_hobbies && (
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1 flex items-center">
-                <Star className="h-4 w-4 mr-1 text-red-500" />
+            <div className="p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 hover:border-yellow-300 transition-colors">
+              <p className="text-xs text-gray-600 mb-2 flex items-center font-semibold">
+                <Star className="h-4 w-4 mr-1 text-yellow-600" />
                 Hobbies
               </p>
               <p className="text-sm font-medium text-gray-900">
@@ -139,9 +238,9 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             </div>
           )}
           {detailed.up_music && (
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1 flex items-center">
-                <Star className="h-4 w-4 mr-1 text-red-500" />
+            <div className="p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 hover:border-yellow-300 transition-colors">
+              <p className="text-xs text-gray-600 mb-2 flex items-center font-semibold">
+                <Star className="h-4 w-4 mr-1 text-yellow-600" />
                 Music
               </p>
               <p className="text-sm font-medium text-gray-900">
@@ -152,9 +251,9 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             </div>
           )}
           {detailed.up_reads && (
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1 flex items-center">
-                <Star className="h-4 w-4 mr-1 text-red-500" />
+            <div className="p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 hover:border-yellow-300 transition-colors">
+              <p className="text-xs text-gray-600 mb-2 flex items-center font-semibold">
+                <Star className="h-4 w-4 mr-1 text-yellow-600" />
                 Reading
               </p>
               <p className="text-sm font-medium text-gray-900">
@@ -165,9 +264,9 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             </div>
           )}
           {detailed.up_cuisine && (
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-1 flex items-center">
-                <Star className="h-4 w-4 mr-1 text-red-500" />
+            <div className="p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 hover:border-yellow-300 transition-colors">
+              <p className="text-xs text-gray-600 mb-2 flex items-center font-semibold">
+                <Star className="h-4 w-4 mr-1 text-yellow-600" />
                 Cuisine
               </p>
               <p className="text-sm font-medium text-gray-900">
@@ -191,12 +290,33 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
 
       {/* About Myself */}
       {detailed.up_about_myself && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-            <User className="h-5 w-5 mr-2 text-red-500" />
-            About Myself
-          </h2>
-          <p className="text-gray-700 leading-relaxed">{detailed.up_about_myself}</p>
+        <div className="relative bg-gradient-to-br from-white via-white to-indigo-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full opacity-20"></div>
+
+          <div className="relative flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+                <User className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  About Myself
+                </h2>
+                <p className="text-xs text-gray-500">Personal Description</p>
+              </div>
+            </div>
+            <Link
+              href="/dashboard/profile/about"
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+            >
+              <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+              <span className="text-sm font-semibold">Edit</span>
+            </Link>
+          </div>
+
+          <div className="relative p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
+            <p className="text-gray-700 leading-relaxed text-base">{detailed.up_about_myself}</p>
+          </div>
         </div>
       )}
     </div>
