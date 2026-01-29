@@ -134,7 +134,7 @@ const Footer = () => {
           </div>
 
           {/* Matrimony */}
-          <div className="space-y-4">
+          <nav className="space-y-4" aria-label="Regional matrimony links">
             <h3 className="text-lg font-semibold text-white">Matrimony</h3>
             <ul className="space-y-2">
               <li>
@@ -168,10 +168,10 @@ const Footer = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
 
           {/* Company */}
-          <div className="space-y-4">
+          <nav className="space-y-4" aria-label="Company links">
             <h3 className="text-lg font-semibold text-white">Company</h3>
             <ul className="space-y-2">
               <li>
@@ -205,7 +205,7 @@ const Footer = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         {/* Social Media & App Downloads */}

@@ -3,21 +3,21 @@ import { Heart, Users, Shield, Star } from 'lucide-react';
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
+    <section className="relative min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 overflow-hidden" aria-label="Hero section">
+      {/* Background Elements - Decorative */}
+      <div className="absolute inset-0" aria-hidden="true">
         <div className="absolute top-20 left-10 w-32 h-32 bg-red-100 rounded-full opacity-40 animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-24 h-24 bg-pink-100 rounded-full opacity-60 animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-red-200 rounded-full opacity-30 animate-pulse delay-500"></div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex items-center min-h-screen">
+      <article className="relative z-10 flex items-center min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
 
             {/* Left Content */}
-            <div className="text-center lg:text-left">
+            <header className="text-center lg:text-left">
               <div className="inline-flex items-center bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <Heart className="h-4 w-4 mr-2" />
                 India&apos;s Most Trusted Matrimonial Platform
@@ -44,33 +44,33 @@ const HeroSection = () => {
               </div>
 
               {/* Trust Indicators */}
-              <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-2">
+              <aside className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0" aria-label="Trust indicators">
+                <figure className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-2" aria-hidden="true">
                     <Users className="h-6 w-6 text-red-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">10M+</div>
-                  <div className="text-sm text-gray-600">Happy Users</div>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-2">
+                  <p className="text-2xl font-bold text-gray-900">10M+</p>
+                  <figcaption className="text-sm text-gray-600">Happy Users</figcaption>
+                </figure>
+                <figure className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-2" aria-hidden="true">
                     <Shield className="h-6 w-6 text-red-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">100%</div>
-                  <div className="text-sm text-gray-600">Verified</div>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-2">
+                  <p className="text-2xl font-bold text-gray-900">100%</p>
+                  <figcaption className="text-sm text-gray-600">Verified</figcaption>
+                </figure>
+                <figure className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-2" aria-hidden="true">
                     <Star className="h-6 w-6 text-red-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">15+</div>
-                  <div className="text-sm text-gray-600">Years</div>
-                </div>
-              </div>
-            </div>
+                  <p className="text-2xl font-bold text-gray-900">15+</p>
+                  <figcaption className="text-sm text-gray-600">Years</figcaption>
+                </figure>
+              </aside>
+            </header>
 
             {/* Right Content - Image */}
-            <div className="relative">
+            <figure className="relative">
               <div className="relative w-full h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
                 <Image
                   src="/images/hero_image.png"
@@ -94,10 +94,10 @@ const HeroSection = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </figure>
           </div>
         </div>
-      </div>
+      </article>
     </section>
   );
 };

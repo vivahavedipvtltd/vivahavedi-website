@@ -9,22 +9,25 @@ import ClientScrollManager from '@/components/ClientScrollManager';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import SectionErrorFallback from '@/components/SectionErrorFallback';
 
-// Keep essential sections with animations for elegant experience
-const SearchSection = lazy(() => import('@/components/SearchSection'));
-const FeaturedProfiles = lazy(() => import('@/components/FeaturedProfiles'));
+// Skeleton Loaders
+import SectionSkeleton from '@/components/skeletons/SectionSkeleton';
+
+// Critical sections - NO lazy loading (above the fold)
+import SearchSection from '@/components/SearchSection';
+import FeaturedProfiles from '@/components/FeaturedProfiles';
+
+// Important sections - Lazy load with high priority (near the fold)
 const FindSpecialSomeone = lazy(() => import('@/components/FindSpecialSomeone'));
 const WhyChooseUs = lazy(() => import('@/components/WhyChooseUs'));
+
+// Secondary sections - Lazy load with normal priority (below the fold)
 const SuccessStories = lazy(() => import('@/components/SuccessStories'));
 const MobileAppDownload = lazy(() => import('@/components/MobileAppDownload'));
 const FAQ = lazy(() => import('@/components/FAQ'));
+
+// Tertiary sections - Lazy load with low priority (far below the fold)
 const CasteMatrimonySection = lazy(() => import('@/components/CasteMatrimonySection'));
 const RegionMatrimonySection = lazy(() => import('@/components/RegionMatrimonySection'));
-
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center py-16">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-  </div>
-);
 
 export default function Home() {
   // Comprehensive Structured Data for Landing Page (JSON-LD)
@@ -335,72 +338,77 @@ export default function Home() {
           </div>
         </ErrorBoundary>
 
+        {/* Critical Section 1: Search - NO lazy loading, immediate render */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load search section" />}>
-          <Suspense fallback={<LoadingSpinner />}>
-            <div id="search">
-              <SearchSection />
-            </div>
-          </Suspense>
+          <div id="search">
+            <SearchSection />
+          </div>
         </ErrorBoundary>
 
+        {/* Critical Section 2: Featured Profiles - NO lazy loading, immediate render */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load featured profiles" />}>
-          <Suspense fallback={<LoadingSpinner />}>
-            <div id="profiles">
-              <FeaturedProfiles />
-            </div>
-          </Suspense>
+          <div id="profiles">
+            <FeaturedProfiles />
+          </div>
         </ErrorBoundary>
 
+        {/* Important Section 1: How It Works - Lazy with skeleton */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load this section" />}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<SectionSkeleton variant="grid" />}>
             <div id="find-special-someone">
               <FindSpecialSomeone />
             </div>
           </Suspense>
         </ErrorBoundary>
 
+        {/* Important Section 2: Why Choose Us - Lazy with skeleton */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load this section" />}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<SectionSkeleton variant="grid" />}>
             <div id="why-choose-us">
               <WhyChooseUs />
             </div>
           </Suspense>
         </ErrorBoundary>
 
+        {/* Secondary Section 1: Success Stories - Lazy with skeleton */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load success stories" />}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<SectionSkeleton variant="default" />}>
             <div id="success-stories">
               <SuccessStories />
             </div>
           </Suspense>
         </ErrorBoundary>
 
+        {/* Secondary Section 2: Mobile App - Lazy with skeleton */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load mobile app section" />}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<SectionSkeleton variant="default" />}>
             <div id="mobile-app">
               <MobileAppDownload />
             </div>
           </Suspense>
         </ErrorBoundary>
 
+        {/* Secondary Section 3: FAQ - Lazy with skeleton */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load FAQ section" />}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<SectionSkeleton variant="compact" />}>
             <div id="faq">
               <FAQ />
             </div>
           </Suspense>
         </ErrorBoundary>
 
+        {/* Tertiary Section 1: Caste Matrimony - Lazy with skeleton (low priority) */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load matrimony section" />}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<SectionSkeleton variant="grid" />}>
             <div id="caste-matrimony">
               <CasteMatrimonySection />
             </div>
           </Suspense>
         </ErrorBoundary>
 
+        {/* Tertiary Section 2: Region Matrimony - Lazy with skeleton (low priority) */}
         <ErrorBoundary fallback={<SectionErrorFallback message="Unable to load region matrimony section" />}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<SectionSkeleton variant="grid" />}>
             <div id="region-matrimony">
               <RegionMatrimonySection />
             </div>

@@ -115,10 +115,11 @@ export const metadata: Metadata = {
     description: "Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform.",
     images: [
       {
-        url: "https://vivamatrimony.com/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
         alt: "vivahavedi - India's Most Trusted Matrimonial Platform",
+        type: "image/png",
       },
     ],
   },
@@ -126,7 +127,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "vivahavedi - Find Your Perfect Life Partner",
     description: "Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform.",
-    images: ["https://vivamatrimony.com/og-image.png"],
+    images: ["/twitter-image"],
     creator: "@vivahavedi",
     site: "@vivahavedi",
   },
