@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const stateName = state.name;
   const title = `${stateName} Matrimony - Find ${stateName} Brides & Grooms by District | vivahavedi`;
   const description = `Find your perfect life partner from ${stateName}. Browse thousands of verified ${stateName} matrimonial profiles from all districts. Connect with ${stateName} brides and grooms. Register free today!`;
-  const url = `https://vivamatrimony.com/matrimony-in/${stateSlug}`;
+  const url = `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}`;
 
   return {
     title,
@@ -103,64 +103,64 @@ export default async function StateLayout({ params, children }: Props) {
     '@graph': [
       {
         '@type': 'WebPage',
-        '@id': `https://vivamatrimony.com/matrimony-in/${stateSlug}`,
-        url: `https://vivamatrimony.com/matrimony-in/${stateSlug}`,
+        '@id': `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}`,
+        url: `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}`,
         name: `${state.name} Matrimony - Find ${state.name} Brides & Grooms by District`,
         description: `Find your perfect life partner from ${state.name}. Browse thousands of verified ${state.name} matrimonial profiles from all districts.`,
         isPartOf: {
-          '@id': 'https://vivamatrimony.com/#website',
+          '@id': 'https://vivahavedimatrimony.com/#website',
         },
         breadcrumb: {
-          '@id': `https://vivamatrimony.com/matrimony-in/${stateSlug}#breadcrumb`,
+          '@id': `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}#breadcrumb`,
         },
       },
       {
         '@type': 'BreadcrumbList',
-        '@id': `https://vivamatrimony.com/matrimony-in/${stateSlug}#breadcrumb`,
+        '@id': `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}#breadcrumb`,
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://vivamatrimony.com',
+            item: 'https://vivahavedimatrimony.com',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Matrimony by Region',
-            item: 'https://vivamatrimony.com/matrimony-in',
+            item: 'https://vivahavedimatrimony.com/matrimony-in',
           },
           {
             '@type': 'ListItem',
             position: 3,
             name: `${state.name} Matrimony`,
-            item: `https://vivamatrimony.com/matrimony-in/${stateSlug}`,
+            item: `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}`,
           },
         ],
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://vivamatrimony.com/#website',
-        url: 'https://vivamatrimony.com',
+        '@id': 'https://vivahavedimatrimony.com/#website',
+        url: 'https://vivahavedimatrimony.com',
         name: 'vivahavedi',
         description: 'Find your perfect life partner on vivahavedi, a trusted Indian matrimonial platform.',
         publisher: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         potentialAction: {
           '@type': 'SearchAction',
-          target: 'https://vivamatrimony.com/search?q={search_term_string}',
+          target: 'https://vivahavedimatrimony.com/search?q={search_term_string}',
           'query-input': 'required name=search_term_string',
         },
       },
       {
         '@type': 'Organization',
-        '@id': 'https://vivamatrimony.com/#organization',
+        '@id': 'https://vivahavedimatrimony.com/#organization',
         name: 'vivahavedi',
-        url: 'https://vivamatrimony.com',
+        url: 'https://vivahavedimatrimony.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://vivamatrimony.com/apple-touch-icon.png',
+          url: 'https://vivahavedimatrimony.com/apple-touch-icon.png',
         },
         description: 'India\'s most trusted matrimonial service helping millions find their perfect life partner.',
         address: {

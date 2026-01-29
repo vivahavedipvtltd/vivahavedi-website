@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://vivamatrimony.com/success-stories',
+    url: 'https://vivahavedimatrimony.com/success-stories',
     siteName: 'vivahavedi',
     title: 'Success Stories - Real Couples Who Found Love | vivahavedi',
     description: 'Read inspiring success stories of real couples who found their perfect match on vivahavedi. Join thousands of happy couples today.',
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     creator: '@vivahavedi',
   },
   alternates: {
-    canonical: 'https://vivamatrimony.com/success-stories',
+    canonical: 'https://vivahavedimatrimony.com/success-stories',
   },
   other: {
     'article:section': 'Success Stories',

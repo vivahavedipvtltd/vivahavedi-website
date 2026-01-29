@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const casteName = caste.name;
   const title = `${casteName} Matrimony - ${religionName} ${casteName} Brides & Grooms | vivahavedi`;
   const description = `Find your perfect ${religionName} ${casteName} life partner on vivahavedi. Browse verified ${casteName} matrimonial profiles from ${religionName} community. Connect with ${casteName} brides and grooms today.`;
-  const url = `https://vivamatrimony.com/matrimony/${religionSlug}/${casteSlug}`;
+  const url = `https://vivahavedimatrimony.com/matrimony/${religionSlug}/${casteSlug}`;
 
   return {
     title,
@@ -121,70 +121,70 @@ export default async function CasteLayout({ params, children }: Props) {
     '@graph': [
       {
         '@type': 'WebPage',
-        '@id': `https://vivamatrimony.com/matrimony/${religionSlug}/${casteSlug}`,
-        url: `https://vivamatrimony.com/matrimony/${religionSlug}/${casteSlug}`,
+        '@id': `https://vivahavedimatrimony.com/matrimony/${religionSlug}/${casteSlug}`,
+        url: `https://vivahavedimatrimony.com/matrimony/${religionSlug}/${casteSlug}`,
         name: `${caste.name} Matrimony - ${religion.name} ${caste.name} Brides & Grooms`,
         description: `Find your perfect ${religion.name} ${caste.name} life partner on vivahavedi. Browse verified ${caste.name} matrimonial profiles.`,
         isPartOf: {
-          '@id': 'https://vivamatrimony.com/#website',
+          '@id': 'https://vivahavedimatrimony.com/#website',
         },
         breadcrumb: {
-          '@id': `https://vivamatrimony.com/matrimony/${religionSlug}/${casteSlug}#breadcrumb`,
+          '@id': `https://vivahavedimatrimony.com/matrimony/${religionSlug}/${casteSlug}#breadcrumb`,
         },
       },
       {
         '@type': 'BreadcrumbList',
-        '@id': `https://vivamatrimony.com/matrimony/${religionSlug}/${casteSlug}#breadcrumb`,
+        '@id': `https://vivahavedimatrimony.com/matrimony/${religionSlug}/${casteSlug}#breadcrumb`,
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://vivamatrimony.com',
+            item: 'https://vivahavedimatrimony.com',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Matrimony',
-            item: 'https://vivamatrimony.com/matrimony',
+            item: 'https://vivahavedimatrimony.com/matrimony',
           },
           {
             '@type': 'ListItem',
             position: 3,
             name: `${religion.name} Matrimony`,
-            item: `https://vivamatrimony.com/matrimony/${religionSlug}`,
+            item: `https://vivahavedimatrimony.com/matrimony/${religionSlug}`,
           },
           {
             '@type': 'ListItem',
             position: 4,
             name: `${caste.name} Matrimony`,
-            item: `https://vivamatrimony.com/matrimony/${religionSlug}/${casteSlug}`,
+            item: `https://vivahavedimatrimony.com/matrimony/${religionSlug}/${casteSlug}`,
           },
         ],
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://vivamatrimony.com/#website',
-        url: 'https://vivamatrimony.com',
+        '@id': 'https://vivahavedimatrimony.com/#website',
+        url: 'https://vivahavedimatrimony.com',
         name: 'vivahavedi',
         description: 'Find your perfect life partner on vivahavedi, a trusted Indian matrimonial platform.',
         publisher: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         potentialAction: {
           '@type': 'SearchAction',
-          target: 'https://vivamatrimony.com/search?q={search_term_string}',
+          target: 'https://vivahavedimatrimony.com/search?q={search_term_string}',
           'query-input': 'required name=search_term_string',
         },
       },
       {
         '@type': 'Organization',
-        '@id': 'https://vivamatrimony.com/#organization',
+        '@id': 'https://vivahavedimatrimony.com/#organization',
         name: 'vivahavedi',
-        url: 'https://vivamatrimony.com',
+        url: 'https://vivahavedimatrimony.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://vivamatrimony.com/apple-touch-icon.png',
+          url: 'https://vivahavedimatrimony.com/apple-touch-icon.png',
         },
       },
       {

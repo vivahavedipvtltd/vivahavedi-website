@@ -37,53 +37,53 @@ export default function Home() {
       // WebPage Schema
       {
         '@type': 'WebPage',
-        '@id': 'https://vivamatrimony.com/#webpage',
-        url: 'https://vivamatrimony.com',
+        '@id': 'https://vivahavedimatrimony.com/#webpage',
+        url: 'https://vivahavedimatrimony.com',
         name: 'vivahavedi - Find Your Perfect Life Partner | Indian Matrimonial Site',
         description: 'Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform. Browse verified profiles, connect with compatible matches, and find your soulmate today.',
         isPartOf: {
-          '@id': 'https://vivamatrimony.com/#website',
+          '@id': 'https://vivahavedimatrimony.com/#website',
         },
         about: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         breadcrumb: {
-          '@id': 'https://vivamatrimony.com/#breadcrumb',
+          '@id': 'https://vivahavedimatrimony.com/#breadcrumb',
         },
         inLanguage: 'en-US',
         potentialAction: {
           '@type': 'ReadAction',
-          target: ['https://vivamatrimony.com'],
+          target: ['https://vivahavedimatrimony.com'],
         },
       },
       // BreadcrumbList Schema
       {
         '@type': 'BreadcrumbList',
-        '@id': 'https://vivamatrimony.com/#breadcrumb',
+        '@id': 'https://vivahavedimatrimony.com/#breadcrumb',
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://vivamatrimony.com',
+            item: 'https://vivahavedimatrimony.com',
           },
         ],
       },
       // WebSite Schema with SearchAction
       {
         '@type': 'WebSite',
-        '@id': 'https://vivamatrimony.com/#website',
-        url: 'https://vivamatrimony.com',
+        '@id': 'https://vivahavedimatrimony.com/#website',
+        url: 'https://vivahavedimatrimony.com',
         name: 'vivahavedi',
         description: 'India\'s most trusted matrimonial platform helping millions find their perfect life partner.',
         publisher: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         potentialAction: {
           '@type': 'SearchAction',
           target: {
             '@type': 'EntryPoint',
-            urlTemplate: 'https://vivamatrimony.com/search?q={search_term_string}',
+            urlTemplate: 'https://vivahavedimatrimony.com/search?q={search_term_string}',
           },
           'query-input': 'required name=search_term_string',
         },
@@ -92,22 +92,22 @@ export default function Home() {
       // Organization Schema
       {
         '@type': 'Organization',
-        '@id': 'https://vivamatrimony.com/#organization',
+        '@id': 'https://vivahavedimatrimony.com/#organization',
         name: 'vivahavedi',
         legalName: 'vivahavedi Matrimonial Services',
-        url: 'https://vivamatrimony.com',
+        url: 'https://vivahavedimatrimony.com',
         logo: {
           '@type': 'ImageObject',
-          '@id': 'https://vivamatrimony.com/#logo',
-          url: 'https://vivamatrimony.com/apple-touch-icon.png',
-          contentUrl: 'https://vivamatrimony.com/apple-touch-icon.png',
+          '@id': 'https://vivahavedimatrimony.com/#logo',
+          url: 'https://vivahavedimatrimony.com/apple-touch-icon.png',
+          contentUrl: 'https://vivahavedimatrimony.com/apple-touch-icon.png',
           caption: 'vivahavedi Logo',
           inLanguage: 'en-US',
           width: 180,
           height: 180,
         },
         image: {
-          '@id': 'https://vivamatrimony.com/#logo',
+          '@id': 'https://vivahavedimatrimony.com/#logo',
         },
         description: 'India\'s most trusted matrimonial service helping millions find their perfect life partner. With 10M+ verified profiles, 50,000+ success stories, and 15+ years of excellence.',
         foundingDate: '2009',
@@ -143,11 +143,11 @@ export default function Home() {
       // Service Schema
       {
         '@type': 'Service',
-        '@id': 'https://vivamatrimony.com/#service',
+        '@id': 'https://vivahavedimatrimony.com/#service',
         name: 'Matrimonial Services',
         description: 'Comprehensive matrimonial services helping individuals find their perfect life partner across all religions, castes, and communities in India.',
         provider: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         serviceType: 'Matrimonial Service',
         areaServed: {
@@ -201,7 +201,7 @@ export default function Home() {
       // FAQPage Schema
       {
         '@type': 'FAQPage',
-        '@id': 'https://vivamatrimony.com/#faqpage',
+        '@id': 'https://vivahavedimatrimony.com/#faqpage',
         mainEntity: [
           {
             '@type': 'Question',
@@ -272,7 +272,7 @@ export default function Home() {
       // ItemList Schema for Success Stories
       {
         '@type': 'ItemList',
-        '@id': 'https://vivamatrimony.com/#successstories',
+        '@id': 'https://vivahavedimatrimony.com/#successstories',
         name: 'Success Stories',
         description: 'Real couples who found their perfect match on vivahavedi',
         numberOfItems: 50000,
@@ -283,7 +283,7 @@ export default function Home() {
             item: {
               '@type': 'Review',
               itemReviewed: {
-                '@id': 'https://vivamatrimony.com/#service',
+                '@id': 'https://vivahavedimatrimony.com/#service',
               },
               reviewRating: {
                 '@type': 'Rating',
@@ -300,7 +300,7 @@ export default function Home() {
       // SoftwareApplication Schema for Mobile App
       {
         '@type': 'SoftwareApplication',
-        '@id': 'https://vivamatrimony.com/#mobileapp',
+        '@id': 'https://vivahavedimatrimony.com/#mobileapp',
         name: 'vivahavedi Mobile App',
         operatingSystem: 'ANDROID',
         applicationCategory: 'LifestyleApplication',

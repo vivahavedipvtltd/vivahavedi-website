@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   publisher: 'vivahavedi',
   robots: 'index, follow',
   alternates: {
-    canonical: 'https://vivamatrimony.com/matrimony-in',
+    canonical: 'https://vivahavedimatrimony.com/matrimony-in',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://vivamatrimony.com/matrimony-in',
+    url: 'https://vivahavedimatrimony.com/matrimony-in',
     siteName: 'vivahavedi',
     title: 'Regional Matrimony - Find Brides & Grooms by State & District | vivahavedi',
     description: 'Find your perfect life partner from your preferred state and district. Browse thousands of verified profiles across major Indian states.',
@@ -38,58 +38,58 @@ export default function MatrimonyByRegionLayout({ children }: Props) {
     '@graph': [
       {
         '@type': 'WebPage',
-        '@id': 'https://vivamatrimony.com/matrimony-in',
-        url: 'https://vivamatrimony.com/matrimony-in',
+        '@id': 'https://vivahavedimatrimony.com/matrimony-in',
+        url: 'https://vivahavedimatrimony.com/matrimony-in',
         name: 'Regional Matrimony - Find Brides & Grooms by State & District',
         description: 'Find your perfect life partner from your preferred state and district. Browse thousands of verified profiles from Kerala, Tamil Nadu, Karnataka, Andhra Pradesh, Telangana & Maharashtra.',
         isPartOf: {
-          '@id': 'https://vivamatrimony.com/#website',
+          '@id': 'https://vivahavedimatrimony.com/#website',
         },
         breadcrumb: {
-          '@id': 'https://vivamatrimony.com/matrimony-in#breadcrumb',
+          '@id': 'https://vivahavedimatrimony.com/matrimony-in#breadcrumb',
         },
       },
       {
         '@type': 'BreadcrumbList',
-        '@id': 'https://vivamatrimony.com/matrimony-in#breadcrumb',
+        '@id': 'https://vivahavedimatrimony.com/matrimony-in#breadcrumb',
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://vivamatrimony.com',
+            item: 'https://vivahavedimatrimony.com',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Matrimony by Region',
-            item: 'https://vivamatrimony.com/matrimony-in',
+            item: 'https://vivahavedimatrimony.com/matrimony-in',
           },
         ],
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://vivamatrimony.com/#website',
-        url: 'https://vivamatrimony.com',
+        '@id': 'https://vivahavedimatrimony.com/#website',
+        url: 'https://vivahavedimatrimony.com',
         name: 'vivahavedi',
         description: 'Find your perfect life partner on vivahavedi, a trusted Indian matrimonial platform.',
         publisher: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         potentialAction: {
           '@type': 'SearchAction',
-          target: 'https://vivamatrimony.com/search?q={search_term_string}',
+          target: 'https://vivahavedimatrimony.com/search?q={search_term_string}',
           'query-input': 'required name=search_term_string',
         },
       },
       {
         '@type': 'Organization',
-        '@id': 'https://vivamatrimony.com/#organization',
+        '@id': 'https://vivahavedimatrimony.com/#organization',
         name: 'vivahavedi',
-        url: 'https://vivamatrimony.com',
+        url: 'https://vivahavedimatrimony.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://vivamatrimony.com/apple-touch-icon.png',
+          url: 'https://vivahavedimatrimony.com/apple-touch-icon.png',
         },
         description: 'India\'s most trusted matrimonial service helping millions find their perfect life partner.',
         address: {
@@ -104,11 +104,11 @@ export default function MatrimonyByRegionLayout({ children }: Props) {
       },
       {
         '@type': 'Service',
-        '@id': 'https://vivamatrimony.com/matrimony-in#service',
+        '@id': 'https://vivahavedimatrimony.com/matrimony-in#service',
         name: 'Regional Matrimonial Services',
         description: 'Comprehensive regional matrimonial services helping individuals find their perfect life partner from their preferred state and district across India.',
         provider: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         serviceType: 'Regional Matrimonial Service',
         areaServed: [

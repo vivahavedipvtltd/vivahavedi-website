@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { state, district } = data;
   const title = `${district.name} Matrimony - ${state.name} ${district.name} Brides & Grooms | vivahavedi`;
   const description = `Find your perfect life partner from ${district.name}, ${state.name}. Browse thousands of verified matrimonial profiles from ${district.name}. Connect with ${district.name} brides and grooms across all religions and castes. Register free today!`;
-  const url = `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`;
+  const url = `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`;
 
   return {
     title,
@@ -123,70 +123,70 @@ export default async function DistrictLayout({ params, children }: Props) {
     '@graph': [
       {
         '@type': 'WebPage',
-        '@id': `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
-        url: `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
+        '@id': `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
+        url: `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
         name: `${district.name} Matrimony - ${state.name} ${district.name} Brides & Grooms`,
         description: `Find your perfect life partner from ${district.name}, ${state.name}. Browse thousands of verified matrimonial profiles from ${district.name} across all religions and castes.`,
         isPartOf: {
-          '@id': 'https://vivamatrimony.com/#website',
+          '@id': 'https://vivahavedimatrimony.com/#website',
         },
         breadcrumb: {
-          '@id': `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}#breadcrumb`,
+          '@id': `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}#breadcrumb`,
         },
       },
       {
         '@type': 'BreadcrumbList',
-        '@id': `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}#breadcrumb`,
+        '@id': `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}#breadcrumb`,
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://vivamatrimony.com',
+            item: 'https://vivahavedimatrimony.com',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Matrimony by Region',
-            item: 'https://vivamatrimony.com/matrimony-in',
+            item: 'https://vivahavedimatrimony.com/matrimony-in',
           },
           {
             '@type': 'ListItem',
             position: 3,
             name: `${state.name} Matrimony`,
-            item: `https://vivamatrimony.com/matrimony-in/${stateSlug}`,
+            item: `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}`,
           },
           {
             '@type': 'ListItem',
             position: 4,
             name: `${district.name} Matrimony`,
-            item: `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
+            item: `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
           },
         ],
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://vivamatrimony.com/#website',
-        url: 'https://vivamatrimony.com',
+        '@id': 'https://vivahavedimatrimony.com/#website',
+        url: 'https://vivahavedimatrimony.com',
         name: 'vivahavedi',
         description: 'Find your perfect life partner on vivahavedi, a trusted Indian matrimonial platform.',
         publisher: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         potentialAction: {
           '@type': 'SearchAction',
-          target: 'https://vivamatrimony.com/search?q={search_term_string}',
+          target: 'https://vivahavedimatrimony.com/search?q={search_term_string}',
           'query-input': 'required name=search_term_string',
         },
       },
       {
         '@type': 'Organization',
-        '@id': 'https://vivamatrimony.com/#organization',
+        '@id': 'https://vivahavedimatrimony.com/#organization',
         name: 'vivahavedi',
-        url: 'https://vivamatrimony.com',
+        url: 'https://vivahavedimatrimony.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://vivamatrimony.com/apple-touch-icon.png',
+          url: 'https://vivahavedimatrimony.com/apple-touch-icon.png',
         },
         description: 'India\'s most trusted matrimonial service helping millions find their perfect life partner.',
         address: {
@@ -198,10 +198,10 @@ export default async function DistrictLayout({ params, children }: Props) {
       },
       {
         '@type': 'LocalBusiness',
-        '@id': `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}#localbusiness`,
+        '@id': `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}#localbusiness`,
         name: `vivahavedi ${district.name} Matrimony`,
         description: `Find verified matrimonial profiles from ${district.name}, ${state.name}. Connect with ${district.name} brides and grooms across all communities.`,
-        url: `https://vivamatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
+        url: `https://vivahavedimatrimony.com/matrimony-in/${stateSlug}/${districtSlug}`,
         address: {
           '@type': 'PostalAddress',
           addressLocality: district.name,

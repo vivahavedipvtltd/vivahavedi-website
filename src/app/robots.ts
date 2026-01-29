@@ -25,6 +25,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/dashboard/', '/api/'],
       },
     ],
-    sitemap: 'https://vivamatrimony.com/sitemap.xml',
+    sitemap: 'https://vivahavedimatrimony.com/sitemap.xml',
   };
 }

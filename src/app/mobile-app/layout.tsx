@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://vivamatrimony.com/mobile-app',
+    url: 'https://vivahavedimatrimony.com/mobile-app',
     siteName: 'vivahavedi',
     title: 'Download vivahavedi Mobile App - Find Your Life Partner on the Go',
     description: 'Download the free vivahavedi matrimony app. Instant chat, verified profiles, smart matches. Rated 4.8 stars with 1M+ downloads.',
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     creator: '@vivahavedi',
   },
   alternates: {
-    canonical: 'https://vivamatrimony.com/mobile-app',
+    canonical: 'https://vivahavedimatrimony.com/mobile-app',
   },
   appLinks: {
     android: {

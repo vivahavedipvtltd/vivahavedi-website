@@ -59,7 +59,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://vivamatrimony.com"),
+  metadataBase: new URL("https://vivahavedimatrimony.com"),
   title: "vivahavedi - Find Your Perfect Life Partner | Indian Matrimonial Site",
   description: "Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform. Browse verified profiles, connect with compatible matches, and find your soulmate today.",
   keywords: "matrimony, marriage, wedding, indian matrimony, life partner, bride, groom, matrimonial site",
@@ -96,20 +96,20 @@ export const metadata: Metadata = {
     title: "vivahavedi",
   },
   alternates: {
-    canonical: "https://vivamatrimony.com",
+    canonical: "https://vivahavedimatrimony.com",
     languages: {
-      "en-IN": "https://vivamatrimony.com",
-      "hi-IN": "https://vivamatrimony.com/hi",
-      "ta-IN": "https://vivamatrimony.com/ta",
-      "te-IN": "https://vivamatrimony.com/te",
-      "kn-IN": "https://vivamatrimony.com/kn",
-      "ml-IN": "https://vivamatrimony.com/ml",
+      "en-IN": "https://vivahavedimatrimony.com",
+      "hi-IN": "https://vivahavedimatrimony.com/hi",
+      "ta-IN": "https://vivahavedimatrimony.com/ta",
+      "te-IN": "https://vivahavedimatrimony.com/te",
+      "kn-IN": "https://vivahavedimatrimony.com/kn",
+      "ml-IN": "https://vivahavedimatrimony.com/ml",
     },
   },
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://vivamatrimony.com",
+    url: "https://vivahavedimatrimony.com",
     siteName: "vivahavedi",
     title: "vivahavedi - Find Your Perfect Life Partner",
     description: "Discover your ideal life partner on vivahavedi, a trusted Indian matrimonial platform.",
@@ -150,7 +150,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="vivahavedi" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <link rel="canonical" href="https://vivamatrimony.com" />
+        <link rel="canonical" href="https://vivahavedimatrimony.com" />
         <link rel="manifest" href="/manifest.json" />
         <script dangerouslySetInnerHTML={{ __html: performanceScript }} />
       </head>

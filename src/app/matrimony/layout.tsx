@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   publisher: 'vivahavedi',
   robots: 'index, follow',
   alternates: {
-    canonical: 'https://vivamatrimony.com/matrimony',
+    canonical: 'https://vivahavedimatrimony.com/matrimony',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://vivamatrimony.com/matrimony',
+    url: 'https://vivahavedimatrimony.com/matrimony',
     siteName: 'vivahavedi',
     title: 'Matrimony Services - Find Brides & Grooms by Religion | vivahavedi',
     description: 'Find your perfect life partner on vivahavedi. Browse lakhs of verified profiles by religion, caste, and community. India\'s most trusted matrimonial platform.',
@@ -38,58 +38,58 @@ export default function MatrimonyLayout({ children }: Props) {
     '@graph': [
       {
         '@type': 'WebPage',
-        '@id': 'https://vivamatrimony.com/matrimony',
-        url: 'https://vivamatrimony.com/matrimony',
+        '@id': 'https://vivahavedimatrimony.com/matrimony',
+        url: 'https://vivahavedimatrimony.com/matrimony',
         name: 'Matrimony Services - Find Brides & Grooms by Religion',
         description: 'Find your perfect life partner on vivahavedi - India\'s most trusted matrimonial platform. Browse lakhs of verified profiles by religion, caste, and community.',
         isPartOf: {
-          '@id': 'https://vivamatrimony.com/#website',
+          '@id': 'https://vivahavedimatrimony.com/#website',
         },
         breadcrumb: {
-          '@id': 'https://vivamatrimony.com/matrimony#breadcrumb',
+          '@id': 'https://vivahavedimatrimony.com/matrimony#breadcrumb',
         },
       },
       {
         '@type': 'BreadcrumbList',
-        '@id': 'https://vivamatrimony.com/matrimony#breadcrumb',
+        '@id': 'https://vivahavedimatrimony.com/matrimony#breadcrumb',
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://vivamatrimony.com',
+            item: 'https://vivahavedimatrimony.com',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Matrimony',
-            item: 'https://vivamatrimony.com/matrimony',
+            item: 'https://vivahavedimatrimony.com/matrimony',
           },
         ],
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://vivamatrimony.com/#website',
-        url: 'https://vivamatrimony.com',
+        '@id': 'https://vivahavedimatrimony.com/#website',
+        url: 'https://vivahavedimatrimony.com',
         name: 'vivahavedi',
         description: 'Find your perfect life partner on vivahavedi, a trusted Indian matrimonial platform.',
         publisher: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         potentialAction: {
           '@type': 'SearchAction',
-          target: 'https://vivamatrimony.com/search?q={search_term_string}',
+          target: 'https://vivahavedimatrimony.com/search?q={search_term_string}',
           'query-input': 'required name=search_term_string',
         },
       },
       {
         '@type': 'Organization',
-        '@id': 'https://vivamatrimony.com/#organization',
+        '@id': 'https://vivahavedimatrimony.com/#organization',
         name: 'vivahavedi',
-        url: 'https://vivamatrimony.com',
+        url: 'https://vivahavedimatrimony.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://vivamatrimony.com/apple-touch-icon.png',
+          url: 'https://vivahavedimatrimony.com/apple-touch-icon.png',
         },
         description: 'India\'s most trusted matrimonial service helping millions find their perfect life partner.',
         address: {
@@ -104,11 +104,11 @@ export default function MatrimonyLayout({ children }: Props) {
       },
       {
         '@type': 'Service',
-        '@id': 'https://vivamatrimony.com/matrimony#service',
+        '@id': 'https://vivahavedimatrimony.com/matrimony#service',
         name: 'Matrimonial Services',
         description: 'Comprehensive matrimonial services helping individuals find their perfect life partner across all religions and communities in India.',
         provider: {
-          '@id': 'https://vivamatrimony.com/#organization',
+          '@id': 'https://vivahavedimatrimony.com/#organization',
         },
         serviceType: 'Matrimonial Service',
         areaServed: {

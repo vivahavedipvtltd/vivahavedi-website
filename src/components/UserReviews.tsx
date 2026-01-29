@@ -34,7 +34,7 @@ const UserReviews = ({ title, community, reviews }: UserReviewsProps) => {
     provider: {
       '@type': 'Organization',
       name: 'vivahavedi',
-      url: 'https://vivamatrimony.com',
+      url: 'https://vivahavedimatrimony.com',
     },
     aggregateRating: {
       '@type': 'AggregateRating',

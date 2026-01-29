@@ -28,7 +28,7 @@ const Breadcrumb = ({ items, customItems }: BreadcrumbProps) => {
       '@type': 'ListItem',
       position: index + 1,
       name: item.label,
-      item: `https://vivamatrimony.com${item.href}`,
+      item: `https://vivahavedimatrimony.com${item.href}`,
     })),
   };
 

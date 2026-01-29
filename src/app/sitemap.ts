@@ -49,7 +49,7 @@ async function getMasterData(): Promise<MasterData> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://vivamatrimony.com';
+  const baseUrl = 'https://vivahavedimatrimony.com';
   const currentDate = new Date();
 
   // Static pages

@@ -1,0 +1,22 @@
+# robots.txt for vivahavedi Matrimonial Website
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow private user areas
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+
+# Sitemap location
+Sitemap: https://vivahavedimatrimony.com/sitemap.xml
+
+# Crawl-delay for specific bots (optional)
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 1

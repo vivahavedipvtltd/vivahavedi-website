@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://vivamatrimony.com/register',
+    url: 'https://vivahavedimatrimony.com/register',
     siteName: 'vivahavedi',
     title: 'Register - Create Your Account | vivahavedi Matrimony',
     description: 'Create your free account on vivahavedi and start your journey to find your perfect life partner.',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     images: ['https://www.vivahavedimatrimony.com/asset/images/matrimony/1568038436_logo.png'],
   },
   alternates: {
-    canonical: 'https://vivamatrimony.com/register',
+    canonical: 'https://vivahavedimatrimony.com/register',
   },
 };
 
