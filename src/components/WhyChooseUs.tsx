@@ -14,6 +14,7 @@ interface Feature {
 
 const WhyChooseUs = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const features: Feature[] = [
@@ -68,24 +69,45 @@ const WhyChooseUs = () => {
   ];
 
   useEffect(() => {
+    // Set mounted state to show content immediately if observer fails
+    setIsMounted(true);
+
+    // Check if IntersectionObserver is supported
+    if (typeof IntersectionObserver === 'undefined') {
+      // Fallback for older browsers - show content immediately
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
         }
       },
-      { threshold: 0.3 }
+      {
+        threshold: 0.1, // Reduced from 0.3 to 0.1 (10%) for better mobile trigger
+        rootMargin: '50px' // Add margin to trigger earlier on mobile
+      }
     );
 
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect();
+    // Fallback timeout - ensure cards show even if observer doesn't trigger
+    const fallbackTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-16 bg-gradient-to-br from-gray-50 via-white to-red-50 relative overflow-hidden">
+    <section ref={sectionRef} className="py-12 md:py-16 bg-gradient-to-br from-gray-50 via-white to-red-50 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-10 right-10 w-40 h-40 bg-red-100 rounded-full opacity-30 animate-pulse"></div>
@@ -95,38 +117,40 @@ const WhyChooseUs = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Heart className="h-4 w-4 mr-2" />
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center bg-red-100 text-red-800 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium mb-4 md:mb-6">
+            <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1.5 md:mr-2" />
             Why Choose Us
           </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6 px-4">
             What Makes
             <span className="text-red-600 block">vivahavedi Special</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
             Discover why millions of families trust vivahavedi for finding their perfect life partner.
             Experience the difference with our premium matrimonial services.
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {features.map((feature) => {
             const IconComponent = feature.icon;
             return (
               <div
                 key={feature.id}
                 className={`group transform transition-all duration-700 ${
-                  isVisible
+                  isMounted && isVisible
                     ? 'translate-y-0 opacity-100'
-                    : 'translate-y-8 opacity-0'
+                    : isMounted
+                    ? 'translate-y-4 opacity-0'
+                    : 'translate-y-0 opacity-100'
                 }`}
                 style={{
-                  transitionDelay: isVisible ? `${feature.delay}ms` : '0ms'
+                  transitionDelay: isMounted && isVisible ? `${feature.delay}ms` : '0ms'
                 }}
               >
-                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full">
+                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full">
                   {/* Icon */}
                   <div className="relative mb-6">
                     <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
@@ -163,11 +187,11 @@ const WhyChooseUs = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 text-center">
+        <div className="mt-12 md:mt-16 text-center">
           <div className={`transform transition-all duration-1000 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`} style={{ transitionDelay: '1200ms' }}>
-            <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-3xl p-8 text-white relative overflow-hidden">
+            isMounted && isVisible ? 'translate-y-0 opacity-100' : isMounted ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'
+          }`} style={{ transitionDelay: isMounted && isVisible ? '1200ms' : '0ms' }}>
+            <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl md:rounded-3xl p-6 md:p-8 text-white relative overflow-hidden">
               {/* Background pattern */}
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-4 left-4 w-16 h-16 border-2 border-white rounded-full"></div>
@@ -176,18 +200,18 @@ const WhyChooseUs = () => {
               </div>
 
               <div className="relative z-10">
-                <h3 className="text-3xl font-bold mb-4">
+                <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">
                   Ready to Find Your Perfect Match?
                 </h3>
-                <p className="text-red-100 mb-6 max-w-2xl mx-auto">
+                <p className="text-sm md:text-base text-red-100 mb-4 md:mb-6 max-w-2xl mx-auto">
                   Join millions of happy families who found their life partner through vivahavedi.
                   Start your journey today with our trusted matrimonial platform.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className="bg-white text-red-600 hover:bg-red-50 px-8 py-4 rounded-full font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                  <button className="bg-white text-red-600 hover:bg-red-50 px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                     Register Free Now
                   </button>
-                  <button className="border-2 border-white text-white hover:bg-white hover:text-red-600 px-8 py-4 rounded-full font-bold text-lg transition-all duration-200">
+                  <button className="border-2 border-white text-white hover:bg-white hover:text-red-600 px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg transition-all duration-200">
                     Explore Features
                   </button>
                 </div>
