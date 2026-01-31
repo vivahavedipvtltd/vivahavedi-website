@@ -17,7 +17,12 @@ interface OverviewSectionProps {
 const OverviewSection: React.FC<OverviewSectionProps> = React.memo(({ myDetails, communicationStats, myPlan, partnerProfile, onSectionChange }) => {
   return (
     <div className="space-y-6">
-      <WelcomeCard firstName={myDetails.basic.user_fname} />
+      <WelcomeCard
+        firstName={myDetails.basic.user_fname}
+        userId={myDetails.basic.user_id}
+        profilePhoto={myDetails.basic.profile_photo}
+        hasProfilePhoto={myDetails.basic.has_profile_photo}
+      />
       <StatisticsCards stats={communicationStats} />
       {myPlan && <MyPlanCard plan={myPlan} />}
       <ProfileCompletionCard

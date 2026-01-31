@@ -15,6 +15,8 @@ export interface MyDetails {
     user_email_verify: string;
     user_mobile_verify: string;
     user_hide?: string;
+    profile_photo: string;
+    has_profile_photo: boolean;
     rel_name: string;
     caste_name: string;
     con_name: string;

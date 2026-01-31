@@ -21,6 +21,13 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Handle placeholder click - trigger file input
+  const handlePlaceholderClick = () => {
+    if (!uploading && canUpload) {
+      document.getElementById('photo-upload')?.click();
+    }
+  };
+
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -44,6 +51,8 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
       setSuccess(null);
       setUploadProgress('Uploading photo...');
 
+      // Note: The backend automatically finds the first available slot (photo1-photo5)
+      // Regardless of which placeholder is clicked, photos are uploaded in sequential order
       const formData = new FormData();
       formData.append('photo', file);
 
@@ -218,10 +227,20 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
                     </button>
                   </>
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                  <button
+                    onClick={handlePlaceholderClick}
+                    disabled={uploading || !canUpload}
+                    className="w-full h-full flex flex-col items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed disabled:hover:text-gray-400 disabled:hover:bg-gray-100"
+                    title={canUpload ? "Click to upload photo" : "All photo slots are full"}
+                  >
                     <Upload className="h-8 w-8 mb-2" />
                     <span className="text-xs">Slot {slotNumber}</span>
-                  </div>
+                    {canUpload && (
+                      <span className="text-xs mt-1 text-red-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to upload
+                      </span>
+                    )}
+                  </button>
                 )}
               </div>
             </div>
@@ -294,6 +313,7 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
         <p>• Supported formats: JPG, PNG, GIF, BMP, WEBP</p>
         <p>• Maximum file size: 10MB</p>
         <p>• Photos are automatically converted to JPG format</p>
+        <p>• Click any empty slot to upload - photos fill in sequential order</p>
         {myPhotos.photo_all_status === 'yes' && (
           <p className="text-yellow-600 font-medium">• Delete a photo to upload a new one</p>
         )}
