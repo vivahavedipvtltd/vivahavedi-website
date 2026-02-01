@@ -106,7 +106,7 @@ export default function FilterSidebar({
           </div>
 
           {searchType === 'advanced' && masterData && (
-            <div className="p-4 space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto">
+            <div className="p-4 space-y-4">
               {/* Age Range */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

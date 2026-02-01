@@ -311,13 +311,10 @@ const SearchResultsPage = () => {
   }, [token, loadUserGender, loadSearchFromParams]);
 
   const handlePageChange = (page: number) => {
-    // Update URL with the new page number
+    // Update URL with the new page number while preserving all params
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', page.toString());
     router.push(`/search-results?${params.toString()}`, { scroll: false });
-
-    // Scroll to top when pagination is clicked
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleFilterChange = (key: string, value: string | number | string[] | number[] | undefined) => {
@@ -331,16 +328,40 @@ const SearchResultsPage = () => {
   };
 
   const handleRefineSearch = () => {
-    // Reset to page 1 when refining search and update URL
-    const params = new URLSearchParams(searchParams.toString());
+    // Build URL params with all current filter values
+    const params = new URLSearchParams();
+    params.set('type', searchType);
+    params.set('sort', sortBy);
     params.set('page', '1');
-    router.push(`/search-results?${params.toString()}`, { scroll: false });
 
     if (searchType === 'id') {
-      executeIdSearch(searchId);
+      if (searchId) {
+        params.set('id', searchId);
+      }
     } else {
-      executeAdvancedSearch(filters, sortBy, 1);
+      // Add all filter values to URL
+      if (filters.age_from) params.set('age_from', filters.age_from.toString());
+      if (filters.age_to) params.set('age_to', filters.age_to.toString());
+      if (filters.height_from) params.set('height_from', filters.height_from);
+      if (filters.height_to) params.set('height_to', filters.height_to);
+      if (filters.religion) params.set('religion', filters.religion.toString());
+      if (filters.country) params.set('country', filters.country.toString());
+      if (filters.state) params.set('state', filters.state.toString());
+      if (filters.caste && filters.caste.length > 0) params.set('caste', filters.caste.join(','));
+      if (filters.district && filters.district.length > 0) params.set('district', filters.district.join(','));
+      if (filters.marital_status && filters.marital_status.length > 0) params.set('marital_status', filters.marital_status.join(','));
+      if (filters.nakshatra && filters.nakshatra.length > 0) params.set('nakshatra', filters.nakshatra.join(','));
+      if (filters.manglik && filters.manglik.length > 0) params.set('manglik', filters.manglik.join(','));
+      if (filters.q_level && filters.q_level.length > 0) params.set('q_level', filters.q_level.join(','));
+      if (filters.qualification && filters.qualification.length > 0) params.set('qualification', filters.qualification.join(','));
+      if (filters.specialization && filters.specialization.length > 0) params.set('specialization', filters.specialization.join(','));
+      if (filters.profession && filters.profession.length > 0) params.set('profession', filters.profession.join(','));
+      if (filters.workedin && filters.workedin.length > 0) params.set('workedin', filters.workedin.join(','));
+      if (filters.physicalstatus && filters.physicalstatus.length > 0) params.set('physicalstatus', filters.physicalstatus.join(','));
     }
+
+    // Update URL - this will trigger the useEffect which will execute the search
+    router.push(`/search-results?${params.toString()}`, { scroll: false });
     setShowMobileFilters(false);
   };
 
