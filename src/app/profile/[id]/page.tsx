@@ -64,6 +64,10 @@ interface ProfileData {
     ql_id?: number;
     speci_id?: number;
     pro_id?: number;
+    qual_name?: string;
+    ql_name?: string;
+    speci_name?: string;
+    pro_name?: string;
     up_job_status?: string;
     up_working_in?: string;
     up_working_at?: string;
@@ -99,9 +103,11 @@ interface ProfileData {
     photo_status: string;
   };
   astro?: {
+    nak_id?: number;
     nak_name?: string;
     manglik?: string;
     place_of_birth?: string;
+    city_of_birth?: string;
     time_of_birth?: string;
     horoscope?: string;
   };
@@ -112,9 +118,14 @@ interface ProfileData {
     upp_height_t?: number;
     religion?: string[];
     caste?: string[];
+    sub_caste?: string[];
+    nakshatra?: string[];
+    country?: string[];
     state?: string[];
     district?: string[];
+    q_level?: string[];
     qualification?: string[];
+    specialization?: string[];
     profession?: string[];
   };
   match?: {
@@ -877,9 +888,15 @@ const ProfileDetailsPage = () => {
               <div className="lg:col-span-2 space-y-6">
                 {/* Basic Info Header */}
                 <div className="bg-white rounded-lg shadow-md p-6">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    {basic.user_fname} {basic.user_lname}
-                  </h1>
+                  <div className="flex items-center justify-between mb-2">
+                    <h1 className="text-3xl font-bold text-gray-900">
+                      {basic.user_fname} {basic.user_lname}
+                    </h1>
+                    <div className="bg-red-50 px-4 py-2 rounded-lg border border-red-200">
+                      <p className="text-sm text-gray-600">Profile ID</p>
+                      <p className="text-lg font-bold text-red-600">{basic.user_id}</p>
+                    </div>
+                  </div>
                   <div className="flex flex-wrap gap-4 text-gray-600">
                     <div className="flex items-center">
                       <Calendar className="h-5 w-5 mr-2" />
@@ -969,13 +986,40 @@ const ProfileDetailsPage = () => {
                   </div>
                 </div>
 
+                {/* Location Details */}
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                    <MapPin className="h-5 w-5 mr-2 text-red-500" />
+                    Location Details
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Country</p>
+                      <p className="text-gray-900 font-medium">{basic.con_name || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">State</p>
+                      <p className="text-gray-900 font-medium">{basic.state_name || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">District</p>
+                      <p className="text-gray-900 font-medium">{basic.dist_name || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Location</p>
+                      <p className="text-gray-900 font-medium">{basic.lpo_name || 'Not specified'}</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Education & Professional Details */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
                     <GraduationCap className="h-5 w-5 mr-2 text-red-500" />
                     Education & Career
                   </h2>
-                  {(!detailed.up_working_as && !detailed.up_company_name && !detailed.up_designation &&
+                  {(!detailed.ql_name && !detailed.qual_name && !detailed.speci_name && !detailed.pro_name &&
+                    !detailed.up_working_as && !detailed.up_company_name && !detailed.up_designation &&
                     !detailed.up_job_status && !detailed.up_working_in && !detailed.up_working_at &&
                     !detailed.up_annualincome && !detailed.up_income) ? (
                     <div>
@@ -984,6 +1028,30 @@ const ProfileDetailsPage = () => {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {detailed.ql_name && (
+                        <div>
+                          <p className="text-sm text-gray-600">Education Level</p>
+                          <p className="text-gray-900 font-medium">{detailed.ql_name}</p>
+                        </div>
+                      )}
+                      {detailed.qual_name && (
+                        <div>
+                          <p className="text-sm text-gray-600">Qualification</p>
+                          <p className="text-gray-900 font-medium">{detailed.qual_name}</p>
+                        </div>
+                      )}
+                      {detailed.speci_name && (
+                        <div>
+                          <p className="text-sm text-gray-600">Specialization</p>
+                          <p className="text-gray-900 font-medium">{detailed.speci_name}</p>
+                        </div>
+                      )}
+                      {detailed.pro_name && (
+                        <div>
+                          <p className="text-sm text-gray-600">Profession</p>
+                          <p className="text-gray-900 font-medium">{detailed.pro_name}</p>
+                        </div>
+                      )}
                       {detailed.up_working_as && (
                         <div>
                           <p className="text-sm text-gray-600">Working As</p>
@@ -1247,16 +1315,52 @@ const ProfileDetailsPage = () => {
                           <p className="text-gray-900 font-medium">{partner.caste.join(', ')}</p>
                         </div>
                       )}
+                      {partner.sub_caste && partner.sub_caste.length > 0 && (
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Sub Caste</p>
+                          <p className="text-gray-900 font-medium">{partner.sub_caste.join(', ')}</p>
+                        </div>
+                      )}
+                      {partner.nakshatra && partner.nakshatra.length > 0 && (
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Nakshatra</p>
+                          <p className="text-gray-900 font-medium">{partner.nakshatra.join(', ')}</p>
+                        </div>
+                      )}
+                      {partner.country && partner.country.length > 0 && (
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Preferred Country</p>
+                          <p className="text-gray-900 font-medium">{partner.country.join(', ')}</p>
+                        </div>
+                      )}
                       {partner.state && partner.state.length > 0 && (
                         <div>
-                          <p className="text-sm text-gray-600 mb-1">Preferred States</p>
+                          <p className="text-sm text-gray-600 mb-1">Preferred State</p>
                           <p className="text-gray-900 font-medium">{partner.state.join(', ')}</p>
+                        </div>
+                      )}
+                      {partner.district && partner.district.length > 0 && (
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Preferred District</p>
+                          <p className="text-gray-900 font-medium">{partner.district.join(', ')}</p>
+                        </div>
+                      )}
+                      {partner.q_level && partner.q_level.length > 0 && (
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Education Level</p>
+                          <p className="text-gray-900 font-medium">{partner.q_level.join(', ')}</p>
                         </div>
                       )}
                       {partner.qualification && partner.qualification.length > 0 && (
                         <div>
-                          <p className="text-sm text-gray-600 mb-1">Education</p>
+                          <p className="text-sm text-gray-600 mb-1">Qualification</p>
                           <p className="text-gray-900 font-medium">{partner.qualification.join(', ')}</p>
+                        </div>
+                      )}
+                      {partner.specialization && partner.specialization.length > 0 && (
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Specialization</p>
+                          <p className="text-gray-900 font-medium">{partner.specialization.join(', ')}</p>
                         </div>
                       )}
                       {partner.profession && partner.profession.length > 0 && (
