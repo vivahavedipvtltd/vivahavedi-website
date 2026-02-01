@@ -5,6 +5,9 @@ import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Upload, X, Loader2, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { MyPhotos } from '@/types/dashboard';
+import dynamic from 'next/dynamic';
+
+const ImageCropModal = dynamic(() => import('./ImageCropModal'), { ssr: false });
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -16,10 +19,13 @@ interface MyPhotosManagementProps {
 const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) => {
   const { token } = useAuth();
   const [uploading, setUploading] = useState(false);
+  const [uploadingToSlot, setUploadingToSlot] = useState<number | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showCropModal, setShowCropModal] = useState(false);
 
   // Handle placeholder click - trigger file input
   const handlePlaceholderClick = () => {
@@ -45,16 +51,35 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
       return;
     }
 
+    // Reset file input
+    event.target.value = '';
+
+    // Show crop modal
+    setSelectedFile(file);
+    setShowCropModal(true);
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    // Find the first empty slot BEFORE closing modal
+    const targetSlot = getFirstEmptySlot();
+
     try {
+      setShowCropModal(false);
       setUploading(true);
+      setUploadingToSlot(targetSlot);
       setError(null);
       setSuccess(null);
-      setUploadProgress('Uploading photo...');
+      setUploadProgress('Uploading cropped photo...');
+
+      // Convert blob to file
+      const croppedFile = new File([croppedBlob], selectedFile?.name || 'cropped-photo.jpg', {
+        type: 'image/jpeg',
+      });
 
       // Note: The backend automatically finds the first available slot (photo1-photo5)
       // Regardless of which placeholder is clicked, photos are uploaded in sequential order
       const formData = new FormData();
-      formData.append('photo', file);
+      formData.append('photo', croppedFile);
 
       const response = await fetch(`${API_BASE_URL}/upload-photo`, {
         method: 'POST',
@@ -85,9 +110,14 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
       setUploadProgress(null);
     } finally {
       setUploading(false);
-      // Reset file input
-      event.target.value = '';
+      setUploadingToSlot(null);
+      setSelectedFile(null);
     }
+  };
+
+  const handleCropCancel = () => {
+    setShowCropModal(false);
+    setSelectedFile(null);
   };
 
   const handlePhotoDelete = async (photoNumber: number) => {
@@ -146,6 +176,16 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
     return null;
   };
 
+  // Find the first empty slot for upload indicator
+  const getFirstEmptySlot = (): number | null => {
+    for (let i = 1; i <= 5; i++) {
+      if (!getPhotoForSlot(i)) {
+        return i;
+      }
+    }
+    return null;
+  };
+
   const canUpload = myPhotos.photo_all_status !== 'yes';
 
   return (
@@ -197,6 +237,7 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
         {[1, 2, 3, 4, 5].map((slotNumber) => {
           const photoUrl = getPhotoForSlot(slotNumber);
           const isDeleting = deleting === `photo${slotNumber}`;
+          const isUploadingToThisSlot = uploadingToSlot === slotNumber;
 
           return (
             <div key={slotNumber} className="relative">
@@ -226,6 +267,12 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
                       )}
                     </button>
                   </>
+                ) : isUploadingToThisSlot ? (
+                  // Show loading indicator in the target slot during upload
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-blue-50 border-2 border-blue-300">
+                    <Loader2 className="h-10 w-10 text-blue-600 mb-2 animate-spin" />
+                    <span className="text-xs text-blue-700 font-medium">Uploading...</span>
+                  </div>
                 ) : (
                   <button
                     onClick={handlePlaceholderClick}
@@ -235,7 +282,7 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
                   >
                     <Upload className="h-8 w-8 mb-2" />
                     <span className="text-xs">Slot {slotNumber}</span>
-                    {canUpload && (
+                    {canUpload && !uploading && (
                       <span className="text-xs mt-1 text-red-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                         Click to upload
                       </span>
@@ -312,12 +359,22 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
       <div className="mt-4 text-xs text-gray-500 space-y-1">
         <p>• Supported formats: JPG, PNG, GIF, BMP, WEBP</p>
         <p>• Maximum file size: 10MB</p>
+        <p>• Photos are automatically cropped to 3:4 ratio (width:height)</p>
         <p>• Photos are automatically converted to JPG format</p>
         <p>• Click any empty slot to upload - photos fill in sequential order</p>
         {myPhotos.photo_all_status === 'yes' && (
           <p className="text-yellow-600 font-medium">• Delete a photo to upload a new one</p>
         )}
       </div>
+
+      {/* Crop Modal */}
+      {showCropModal && selectedFile && (
+        <ImageCropModal
+          imageFile={selectedFile}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 };
