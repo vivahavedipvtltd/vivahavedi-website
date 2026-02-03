@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { Phone, Loader2, ChevronLeft, ChevronRight, Check, X, Image as ImageIcon } from 'lucide-react';
+import { Phone, Loader2, ChevronLeft, ChevronRight, Check, X, Image as ImageIcon, MessageCircle, Edit } from 'lucide-react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -34,11 +34,16 @@ const ProfileRequestsSection = () => {
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [respondingTo, setRespondingTo] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'received' | 'sent'>('received');
 
   const fetchProfileRequests = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/profile-request/list?page=${currentPage}`, {
+      const endpoint = activeTab === 'received'
+        ? `${API_BASE_URL}/profile-request/list?page=${currentPage}`
+        : `${API_BASE_URL}/profile-request/sent-list?page=${currentPage}`;
+
+      const response = await fetch(endpoint, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -62,7 +67,7 @@ const ProfileRequestsSection = () => {
     } finally {
       setLoading(false);
     }
-  }, [token, currentPage]);
+  }, [token, currentPage, activeTab]);
 
   useEffect(() => {
     if (token) {
@@ -117,6 +122,41 @@ const ProfileRequestsSection = () => {
     }
   }, [pagination, currentPage]);
 
+  const handleTabChange = useCallback((tab: 'received' | 'sent') => {
+    setActiveTab(tab);
+    setCurrentPage(1); // Reset to first page when switching tabs
+  }, []);
+
+  const handleCancelRequest = useCallback(async (requestId: number) => {
+    try {
+      setRespondingTo(requestId);
+      const response = await fetch(`${API_BASE_URL}/profile-request/cancel`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          request_id: requestId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        // Refresh the requests list after canceling
+        await fetchProfileRequests();
+      } else {
+        console.error('Failed to cancel request:', result.message);
+      }
+    } catch (error) {
+      console.error('Error canceling request:', error);
+    } finally {
+      setRespondingTo(null);
+    }
+  }, [token, fetchProfileRequests]);
+
   const getRequestTypeLabel = (type: string) => {
     const typeLabels: Record<string, string> = {
       photo_view: 'Photo View Request',
@@ -133,6 +173,7 @@ const ProfileRequestsSection = () => {
       partner_location: 'Partner Location Request',
       partner_education: 'Partner Education Request',
       contact_details: 'Contact Details Request',
+      replay: 'Reply', // Reply type for responses
     };
     return typeLabels[type] || 'Profile Request';
   };
@@ -164,6 +205,41 @@ const ProfileRequestsSection = () => {
     return type === 'photo_view' || type === 'photo_lock';
   };
 
+  const isReply = (type: string) => {
+    return type === 'replay';
+  };
+
+  const getProfileUpdatePath = (requestType: string): string | null => {
+    const typeToPathMap: Record<string, string> = {
+      'photo_view': '/dashboard/profile/basic',
+      'photo_lock': '/dashboard/profile/basic',
+      'photo_add': '/dashboard?section=my-photos', // Photo add navigates to my-photos section
+      'basic': '/dashboard/profile/basic',
+      'education': '/dashboard/profile/education',
+      'family': '/dashboard/profile/family',
+      'hobbies': '/dashboard/profile/hobbies',
+      'astro': '/dashboard/profile/astrological',
+      'horoscope': '/dashboard/profile/astrological',
+      'partner_basic': '/dashboard/profile/partner-basic',
+      'partner_religion': '/dashboard/profile/partner-religion',
+      'partner_location': '/dashboard/profile/partner-location',
+      'partner_education': '/dashboard/profile/partner-education',
+      'contact_details': '/dashboard/profile/basic',
+    };
+    return typeToPathMap[requestType] || null;
+  };
+
+  const isPhotoAddRequest = (type: string) => {
+    return type === 'photo_add';
+  };
+
+  const handleNavigateToUpdate = useCallback((requestType: string) => {
+    const path = getProfileUpdatePath(requestType);
+    if (path) {
+      router.push(path);
+    }
+  }, [router]);
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       {/* Header */}
@@ -172,10 +248,37 @@ const ProfileRequestsSection = () => {
         <h2 className="text-2xl font-bold text-gray-900 ml-3">Profile Requests</h2>
       </div>
 
-      {/* Description */}
-      <p className="text-sm text-gray-600 mb-6">
-        Requests received from other users to view your profile information
-      </p>
+      {/* Tabs */}
+      <div className="border-b border-gray-200 mb-6">
+        <div className="flex space-x-8">
+          <button
+            onClick={() => handleTabChange('received')}
+            className={`pb-4 px-1 relative ${
+              activeTab === 'received'
+                ? 'text-purple-600 font-semibold'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Received
+            {activeTab === 'received' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600"></div>
+            )}
+          </button>
+          <button
+            onClick={() => handleTabChange('sent')}
+            className={`pb-4 px-1 relative ${
+              activeTab === 'sent'
+                ? 'text-purple-600 font-semibold'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Sent by Me
+            {activeTab === 'sent' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600"></div>
+            )}
+          </button>
+        </div>
+      </div>
 
       {/* Loading State */}
       {loading ? (
@@ -187,7 +290,11 @@ const ProfileRequestsSection = () => {
           <div className="mb-4 text-gray-400">
             <Phone className="h-12 w-12 mx-auto" />
           </div>
-          <p className="text-gray-500">No profile requests received yet.</p>
+          <p className="text-gray-500">
+            {activeTab === 'received'
+              ? 'No profile requests received yet.'
+              : 'No profile requests sent yet.'}
+          </p>
         </div>
       ) : (
         <>
@@ -217,8 +324,14 @@ const ProfileRequestsSection = () => {
                       />
                     </div>
                     {/* Request Type Badge */}
-                    <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-purple-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                      <ImageIcon className="h-4 w-4 text-white" />
+                    <div className={`absolute -bottom-2 -right-2 w-9 h-9 rounded-full border-4 border-white shadow-lg flex items-center justify-center ${
+                      isReply(request.request_type) ? 'bg-green-500' : 'bg-purple-500'
+                    }`}>
+                      {isReply(request.request_type) ? (
+                        <MessageCircle className="h-4 w-4 text-white" />
+                      ) : (
+                        <ImageIcon className="h-4 w-4 text-white" />
+                      )}
                     </div>
                   </div>
 
@@ -234,51 +347,104 @@ const ProfileRequestsSection = () => {
                           {request.name}
                         </h4>
                         <div className="flex items-center space-x-2 mt-2">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm">
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                            request.request_type === 'replay'
+                              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                              : 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white'
+                          }`}>
                             {getRequestTypeLabel(request.request_type)}
                           </span>
-                          {getStatusBadge(request.request_status)}
+                          {/* Don't show status badge for replies */}
+                          {!isReply(request.request_type) && getStatusBadge(request.request_status)}
                         </div>
                       </div>
                     </div>
 
-                    {/* Request Message */}
+                    {/* Request Message / Reply Message */}
                     {request.request_messgae && (
-                      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl px-4 py-3 mb-3 border-l-4 border-purple-500">
+                      <div className={`rounded-xl px-4 py-3 mb-3 border-l-4 ${
+                        request.request_type === 'replay'
+                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-500'
+                          : 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-500'
+                      }`}>
                         <p className="text-sm text-gray-700 italic">
-                          &ldquo;{request.request_messgae}&rdquo;
+                          {request.request_type === 'replay' ? '✓ ' : ''}&ldquo;{request.request_messgae}&rdquo;
                         </p>
                       </div>
                     )}
 
-                    {/* Action Buttons for Photo Requests (only if pending) */}
-                    {isPhotoRequest(request.request_type) && (request.request_status === '0' || request.request_status === 0) && (
-                      <div className="flex items-center space-x-3 mt-4 pt-4 border-t border-gray-100">
+                    {/* Action Buttons for Received Requests */}
+                    {activeTab === 'received' && (request.request_status === '0' || request.request_status === 0) && (
+                      <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+                        {/* Complete Profile Button for non-photo-view pending received requests */}
+                        {/* Shows for: photo_add, basic, education, family, hobbies, astro, partner preferences */}
+                        {/* Does NOT show for: photo_view, photo_lock (those only have Accept/Reject) */}
+                        {getProfileUpdatePath(request.request_type) && !isPhotoRequest(request.request_type) && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleNavigateToUpdate(request.request_type);
+                            }}
+                            className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200"
+                          >
+                            <Edit className="h-4 w-4" />
+                            <span>{isPhotoAddRequest(request.request_type) ? 'Add Photos' : 'Complete Profile'}</span>
+                          </button>
+                        )}
+
+                        {/* Accept/Reject buttons only for photo view/lock requests */}
+                        {isPhotoRequest(request.request_type) && (
+                          <>
+                            <button
+                              onClick={() => handlePhotoResponse(request.id, 'accept')}
+                              disabled={respondingTo === request.id}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {respondingTo === request.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Check className="h-4 w-4" />
+                                  <span>Accept</span>
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handlePhotoResponse(request.id, 'reject')}
+                              disabled={respondingTo === request.id}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {respondingTo === request.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <X className="h-4 w-4" />
+                                  <span>Reject</span>
+                                </>
+                              )}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Cancel Button for Pending Sent Requests */}
+                    {activeTab === 'sent' && (request.request_status === '0' || request.request_status === 0) && (
+                      <div className="flex items-center mt-3 pt-3 border-t border-gray-100">
                         <button
-                          onClick={() => handlePhotoResponse(request.id, 'accept')}
-                          disabled={respondingTo === request.id}
-                          className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCancelRequest(request.request_id);
+                          }}
+                          disabled={respondingTo === request.request_id}
+                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {respondingTo === request.id ? (
+                          {respondingTo === request.request_id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
                             <>
-                              <Check className="h-5 w-5" />
-                              <span>Accept</span>
-                            </>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => handlePhotoResponse(request.id, 'reject')}
-                          disabled={respondingTo === request.id}
-                          className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {respondingTo === request.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              <X className="h-5 w-5" />
-                              <span>Reject</span>
+                              <X className="h-4 w-4" />
+                              <span>Cancel Request</span>
                             </>
                           )}
                         </button>

@@ -655,7 +655,7 @@ const ProfileDetailsPage = () => {
                   {request && (
                     <div className="p-4 space-y-2 border-t border-gray-200">
                       {/* Photo Add Request - when profile has no photos or only avatar */}
-                      {photo.photo_status === 'avatar' && (
+                      {(photo.photo_status === 'avatar' || photo.photo_status === 'no') && (
                         <div>
                           {request.photo_add ? (
                             <div className="flex items-center justify-center text-sm text-gray-500 bg-gray-50 py-2 px-4 rounded-lg">
