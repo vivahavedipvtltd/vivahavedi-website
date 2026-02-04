@@ -4,11 +4,12 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, PhoneCall, Check, X } from 'lucide-react';
+import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, PhoneCall, Check, X, ShieldCheck } from 'lucide-react';
 import ProfileRequestsSection from './ProfileRequestsSection';
 import ChatListSection from './ChatListSection';
-import { useCommunicationViews } from '@/hooks/useDashboardData';
-import type { CommunicationViewType } from '@/types/dashboard';
+import ContactRequestCard from './ContactRequestCard';
+import { useCommunicationViews, useSentContactRequests, useReceivedContactRequests, useCommunicationStats } from '@/hooks/useDashboardData';
+import type { CommunicationViewType, CommunicationProfile } from '@/types/dashboard';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -57,6 +58,14 @@ const sectionConfig: Record<string, {
     byMeLabel: 'Contacted by Me',
     toMeLabel: 'Contacted Me'
   },
+  'contact-requests': {
+    title: 'Contact Requests',
+    icon: <ShieldCheck className="h-6 w-6 text-purple-500" />,
+    byMeType: 'contact_requests_sent_by_me',
+    toMeType: 'contact_requests_received_by_me',
+    byMeLabel: 'Sent by Me',
+    toMeLabel: 'Received'
+  },
   'viewed-profiles': {
     title: 'Viewed Profiles',
     icon: <Eye className="h-6 w-6 text-purple-500" />,
@@ -75,17 +84,80 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   const [currentPage, setCurrentPage] = useState(1);
   const [respondingTo, setRespondingTo] = useState<number | null>(null);
 
+  // Fetch communication stats for notification badges
+  const { data: stats } = useCommunicationStats(token);
+
   const config = sectionConfig[initialSection] || sectionConfig['interests'];
 
   // Get current view type based on active tab
   const currentViewType = activeTab === 'by_me' ? config.byMeType : config.toMeType;
 
-  // Use SWR hook for data fetching with automatic caching and deduplication
-  const { data: profiles, isLoading: loading, mutate, hasMore } = useCommunicationViews(
+  // Determine if this is a contact request section (only for dedicated contact-requests section)
+  const isContactRequestSection = initialSection === 'contact-requests';
+
+  // For 'contacted' section, fetch BOTH contact requests AND regular contacted profiles
+  const isContactedSection = initialSection === 'contacted';
+
+  // Use appropriate SWR hook based on section type
+  const communicationData = useCommunicationViews(
     token,
     currentViewType as CommunicationViewType,
-    currentPage
+    currentPage,
+    !isContactRequestSection // Enable for contacted section and others
   );
+
+  // Fetch contact requests for 'contacted' section
+  const sentContactRequestsData = useSentContactRequests(
+    token,
+    currentPage,
+    (isContactRequestSection || isContactedSection) && activeTab === 'by_me'
+  );
+
+  const receivedContactRequestsData = useReceivedContactRequests(
+    token,
+    currentPage,
+    (isContactRequestSection || isContactedSection) && activeTab === 'to_me'
+  );
+
+  // Select the appropriate data source
+  // For contacted section, merge both contact requests and regular contacts
+  let profiles: CommunicationProfile[] = [];
+  let loading = false;
+  let hasMore = false;
+  let mutate: () => void;
+
+  if (isContactRequestSection) {
+    // Only contact requests
+    const requestData = activeTab === 'by_me' ? sentContactRequestsData : receivedContactRequestsData;
+    profiles = requestData.data || [];
+    loading = requestData.isLoading;
+    hasMore = requestData.hasMore || false;
+    mutate = requestData.mutate;
+  } else if (isContactedSection) {
+    // Merge contact requests and regular contacts
+    const requestData = activeTab === 'by_me' ? sentContactRequestsData : receivedContactRequestsData;
+    const regularData = communicationData;
+
+    // Combine both arrays
+    const requests = requestData.data || [];
+    const regular = regularData.data || [];
+    profiles = [...requests, ...regular];
+
+    loading = requestData.isLoading || regularData.isLoading;
+    hasMore = (requestData.hasMore || false) || (regularData.hasMore || false);
+
+    // Mutate both data sources
+    mutate = () => {
+      requestData.mutate();
+      regularData.mutate();
+    };
+  } else {
+    // Regular communication views only
+    profiles = communicationData.data || [];
+    loading = communicationData.isLoading;
+    hasMore = communicationData.hasMore || false;
+    mutate = communicationData.mutate;
+  }
 
   const handleProfileClick = useCallback((profileId: number) => {
     router.push(`/profile/${profileId}`);
@@ -169,7 +241,17 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            {config.toMeLabel}
+            <span className="flex items-center gap-2">
+              {config.toMeLabel}
+              {/* Show notification badge for contact requests received */}
+              {(initialSection === 'contacted' || initialSection === 'contact-requests') &&
+                stats?.contact_requests_received !== undefined &&
+                stats.contact_requests_received > 0 && (
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-bold rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md">
+                    {stats.contact_requests_received > 99 ? '99+' : stats.contact_requests_received}
+                  </span>
+                )}
+            </span>
             {activeTab === 'to_me' && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"></div>
             )}
@@ -182,7 +264,17 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            {config.byMeLabel}
+            <span className="flex items-center gap-2">
+              {config.byMeLabel}
+              {/* Show notification badge for contact responses received */}
+              {(initialSection === 'contacted' || initialSection === 'contact-requests') &&
+                stats?.contact_responses_received !== undefined &&
+                stats.contact_responses_received > 0 && (
+                  <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-bold rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md">
+                    {stats.contact_responses_received > 99 ? '99+' : stats.contact_responses_received}
+                  </span>
+                )}
+            </span>
             {activeTab === 'by_me' && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"></div>
             )}
@@ -208,8 +300,159 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-5">
-            {profiles.map((profile) => (
+          {/* Contact Request Cards (for contact-requests section only) */}
+          {isContactRequestSection && (
+            <div className="grid grid-cols-1 gap-5">
+              {profiles.map((request) => (
+                <ContactRequestCard
+                  key={request.id}
+                  request={request}
+                  type={activeTab === 'by_me' ? 'sent' : 'received'}
+                  onAction={() => mutate()}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* For contacted section: show both contact requests and regular profiles */}
+          {isContactedSection && (
+            <div className="grid grid-cols-1 gap-5">
+              {profiles.map((profile) => {
+                // Check if this is a contact request (has request_id) or regular profile
+                if (profile.request_id !== undefined) {
+                  // This is a contact request
+                  return (
+                    <ContactRequestCard
+                      key={`request-${profile.id}`}
+                      request={profile}
+                      type={activeTab === 'by_me' ? 'sent' : 'received'}
+                      onAction={() => mutate()}
+                    />
+                  );
+                } else {
+                  // This is a regular contacted profile
+                  return (
+                    <div
+                      key={`profile-${profile.id}`}
+                      onClick={() => handleProfileClick(profile.id)}
+                      className="group relative bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-xl hover:border-red-200 cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                    >
+                      {/* Gradient overlay on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-red-50/50 to-pink-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                      <div className="relative flex items-start space-x-5">
+                        {/* Profile Photo with Badge */}
+                        <div className="relative flex-shrink-0">
+                          <div className="relative w-20 h-20 ring-4 ring-white shadow-lg rounded-2xl overflow-hidden">
+                            <Image
+                              src={profile.photo || '/placeholder-avatar.png'}
+                              alt={`${profile.name}'s matrimonial profile - View communication on vivahavedi`}
+                              fill
+                              sizes="80px"
+                              className="object-cover group-hover:scale-110 transition-transform duration-300"
+                              unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
+                            />
+                          </div>
+                          {/* Online Status Indicator */}
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-4 border-white shadow-md"></div>
+                        </div>
+
+                        {/* Profile Information */}
+                        <div className="flex-1 min-w-0">
+                          {/* Header Section */}
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                              <h4 className="text-lg font-bold text-gray-900 truncate group-hover:text-red-600 transition-colors">
+                                {profile.name}
+                              </h4>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-sm">
+                                  {profile.age} years
+                                </span>
+                                {profile.status && (
+                                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                                    profile.status === 'accepted'
+                                      ? 'bg-green-100 text-green-700'
+                                      : profile.status === 'rejected'
+                                      ? 'bg-red-100 text-red-700'
+                                      : 'bg-yellow-100 text-yellow-700'
+                                  }`}>
+                                    {profile.status.charAt(0).toUpperCase() + profile.status.slice(1)}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Details Grid */}
+                          <div className="grid grid-cols-2 gap-3 mb-3">
+                            <div className="flex items-center space-x-2 text-sm text-gray-600">
+                              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                              <span className="font-medium">{profile.height} cm</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm text-gray-600">
+                              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                              <span className="font-medium">{profile.marital_status}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm text-gray-600">
+                              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span className="font-medium truncate">{profile.district}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm text-gray-600">
+                              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                              </svg>
+                              <span className="font-medium truncate">{profile.religion}</span>
+                            </div>
+                          </div>
+
+                          {/* Contact Details */}
+                          {profile.mobile && (
+                            <div className="flex items-center space-x-2 text-sm bg-gray-50 rounded-lg px-3 py-2 mb-3">
+                              <Phone className="h-4 w-4 text-red-500" />
+                              <span className="font-medium text-gray-700">{profile.mobile}</span>
+                              {profile.phone && (
+                                <>
+                                  <span className="text-gray-400">•</span>
+                                  <span className="font-medium text-gray-700">{profile.phone}</span>
+                                </>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Interest Content */}
+                          {profile.content && (
+                            <p className="text-sm text-gray-600 bg-blue-50 rounded-lg px-3 py-2 mb-3 line-clamp-2 italic">
+                              &ldquo;{profile.content}&rdquo;
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* View Profile Arrow */}
+                      <div className="absolute top-5 right-5 w-8 h-8 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-red-500 transition-all duration-300">
+                        <svg className="w-4 h-4 text-red-500 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          )}
+
+          {/* Regular Profile Cards (for other sections) */}
+          {!isContactRequestSection && !isContactedSection && (
+            <div className="grid grid-cols-1 gap-5">
+              {profiles.map((profile) => (
               <div
                 key={profile.id}
                 onClick={() => handleProfileClick(profile.id)}
@@ -361,8 +604,9 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                   </svg>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Pagination Controls */}
           {(currentPage > 1 || hasMore) && (

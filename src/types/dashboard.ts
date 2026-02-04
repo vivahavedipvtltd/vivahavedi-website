@@ -115,6 +115,8 @@ export interface CommunicationStats {
   profile_interest: number;
   profile_chat: number;
   profile_request: number;
+  contact_requests_received: number;
+  contact_responses_received: number;
 }
 
 export interface MyPlan {
@@ -155,6 +157,9 @@ export interface CommunicationProfile {
   status?: string | null;
   mobile?: string | null;
   phone?: string | null;
+  request_id?: number;
+  request_status?: 'pending' | 'accepted' | 'rejected';
+  requested_at?: string;
 }
 
 export type CommunicationViewType =
@@ -166,6 +171,8 @@ export type CommunicationViewType =
   | 'contacted_to_me'
   | 'interested_by_me'
   | 'interested_to_me'
+  | 'contact_requests_sent_by_me'
+  | 'contact_requests_received_by_me'
   | 'communication_statistics';
 
 export interface PartnerProfile {

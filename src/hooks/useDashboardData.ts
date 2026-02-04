@@ -402,3 +402,113 @@ export function useCommunicationViews(
     hasMore: data?.data && data.data.length === 5,
   };
 }
+
+/**
+ * Fetcher for contact requests (GET request)
+ */
+const contactRequestFetcher = async (url: string, token: string) => {
+  logSwrActivity(url, 'FETCH');
+
+  const response = await fetchWithRetry(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    retries: 3,
+    retryDelay: 1000,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+/**
+ * Hook to fetch sent contact requests with SWR
+ * Shows contact requests sent by the current user with status tracking
+ *
+ * FEATURES:
+ * - Automatic caching and deduplication
+ * - Pagination support (5 items per page)
+ * - Shows contact details for accepted requests
+ * - Status tracking (pending, accepted, rejected)
+ *
+ * @param token - Authentication token
+ * @param page - Page number for pagination
+ * @param enabled - Whether to fetch (default: true)
+ * @returns Contact requests data, loading state, error, and mutate function
+ *
+ * @example
+ * const { data, isLoading, mutate } = useSentContactRequests(token, 1);
+ */
+export function useSentContactRequests(
+  token: string | null,
+  page: number = 1,
+  enabled: boolean = true
+) {
+  const { data, error, isLoading, mutate } = useSWR<ApiResponse<CommunicationProfile[]>>(
+    token && enabled ? [buildApiUrl(`/contact-request/sent?page=${page}`), token] : null,
+    ([url, tkn]: [string, string]) => contactRequestFetcher(url, tkn),
+    {
+      ...semiStaticDataConfig,
+      refreshInterval: 120000, // Refresh every 2 minutes
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    data: data?.status === 'success' ? data.data : null,
+    isLoading,
+    error,
+    mutate,
+    hasData: !isLoading && !error && data?.status === 'success',
+    hasMore: data?.data && data.data.length === 5,
+  };
+}
+
+/**
+ * Hook to fetch received contact requests with SWR
+ * Shows pending contact requests received by the current user
+ *
+ * FEATURES:
+ * - Automatic caching and deduplication
+ * - Pagination support (5 items per page)
+ * - Auto-marks requests as seen when viewed
+ * - Real-time updates with background revalidation
+ *
+ * @param token - Authentication token
+ * @param page - Page number for pagination
+ * @param enabled - Whether to fetch (default: true)
+ * @returns Contact requests data, loading state, error, and mutate function
+ *
+ * @example
+ * const { data, isLoading, mutate } = useReceivedContactRequests(token, 1);
+ */
+export function useReceivedContactRequests(
+  token: string | null,
+  page: number = 1,
+  enabled: boolean = true
+) {
+  const { data, error, isLoading, mutate } = useSWR<ApiResponse<CommunicationProfile[]>>(
+    token && enabled ? [buildApiUrl(`/contact-request/received?page=${page}`), token] : null,
+    ([url, tkn]: [string, string]) => contactRequestFetcher(url, tkn),
+    {
+      ...semiStaticDataConfig,
+      refreshInterval: 120000, // Refresh every 2 minutes
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    data: data?.status === 'success' ? data.data : null,
+    isLoading,
+    error,
+    mutate,
+    hasData: !isLoading && !error && data?.status === 'success',
+    hasMore: data?.data && data.data.length === 5,
+  };
+}

@@ -2,25 +2,30 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Lock, Unlock, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Lock, Unlock, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { lockUnlockPhoto, hideShowProfile } from '@/lib/profileSettingsApi';
+import { lockUnlockContactView } from '@/lib/contactRequestApi';
 
 interface PrivacySettingsProps {
   initialPhotoLocked?: boolean;
   initialProfileHidden?: boolean;
+  initialContactLocked?: boolean;
   onUpdate?: () => void;
 }
 
 const PrivacySettings = ({
   initialPhotoLocked = false,
   initialProfileHidden = false,
+  initialContactLocked = false,
   onUpdate
 }: PrivacySettingsProps) => {
   const { token } = useAuth();
   const [photoLocked, setPhotoLocked] = useState(initialPhotoLocked);
   const [profileHidden, setProfileHidden] = useState(initialProfileHidden);
+  const [contactLocked, setContactLocked] = useState(initialContactLocked);
   const [photoLoading, setPhotoLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [contactLoading, setContactLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
@@ -30,6 +35,10 @@ const PrivacySettings = ({
   useEffect(() => {
     setProfileHidden(initialProfileHidden);
   }, [initialProfileHidden]);
+
+  useEffect(() => {
+    setContactLocked(initialContactLocked);
+  }, [initialContactLocked]);
 
   const handlePhotoLockToggle = async () => {
     if (!token || photoLoading) return;
@@ -109,6 +118,48 @@ const PrivacySettings = ({
       });
     } finally {
       setProfileLoading(false);
+
+      // Clear message after 5 seconds
+      setTimeout(() => setMessage(null), 5000);
+    }
+  };
+
+  const handleContactLockToggle = async () => {
+    if (!token || contactLoading) return;
+
+    const newLockState = !contactLocked;
+
+    try {
+      setContactLoading(true);
+      setMessage(null);
+
+      const result = await lockUnlockContactView(token, newLockState);
+
+      if (result.status === 'success') {
+        setContactLocked(newLockState);
+        setMessage({
+          type: 'success',
+          text: result.mesage || (newLockState ? 'Contact view locked successfully' : 'Contact view unlocked successfully')
+        });
+
+        // Call onUpdate callback if provided
+        if (onUpdate) {
+          onUpdate();
+        }
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.message || result.mesage || 'Failed to update contact lock status'
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling contact lock:', error);
+      setMessage({
+        type: 'error',
+        text: 'An error occurred while updating contact lock status'
+      });
+    } finally {
+      setContactLoading(false);
 
       // Clear message after 5 seconds
       setTimeout(() => setMessage(null), 5000);
@@ -266,6 +317,72 @@ const PrivacySettings = ({
           </div>
         </div>
 
+        {/* Contact Lock Setting */}
+        <div className="border border-gray-200 rounded-lg p-6 hover:border-red-300 transition-colors">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center mb-2">
+                {contactLocked ? (
+                  <ShieldCheck className="h-6 w-6 text-red-500 mr-3" />
+                ) : (
+                  <ShieldCheck className="h-6 w-6 text-green-500 mr-3" />
+                )}
+                <h3 className="text-lg font-semibold text-gray-900">Contact View Protection</h3>
+              </div>
+              <p className="text-sm text-gray-600 mb-3">
+                {contactLocked
+                  ? 'Your contact details are protected. Users must send a request to view your contact information.'
+                  : 'Users can view your contact details directly based on their plan permissions.'}
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+                <p className="font-medium mb-1">ℹ️ How it works:</p>
+                <ul className="list-disc ml-5 space-y-1">
+                  <li><strong>Locked:</strong> Users must send a request to view your contact details</li>
+                  <li><strong>Unlocked:</strong> Users can view your contact directly (based on plan)</li>
+                  <li>You can approve or reject each request individually</li>
+                  <li>Contact view count decreases only when you accept a request</li>
+                </ul>
+              </div>
+              {contactLocked && (
+                <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+                  <p className="font-medium">✅ Your contact details are now protected!</p>
+                  <p className="mt-1">You&apos;ll receive requests in the &quot;Contacted Me&quot; section when someone wants to view your contact information.</p>
+                </div>
+              )}
+            </div>
+            <div className="ml-6">
+              <button
+                onClick={handleContactLockToggle}
+                disabled={contactLoading}
+                className={`relative inline-flex h-12 w-24 items-center rounded-full transition-colors ${
+                  contactLocked
+                    ? 'bg-red-500 hover:bg-red-600'
+                    : 'bg-green-500 hover:bg-green-600'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {contactLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin text-white mx-auto" />
+                ) : (
+                  <>
+                    <span
+                      className={`inline-block h-10 w-10 transform rounded-full bg-white shadow-lg transition-transform ${
+                        contactLocked ? 'translate-x-1' : 'translate-x-12'
+                      }`}
+                    >
+                      <ShieldCheck className={`h-6 w-6 m-2 ${contactLocked ? 'text-red-500' : 'text-green-500'}`} />
+                    </span>
+                    <span className={`absolute text-xs font-semibold text-white ${
+                      contactLocked ? 'right-2' : 'left-2'
+                    }`}>
+                      {contactLocked ? 'ON' : 'OFF'}
+                    </span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Information Box */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <h4 className="font-semibold text-yellow-900 mb-2 flex items-center">
@@ -278,6 +395,7 @@ const PrivacySettings = ({
             <li>Changes take effect immediately</li>
             <li>Hiding your profile may reduce your chances of receiving matches</li>
             <li>Locking photos prevents others from viewing them regardless of plan permissions</li>
+            <li>Contact lock allows you to control who can view your contact details through a request system</li>
           </ul>
         </div>
       </div>

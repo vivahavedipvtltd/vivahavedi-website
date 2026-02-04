@@ -44,6 +44,8 @@ interface DashboardSidebarProps {
     profile_interest?: number;
     profile_chat?: number;
     profile_request?: number;
+    contact_requests_received?: number;
+    contact_responses_received?: number;
   };
 }
 
@@ -96,7 +98,12 @@ const DashboardSidebar = ({ activeSection, onSectionChange: _onSectionChange, st
       items: [
         { id: 'shortlisted', label: 'Shortlisted', icon: <Star className="h-5 w-5" /> },
         { id: 'viewed-profiles', label: 'Viewed Profiles', icon: <Eye className="h-5 w-5" /> },
-        { id: 'contacted', label: 'Contacted', icon: <Phone className="h-5 w-5" /> },
+        {
+          id: 'contacted',
+          label: 'Contacted',
+          icon: <Phone className="h-5 w-5" />,
+          count: (stats?.contact_requests_received || 0) + (stats?.contact_responses_received || 0)
+        },
         { id: 'blocked-profiles', label: 'Blocked Profiles', icon: <Ban className="h-5 w-5" /> },
       ]
     },

@@ -32,6 +32,7 @@ import {
 import ChatModal from '@/components/ChatModal';
 import { blockProfile, unblockProfile } from '@/lib/profileBlockApi';
 import { reportProfile, REPORT_REASONS } from '@/lib/reportProfileApi';
+import { sendContactRequest, viewContactDetails } from '@/lib/contactRequestApi';
 
 interface ProfileData {
   basic: {
@@ -312,34 +313,55 @@ const ProfileDetailsPage = () => {
 
     try {
       setActionLoading('contact');
-      const response = await fetch(`${API_BASE_URL}/contact-details`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ match_id: parseInt(profileId) }),
-      });
+      const result = await viewContactDetails(token!, parseInt(profileId));
 
-      const result = await response.json();
-
-      if (result.status === 'success') {
+      if (result.status === 'success' && result.data) {
         const { mobile, phone, address, remaining_contact } = result.data;
-        setContactDetails({ mobile, phone, address, remaining_contact });
+        setContactDetails({ mobile: mobile || '', phone: phone || '', address: address || '', remaining_contact: remaining_contact || 0 });
         setShowContactModal(true);
-      } else if (result.message === 'plan_expired') {
+      } else if (result.error_code === 'contact_locked') {
+        // User has contact lock enabled - prompt to send request
+        const userConfirmed = window.confirm(
+          result.message || 'This user has locked their contact details. Would you like to send a contact request?'
+        );
+
+        if (userConfirmed) {
+          await handleSendContactRequest();
+        }
+      } else if (result.error_code === 'request_pending') {
+        showInfo(result.message || 'Your contact request is pending approval.');
+      } else if (result.message === 'plan_expired' || result.mesage === 'plan_expired') {
         showWarning('Your plan has expired. Please upgrade to view contact details.');
-      } else if (result.message === 'time_limit') {
-        showWarning(`Please wait until ${result.time} to view more contacts.`);
-      } else if (result.message === 'same_gender') {
+      } else if (result.message === 'time_limit' || result.mesage === 'time_limit') {
+        showWarning(`Please wait until ${result.time || result.data?.time || 'later'} to view more contacts.`);
+      } else if (result.message === 'same_gender' || result.mesage === 'same_gender') {
         showError('Cannot view contact details of same gender profile.');
       } else {
-        showError(result.message || 'Failed to view contact details');
+        showError(result.message || result.mesage || 'Failed to view contact details');
       }
     } catch (error) {
       console.error('Error viewing contact:', error);
       showError('An error occurred while viewing contact details');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleSendContactRequest = async () => {
+    try {
+      setActionLoading('contact_request');
+      const result = await sendContactRequest(token!, parseInt(profileId));
+
+      if (result.status === 'success') {
+        showSuccess(result.message || 'Contact request sent successfully! You will be notified when it is accepted.');
+        // Optionally refresh profile to update any request status
+        fetchProfileDetails();
+      } else {
+        showError(result.message || result.mesage || 'Failed to send contact request');
+      }
+    } catch (error) {
+      console.error('Error sending contact request:', error);
+      showError('An error occurred while sending contact request');
     } finally {
       setActionLoading(null);
     }
