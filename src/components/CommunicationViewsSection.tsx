@@ -323,7 +323,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                   // This is a contact request
                   return (
                     <ContactRequestCard
-                      key={`request-${profile.id}`}
+                      key={`request-${profile.request_id}`}
                       request={profile}
                       type={activeTab === 'by_me' ? 'sent' : 'received'}
                       onAction={() => mutate()}
