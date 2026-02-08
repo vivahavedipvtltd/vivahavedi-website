@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { buildApiUrl, semiStaticDataConfig } from '@/lib/swrConfig';
 import { fetchWithRetry } from '@/lib/fetchWithRetry';
 import { logSwrActivity } from '@/lib/swrDevLogger';
-import type { MyDetails, CommunicationStats, MyPlan, MyPhotos, CommunicationProfile, CommunicationViewType, PartnerProfile } from '@/types/dashboard';
+import type { MyDetails, CommunicationStats, MyPlan, MyPhotos, CommunicationProfile, CommunicationViewType, PartnerProfile, ContactedSectionData } from '@/types/dashboard';
 import type { ApiResponse } from '@/lib/api';
 
 /**
@@ -510,5 +510,57 @@ export function useReceivedContactRequests(
     mutate,
     hasData: !isLoading && !error && data?.status === 'success',
     hasMore: data?.data && data.data.length === 5,
+  };
+}
+
+/**
+ * Hook to fetch all contacted section data in a single API call
+ * Optimizes the "contacted" section by reducing 4 API calls to 1
+ *
+ * PERFORMANCE OPTIMIZATION:
+ * - Before: 4 separate API calls (contacted_by_me, contacted_to_me, request_sent, request_received)
+ * - After: 1 API call that returns all 4 datasets
+ * - Result: 75% reduction in network requests, faster tab switching
+ *
+ * BENEFITS:
+ * - Single API call fetches all tab data at once
+ * - SWR caches the entire dataset
+ * - Instant tab switching (no loading spinner after first load)
+ * - Reduced server load and bandwidth usage
+ * - Better user experience with zero latency tab switches
+ *
+ * @param token - Authentication token
+ * @param page - Page number for pagination (applies to all datasets)
+ * @param enabled - Whether to fetch (default: true)
+ * @returns All contacted section data, loading state, error, and mutate function
+ *
+ * @example
+ * const { data, isLoading, mutate } = useContactedSectionData(token, 1, true);
+ * // data.contacted_by_me - Profiles contacted by the user
+ * // data.contacted_to_me - Profiles that contacted the user
+ * // data.request_sent - Contact requests sent by the user
+ * // data.request_received - Contact requests received by the user
+ */
+export function useContactedSectionData(
+  token: string | null,
+  page: number = 1,
+  enabled: boolean = true
+) {
+  const { data, error, isLoading, mutate } = useSWR<ApiResponse<ContactedSectionData>>(
+    token && enabled ? [buildApiUrl(`/contacted-section-data?page=${page}`), token] : null,
+    ([url, tkn]: [string, string]) => authenticatedFetcher(url, tkn),
+    {
+      ...semiStaticDataConfig,
+      refreshInterval: 120000, // Refresh every 2 minutes
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    data: data?.status === 'success' ? data.data : null,
+    isLoading,
+    error,
+    mutate,
+    hasData: !isLoading && !error && data?.status === 'success',
   };
 }

@@ -8,7 +8,7 @@ import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, Check, X, 
 import ProfileRequestsSection from './ProfileRequestsSection';
 import ChatListSection from './ChatListSection';
 import ContactRequestCard from './ContactRequestCard';
-import { useCommunicationViews, useSentContactRequests, useReceivedContactRequests, useCommunicationStats } from '@/hooks/useDashboardData';
+import { useCommunicationViews, useSentContactRequests, useReceivedContactRequests, useCommunicationStats, useContactedSectionData } from '@/hooks/useDashboardData';
 import type { CommunicationViewType, CommunicationProfile } from '@/types/dashboard';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -100,35 +100,32 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   // Determine if this is a contact request section
   const isContactRequestSection = initialSection === 'contact-requests';
 
-  // For contacted section with 4 tabs, determine the current data type
-  let contactedViewType: CommunicationViewType | null = null;
-  if (isContactedSection) {
-    if (contactedActiveTab === 'contacted_me') {
-      contactedViewType = 'contacted_to_me';
-    } else if (contactedActiveTab === 'contacted_by_me') {
-      contactedViewType = 'contacted_by_me';
-    }
-  }
-
-  // Use appropriate SWR hook based on section type
-  const communicationData = useCommunicationViews(
+  // OPTIMIZED: Use single API call for contacted section (reduces 4 API calls to 1)
+  const contactedSectionData = useContactedSectionData(
     token,
-    isContactedSection && contactedViewType ? contactedViewType : currentViewType as CommunicationViewType,
     currentPage,
-    isContactedSection ? (contactedActiveTab === 'contacted_me' || contactedActiveTab === 'contacted_by_me') : !isContactRequestSection
+    isContactedSection
   );
 
-  // Fetch contact requests for contact request sections and contacted section
+  // Use appropriate SWR hook based on section type (for non-contacted sections)
+  const communicationData = useCommunicationViews(
+    token,
+    currentViewType as CommunicationViewType,
+    currentPage,
+    !isContactedSection && !isContactRequestSection
+  );
+
+  // Fetch contact requests for contact request sections only (not for contacted section anymore)
   const sentContactRequestsData = useSentContactRequests(
     token,
     currentPage,
-    isContactRequestSection ? activeTab === 'by_me' : (isContactedSection && contactedActiveTab === 'request_send')
+    isContactRequestSection && activeTab === 'by_me'
   );
 
   const receivedContactRequestsData = useReceivedContactRequests(
     token,
     currentPage,
-    isContactRequestSection ? activeTab === 'to_me' : (isContactedSection && contactedActiveTab === 'request_received')
+    isContactRequestSection && activeTab === 'to_me'
   );
 
   // Select the appropriate data source
@@ -138,23 +135,29 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   let mutate: () => void;
 
   if (isContactedSection) {
-    // Contacted section with 4 tabs
+    // OPTIMIZED: Contacted section with 4 tabs - uses single API call
+    // Extract the appropriate data based on active tab
     if (contactedActiveTab === 'request_received') {
-      profiles = receivedContactRequestsData.data || [];
-      loading = receivedContactRequestsData.isLoading;
-      hasMore = receivedContactRequestsData.hasMore || false;
-      mutate = receivedContactRequestsData.mutate;
+      profiles = contactedSectionData.data?.request_received || [];
+      loading = contactedSectionData.isLoading;
+      hasMore = profiles.length === 5; // 5 items per page
+      mutate = contactedSectionData.mutate;
     } else if (contactedActiveTab === 'request_send') {
-      profiles = sentContactRequestsData.data || [];
-      loading = sentContactRequestsData.isLoading;
-      hasMore = sentContactRequestsData.hasMore || false;
-      mutate = sentContactRequestsData.mutate;
+      profiles = contactedSectionData.data?.request_sent || [];
+      loading = contactedSectionData.isLoading;
+      hasMore = profiles.length === 5;
+      mutate = contactedSectionData.mutate;
+    } else if (contactedActiveTab === 'contacted_me') {
+      profiles = contactedSectionData.data?.contacted_to_me || [];
+      loading = contactedSectionData.isLoading;
+      hasMore = profiles.length === 5;
+      mutate = contactedSectionData.mutate;
     } else {
-      // contacted_me or contacted_by_me - use regular communication data
-      profiles = communicationData.data || [];
-      loading = communicationData.isLoading;
-      hasMore = communicationData.hasMore || false;
-      mutate = communicationData.mutate;
+      // contacted_by_me
+      profiles = contactedSectionData.data?.contacted_by_me || [];
+      loading = contactedSectionData.isLoading;
+      hasMore = profiles.length === 5;
+      mutate = contactedSectionData.mutate;
     }
   } else if (isContactRequestSection) {
     // Only contact requests (for 'contact-requests' section)
@@ -404,9 +407,9 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
           {/* Contact Request Cards (for contact-requests section OR contacted section with request tabs) */}
           {(isContactRequestSection || (isContactedSection && (contactedActiveTab === 'request_received' || contactedActiveTab === 'request_send'))) && (
             <div className="grid grid-cols-1 gap-5">
-              {profiles.map((request) => (
+              {profiles.map((request, index) => (
                 <ContactRequestCard
-                  key={request.id}
+                  key={request.request_id || `${isContactedSection ? contactedActiveTab : activeTab}-${request.id}-${index}`}
                   request={request}
                   type={isContactRequestSection
                     ? (activeTab === 'by_me' ? 'sent' : 'received')
@@ -420,9 +423,9 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
           {/* Regular Profile Cards (for other sections like interests, shortlisted, profile-views, OR contacted section with contacted tabs) */}
           {!isContactRequestSection && !(isContactedSection && (contactedActiveTab === 'request_received' || contactedActiveTab === 'request_send')) && (
             <div className="grid grid-cols-1 gap-5">
-              {profiles.map((profile) => (
+              {profiles.map((profile, index) => (
               <div
-                key={profile.id}
+                key={`${isContactedSection ? contactedActiveTab : activeTab}-${profile.id}-${index}`}
                 onClick={() => handleProfileClick(profile.id)}
                 className="group relative bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-xl hover:border-red-200 cursor-pointer transition-all duration-300 hover:-translate-y-1"
               >

@@ -184,3 +184,10 @@ export interface PartnerProfile {
   };
   [key: string]: unknown; // Allow other fields from the API
 }
+
+export interface ContactedSectionData {
+  contacted_by_me: CommunicationProfile[];
+  contacted_to_me: CommunicationProfile[];
+  request_sent: CommunicationProfile[];
+  request_received: CommunicationProfile[];
+}
