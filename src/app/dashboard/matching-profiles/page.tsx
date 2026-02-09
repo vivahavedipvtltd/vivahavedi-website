@@ -319,6 +319,7 @@ const MatchingProfilesPage = () => {
                             height={352}
                             className="w-full h-[22rem] object-cover"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            unoptimized={profile.photo?.includes('vivahavedimatrimony.com')}
                           />
                           {activeTab === 'perfect' && (
                             <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
