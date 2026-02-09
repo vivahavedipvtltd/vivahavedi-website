@@ -12,6 +12,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/a
 export interface MatchingProfile {
   photo: string;
   id: number;
+  user_id: number;
   name: string;
   age: number;
   height: string;

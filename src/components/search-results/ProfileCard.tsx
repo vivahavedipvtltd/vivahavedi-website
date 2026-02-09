@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 interface ProfileCardProps {
   profile: {
     id: number;
+    user_id: number;
     name: string;
     age: number;
     height: string;
@@ -41,6 +42,9 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           {profile.name}
         </h3>
         <div className="space-y-1 text-sm text-gray-600">
+          <p>
+            <span className="font-medium">User ID:</span> {profile.user_id}
+          </p>
           <p>
             <span className="font-medium">Age:</span> {profile.age} years
           </p>

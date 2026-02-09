@@ -327,11 +327,14 @@ const MatchingProfilesPage = () => {
                             </div>
                           )}
                         </div>
-                        <div className="p-4 flex flex-col h-[19rem]">
+                        <div className="p-4 flex flex-col">
                           <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">
                             {profile.name}
                           </h3>
-                          <div className="space-y-1 text-sm text-gray-600 flex-grow overflow-y-auto">
+                          <div className="space-y-1 text-sm text-gray-600 flex-grow">
+                            <p>
+                              <span className="font-medium">User ID:</span> {profile.user_id}
+                            </p>
                             <p>
                               <span className="font-medium">Age:</span> {profile.age} years
                             </p>

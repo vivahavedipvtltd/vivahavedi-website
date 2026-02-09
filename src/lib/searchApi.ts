@@ -27,6 +27,7 @@ export interface SearchFilters {
 
 export interface ProfileResult {
   id: number;
+  user_id: number;
   name: string;
   age: number;
   height: string;
