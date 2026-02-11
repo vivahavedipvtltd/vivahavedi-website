@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
@@ -196,13 +196,7 @@ const ProfileDetailsPage = () => {
     remaining_contact: number;
   } | null>(null);
 
-  useEffect(() => {
-    if (token && profileId) {
-      fetchProfileDetails();
-    }
-  }, [token, profileId]);
-
-  const fetchProfileDetails = async () => {
+  const fetchProfileDetails = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -235,7 +229,13 @@ const ProfileDetailsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, profileId]);
+
+  useEffect(() => {
+    if (token && profileId) {
+      fetchProfileDetails();
+    }
+  }, [token, profileId, fetchProfileDetails]);
 
   const handleSendInterest = async () => {
     if (isInterestSent || actionLoading === 'interest') return;
@@ -410,11 +410,6 @@ const ProfileDetailsPage = () => {
     } finally {
       setActionLoading(null);
     }
-  };
-
-  // Helper to check if a section is empty
-  const isSectionEmpty = (checkFunction: () => boolean): boolean => {
-    return !checkFunction();
   };
 
   // Helper to render request button for sections
@@ -617,7 +612,7 @@ const ProfileDetailsPage = () => {
     );
   }
 
-  const { basic, detailed, photo, astro, partner, match, communicaton, request } = profileData;
+  const { basic, detailed, photo, astro, partner, match, request } = profileData;
 
   return (
     <AuthGuard requireAuth={true} redirectTo="/login">
@@ -961,12 +956,6 @@ const ProfileDetailsPage = () => {
                       <p className="text-sm text-gray-600">Weight</p>
                       <p className="text-gray-900 font-medium">{detailed.up_body_weight ? `${detailed.up_body_weight} kg` : 'Not specified'}</p>
                     </div>
-                    {detailed.up_children && (
-                      <div>
-                        <p className="text-sm text-gray-600">Children</p>
-                        <p className="text-gray-900 font-medium">{detailed.up_children}</p>
-                      </div>
-                    )}
                     {detailed.up_personal_values && (
                       <div>
                         <p className="text-sm text-gray-600">Personal Values</p>
@@ -977,6 +966,12 @@ const ProfileDetailsPage = () => {
                       <p className="text-sm text-gray-600">Marital Status</p>
                       <p className="text-gray-900 font-medium">{detailed.up_marital_status || 'Not specified'}</p>
                     </div>
+                    {detailed.up_children && detailed.up_marital_status?.toLowerCase() !== 'unmarried' && (
+                      <div>
+                        <p className="text-sm text-gray-600">Children</p>
+                        <p className="text-gray-900 font-medium">{detailed.up_children}</p>
+                      </div>
+                    )}
                     <div>
                       <p className="text-sm text-gray-600">Body Type</p>
                       <p className="text-gray-900 font-medium">{detailed.up_body_type || 'Not specified'}</p>
