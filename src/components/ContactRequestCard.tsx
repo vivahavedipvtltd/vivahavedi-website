@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Check, X, Loader2, Phone, Mail, XCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { respondToContactRequest, cancelContactRequest } from '@/lib/contactRequestApi';
+import { formatHeight } from '@/utils/heightUtils';
 import type { CommunicationProfile } from '@/types/dashboard';
 
 interface ContactRequestCardProps {
@@ -193,7 +194,7 @@ const ContactRequestCard = ({ request, type, onAction }: ContactRequestCardProps
           </div>
 
           <div className="space-y-1 text-sm text-gray-600">
-            <p>{request.age} years, {request.height}</p>
+            <p>{request.age} years, {formatHeight(request.height)}</p>
             <p>{request.marital_status}</p>
             <p>{request.religion} - {request.caste}</p>
             <p>{request.district}</p>

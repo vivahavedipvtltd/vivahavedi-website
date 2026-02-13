@@ -18,6 +18,7 @@ import {
   Users,
 } from 'lucide-react';
 import { getMatchingProfiles, getMatchingProfilesCount, MatchingProfile } from '@/lib/matchingProfilesApi';
+import { formatHeight } from '@/utils/heightUtils';
 
 type MatchTab = 'latest' | 'perfect';
 
@@ -340,7 +341,7 @@ const MatchingProfilesPage = () => {
                               <span className="font-medium">Age:</span> {profile.age} years
                             </p>
                             <p>
-                              <span className="font-medium">Height:</span> {profile.height}
+                              <span className="font-medium">Height:</span> {formatHeight(profile.height)}
                             </p>
                             <p>
                               <span className="font-medium">Status:</span>{' '}

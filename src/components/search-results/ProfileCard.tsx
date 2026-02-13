@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { formatHeight } from '@/utils/heightUtils';
 
 interface ProfileCardProps {
   profile: {
@@ -49,7 +50,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             <span className="font-medium">Age:</span> {profile.age} years
           </p>
           <p>
-            <span className="font-medium">Height:</span> {profile.height}
+            <span className="font-medium">Height:</span> {formatHeight(profile.height)}
           </p>
           <p>
             <span className="font-medium">Status:</span>{' '}

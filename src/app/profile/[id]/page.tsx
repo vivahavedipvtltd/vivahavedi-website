@@ -30,6 +30,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import ChatModal from '@/components/ChatModal';
+import { formatHeight } from '@/utils/heightUtils';
 import { blockProfile, unblockProfile } from '@/lib/profileBlockApi';
 import { reportProfile, REPORT_REASONS } from '@/lib/reportProfileApi';
 import { sendContactRequest, viewContactDetails } from '@/lib/contactRequestApi';
@@ -143,7 +144,9 @@ interface ProfileData {
     country: string;
     state: string;
     district: string;
-    qualification: string;
+    q_level: string;
+    qualificatio: string;
+    spetialization: string;
     profession: string;
   };
   communicaton?: {
@@ -750,7 +753,7 @@ const ProfileDetailsPage = () => {
                             strokeWidth="10"
                             fill="none"
                             strokeDasharray={`${2 * Math.PI * 64}`}
-                            strokeDashoffset={`${2 * Math.PI * 64 * (1 - match.score / 100)}`}
+                            strokeDashoffset={`${2 * Math.PI * 64 * (1 - Math.min(match.score, 100) / 100)}`}
                             className="transition-all duration-1000 ease-out"
                             strokeLinecap="round"
                           />
@@ -771,35 +774,36 @@ const ProfileDetailsPage = () => {
                     </div>
 
                     {/* Match Details */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-                        <span className="text-gray-700 font-medium text-sm">Age</span>
-                        <div className={`flex items-center gap-2 ${getMatchColor(match.age)}`}>
-                          {getMatchIcon(match.age)}
-                          <span className="font-semibold text-sm">{match.age === 'yes' ? 'Match' : 'No Match'}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-                        <span className="text-gray-700 font-medium text-sm">Height</span>
-                        <div className={`flex items-center gap-2 ${getMatchColor(match.height)}`}>
-                          {getMatchIcon(match.height)}
-                          <span className="font-semibold text-sm">{match.height === 'yes' ? 'Match' : 'No Match'}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-                        <span className="text-gray-700 font-medium text-sm">Religion</span>
-                        <div className={`flex items-center gap-2 ${getMatchColor(match.relegion)}`}>
-                          {getMatchIcon(match.relegion)}
-                          <span className="font-semibold text-sm">{match.relegion === 'yes' ? 'Match' : 'No Match'}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-                        <span className="text-gray-700 font-medium text-sm">Location</span>
-                        <div className={`flex items-center gap-2 ${getMatchColor(match.state)}`}>
-                          {getMatchIcon(match.state)}
-                          <span className="font-semibold text-sm">{match.state === 'yes' ? 'Match' : 'No Match'}</span>
-                        </div>
-                      </div>
+                    <div className="space-y-2">
+                      {([
+                        { label: 'Age', key: 'age' },
+                        { label: 'Height', key: 'height' },
+                        { label: 'Marital Status', key: 'marital_status' },
+                        { label: 'Body Type', key: 'body_type' },
+                        { label: 'Complexion', key: 'complexion' },
+                        { label: 'Physical Status', key: 'physical_status' },
+                        { label: 'Religion', key: 'relegion' },
+                        { label: 'Caste', key: 'caste' },
+                        { label: 'Nakshatra', key: 'nakshathra' },
+                        { label: 'Country', key: 'country' },
+                        { label: 'State', key: 'state' },
+                        { label: 'District', key: 'district' },
+                        { label: 'Education Level', key: 'q_level' },
+                        { label: 'Qualification', key: 'qualificatio' },
+                        { label: 'Specialization', key: 'spetialization' },
+                        { label: 'Profession', key: 'profession' },
+                      ] as { label: string; key: Exclude<keyof NonNullable<typeof match>, 'score'> }[]).map(({ label, key }) => {
+                        const val = match[key] as string;
+                        return (
+                          <div key={key} className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100">
+                            <span className="text-gray-700 font-medium text-sm">{label}</span>
+                            <div className={`flex items-center gap-1.5 ${getMatchColor(val)}`}>
+                              {getMatchIcon(val)}
+                              <span className="font-semibold text-xs">{val === 'yes' ? 'Match' : 'No Match'}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -950,7 +954,7 @@ const ProfileDetailsPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-600">Height</p>
-                      <p className="text-gray-900 font-medium">{detailed.up_height || 'Not specified'}</p>
+                      <p className="text-gray-900 font-medium">{formatHeight(detailed.up_height)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Weight</p>

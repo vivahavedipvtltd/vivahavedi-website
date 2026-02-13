@@ -93,9 +93,19 @@ const BasicProfilePage = () => {
 
       if (profileResult.status === 'success') {
         const detailed = profileResult.data.detailed;
+        // Convert legacy feet.inches format (e.g. "5.6") to cm for consistency
+        const normalizeHeight = (h: string): string => {
+          if (!h) return '';
+          const num = parseFloat(h);
+          if (num >= 100) return h; // already cm
+          const parts = h.split('.');
+          const feet = parseInt(parts[0]);
+          const inches = parseInt(parts[1] || '0');
+          return String(Math.round(feet * 30.48 + inches * 2.54));
+        };
         setFormData({
           profile_created: detailed.up_added_by || '',
-          height: detailed.up_height || '',
+          height: normalizeHeight(detailed.up_height || ''),
           weight: detailed.up_body_weight || '',
           marital_status: detailed.up_marital_status || '',
           children: detailed.up_children || 'No',
@@ -265,43 +275,43 @@ const BasicProfilePage = () => {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     >
                       <option value="">Select Height</option>
-                      <option value="4.0">4&apos;0&quot; (122 cm)</option>
-                      <option value="4.1">4&apos;1&quot; (124 cm)</option>
-                      <option value="4.2">4&apos;2&quot; (127 cm)</option>
-                      <option value="4.3">4&apos;3&quot; (130 cm)</option>
-                      <option value="4.4">4&apos;4&quot; (132 cm)</option>
-                      <option value="4.5">4&apos;5&quot; (135 cm)</option>
-                      <option value="4.6">4&apos;6&quot; (137 cm)</option>
-                      <option value="4.7">4&apos;7&quot; (140 cm)</option>
-                      <option value="4.8">4&apos;8&quot; (142 cm)</option>
-                      <option value="4.9">4&apos;9&quot; (145 cm)</option>
-                      <option value="4.10">4&apos;10&quot; (147 cm)</option>
-                      <option value="4.11">4&apos;11&quot; (150 cm)</option>
-                      <option value="5.0">5&apos;0&quot; (152 cm)</option>
-                      <option value="5.1">5&apos;1&quot; (155 cm)</option>
-                      <option value="5.2">5&apos;2&quot; (157 cm)</option>
-                      <option value="5.3">5&apos;3&quot; (160 cm)</option>
-                      <option value="5.4">5&apos;4&quot; (163 cm)</option>
-                      <option value="5.5">5&apos;5&quot; (165 cm)</option>
-                      <option value="5.6">5&apos;6&quot; (168 cm)</option>
-                      <option value="5.7">5&apos;7&quot; (170 cm)</option>
-                      <option value="5.8">5&apos;8&quot; (173 cm)</option>
-                      <option value="5.9">5&apos;9&quot; (175 cm)</option>
-                      <option value="5.10">5&apos;10&quot; (178 cm)</option>
-                      <option value="5.11">5&apos;11&quot; (180 cm)</option>
-                      <option value="6.0">6&apos;0&quot; (183 cm)</option>
-                      <option value="6.1">6&apos;1&quot; (185 cm)</option>
-                      <option value="6.2">6&apos;2&quot; (188 cm)</option>
-                      <option value="6.3">6&apos;3&quot; (191 cm)</option>
-                      <option value="6.4">6&apos;4&quot; (193 cm)</option>
-                      <option value="6.5">6&apos;5&quot; (196 cm)</option>
-                      <option value="6.6">6&apos;6&quot; (198 cm)</option>
-                      <option value="6.7">6&apos;7&quot; (201 cm)</option>
-                      <option value="6.8">6&apos;8&quot; (203 cm)</option>
-                      <option value="6.9">6&apos;9&quot; (206 cm)</option>
-                      <option value="6.10">6&apos;10&quot; (208 cm)</option>
-                      <option value="6.11">6&apos;11&quot; (211 cm)</option>
-                      <option value="7.0">7&apos;0&quot; (213 cm)</option>
+                      <option value="122">4&apos;0&quot; (122 cm)</option>
+                      <option value="124">4&apos;1&quot; (124 cm)</option>
+                      <option value="127">4&apos;2&quot; (127 cm)</option>
+                      <option value="130">4&apos;3&quot; (130 cm)</option>
+                      <option value="132">4&apos;4&quot; (132 cm)</option>
+                      <option value="135">4&apos;5&quot; (135 cm)</option>
+                      <option value="137">4&apos;6&quot; (137 cm)</option>
+                      <option value="140">4&apos;7&quot; (140 cm)</option>
+                      <option value="142">4&apos;8&quot; (142 cm)</option>
+                      <option value="145">4&apos;9&quot; (145 cm)</option>
+                      <option value="147">4&apos;10&quot; (147 cm)</option>
+                      <option value="150">4&apos;11&quot; (150 cm)</option>
+                      <option value="152">5&apos;0&quot; (152 cm)</option>
+                      <option value="155">5&apos;1&quot; (155 cm)</option>
+                      <option value="157">5&apos;2&quot; (157 cm)</option>
+                      <option value="160">5&apos;3&quot; (160 cm)</option>
+                      <option value="163">5&apos;4&quot; (163 cm)</option>
+                      <option value="165">5&apos;5&quot; (165 cm)</option>
+                      <option value="168">5&apos;6&quot; (168 cm)</option>
+                      <option value="170">5&apos;7&quot; (170 cm)</option>
+                      <option value="173">5&apos;8&quot; (173 cm)</option>
+                      <option value="175">5&apos;9&quot; (175 cm)</option>
+                      <option value="178">5&apos;10&quot; (178 cm)</option>
+                      <option value="180">5&apos;11&quot; (180 cm)</option>
+                      <option value="183">6&apos;0&quot; (183 cm)</option>
+                      <option value="185">6&apos;1&quot; (185 cm)</option>
+                      <option value="188">6&apos;2&quot; (188 cm)</option>
+                      <option value="191">6&apos;3&quot; (191 cm)</option>
+                      <option value="193">6&apos;4&quot; (193 cm)</option>
+                      <option value="196">6&apos;5&quot; (196 cm)</option>
+                      <option value="198">6&apos;6&quot; (198 cm)</option>
+                      <option value="201">6&apos;7&quot; (201 cm)</option>
+                      <option value="203">6&apos;8&quot; (203 cm)</option>
+                      <option value="206">6&apos;9&quot; (206 cm)</option>
+                      <option value="208">6&apos;10&quot; (208 cm)</option>
+                      <option value="211">6&apos;11&quot; (211 cm)</option>
+                      <option value="213">7&apos;0&quot; (213 cm)</option>
                     </select>
                   </div>
                   <div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatHeight } from '@/utils/heightUtils';
 import Link from 'next/link';
 import {
   User,
@@ -98,7 +99,7 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
         </div>
 
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <ProfileItem icon={<User />} label="Height" value={detailed.up_height ? `${detailed.up_height} cm` : 'N/A'} />
+          <ProfileItem icon={<User />} label="Height" value={formatHeight(detailed.up_height)} />
           <ProfileItem icon={<User />} label="Weight" value={detailed.up_weight ? `${detailed.up_weight} kg` : 'N/A'} />
           <ProfileItem icon={<User />} label="Complexion" value={detailed.up_complexion || 'N/A'} />
           <ProfileItem icon={<User />} label="Body Type" value={detailed.up_body_type || 'N/A'} />

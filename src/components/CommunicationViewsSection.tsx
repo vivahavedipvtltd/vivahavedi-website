@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { Eye, Heart, Star, Phone, Loader2, ChevronLeft, ChevronRight, Check, X, ShieldCheck } from 'lucide-react';
+import { formatHeight } from '@/utils/heightUtils';
 import ProfileRequestsSection from './ProfileRequestsSection';
 import ChatListSection from './ChatListSection';
 import ContactRequestCard from './ContactRequestCard';
@@ -482,7 +483,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                         <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
-                        <span className="font-medium">{profile.height} cm</span>
+                        <span className="font-medium">{formatHeight(profile.height)}</span>
                       </div>
                       <div className="flex items-center space-x-2 text-sm text-gray-600">
                         <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
