@@ -284,12 +284,6 @@ const ChatListSection = () => {
       const result = await response.json();
 
       if (result.status === 'success') {
-        // Remove temporary message and let polling fetch the real one
-        setMessages((prev) => prev.filter(m => m.plan_chat_id !== tempId));
-
-        // Immediately load new messages to get the real message ID
-        setTimeout(() => loadNewMessages(), 500);
-
         if (result.message === 'new_chat') {
           showSuccess('Chat initiated successfully! 1 chat credit used.');
         }
@@ -311,7 +305,7 @@ const ChatListSection = () => {
     } finally {
       setSending(false);
     }
-  }, [newMessage, sending, selectedChat, userId, token, loadNewMessages, showSuccess, showError]);
+  }, [newMessage, sending, selectedChat, userId, token, showSuccess, showError]);
 
   // Memoized key press handler
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
