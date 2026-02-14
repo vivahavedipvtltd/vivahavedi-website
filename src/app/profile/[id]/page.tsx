@@ -574,10 +574,6 @@ const ProfileDetailsPage = () => {
     }
   };
 
-  const getMatchColor = (value: string) => {
-    return value === 'yes' ? 'text-green-600' : 'text-red-600';
-  };
-
   const getMatchIcon = (value: string) => {
     return value === 'yes' ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />;
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -92,11 +92,7 @@ export default function CasteMatrimonyPage() {
   // Generate age options (18-80)
   const ageOptions = Array.from({ length: 63 }, (_, i) => i + 18);
 
-  useEffect(() => {
-    fetchCasteAndReligion();
-  }, [religionSlug, casteSlug]);
-
-  const fetchCasteAndReligion = async () => {
+  const fetchCasteAndReligion = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/masters`);
@@ -135,7 +131,11 @@ export default function CasteMatrimonyPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [religionSlug, casteSlug]);
+
+  useEffect(() => {
+    fetchCasteAndReligion();
+  }, [religionSlug, casteSlug, fetchCasteAndReligion]);
 
   // Handle state change and filter districts
   const handleStateChange = (stateId: string) => {

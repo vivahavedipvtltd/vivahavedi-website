@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumb from '@/components/Breadcrumb';
-import { getAllBlogPosts, BlogPost } from '@/data/blogPosts';
+import { getAllBlogPosts } from '@/data/blogPosts';
 
 export default function BlogPage() {
   const allPosts = getAllBlogPosts();

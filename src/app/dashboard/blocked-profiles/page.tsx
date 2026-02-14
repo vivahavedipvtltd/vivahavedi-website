@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
@@ -27,13 +27,7 @@ const BlockedProfilesPage = () => {
     profileName: string;
   }>({ isOpen: false, profileId: 0, profileName: '' });
 
-  useEffect(() => {
-    if (token) {
-      fetchBlockedProfiles();
-    }
-  }, [token]);
-
-  const fetchBlockedProfiles = async () => {
+  const fetchBlockedProfiles = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -51,7 +45,13 @@ const BlockedProfilesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      fetchBlockedProfiles();
+    }
+  }, [token, fetchBlockedProfiles]);
 
   const handleUnblockClick = (profileId: number, profileName: string) => {
     setConfirmDialog({ isOpen: true, profileId, profileName });
@@ -101,7 +101,7 @@ const BlockedProfilesPage = () => {
         <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="blocked-profiles"
-            onSectionChange={(section) => {
+            onSectionChange={() => {
               // Navigate to dashboard for sections handled there
               router.push('/dashboard');
             }}

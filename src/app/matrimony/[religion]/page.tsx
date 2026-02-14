@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -29,11 +29,7 @@ export default function ReligionMatrimonyPage() {
   const [castes, setCastes] = useState<Caste[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchReligionAndCastes();
-  }, [religionSlug]);
-
-  const fetchReligionAndCastes = async () => {
+  const fetchReligionAndCastes = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/masters`);
@@ -60,7 +56,11 @@ export default function ReligionMatrimonyPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [religionSlug]);
+
+  useEffect(() => {
+    fetchReligionAndCastes();
+  }, [religionSlug, fetchReligionAndCastes]);
 
   const createSlug = (name: string) => {
     return name

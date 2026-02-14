@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Phone,
@@ -10,7 +10,7 @@ import {
   Shield,
   X
 } from 'lucide-react';
-import { mobileSchema, otpSchema } from '@/lib/validation';
+import { otpSchema } from '@/lib/validation';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -31,18 +31,11 @@ const MobileVerification = ({ onVerificationComplete }: MobileVerificationProps)
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showOtpInput, setShowOtpInput] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      fetchVerificationStatus();
-    }
-  }, [token]);
-
-  const fetchVerificationStatus = async () => {
+  const fetchVerificationStatus = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -68,7 +61,13 @@ const MobileVerification = ({ onVerificationComplete }: MobileVerificationProps)
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      fetchVerificationStatus();
+    }
+  }, [token, fetchVerificationStatus]);
 
   const handleSendOtp = async () => {
     try {
@@ -90,7 +89,6 @@ const MobileVerification = ({ onVerificationComplete }: MobileVerificationProps)
 
       if (result.status === 'success') {
         setSuccess('OTP sent successfully to your mobile number!');
-        setOtpSent(true);
         setShowOtpInput(true);
       } else {
         setError(result.message || 'Failed to send OTP');
@@ -131,7 +129,6 @@ const MobileVerification = ({ onVerificationComplete }: MobileVerificationProps)
       if (result.status === 'success') {
         setSuccess('Mobile number verified successfully!');
         setShowOtpInput(false);
-        setOtpSent(false);
         setOtp('');
 
         // Refresh verification status
@@ -155,7 +152,6 @@ const MobileVerification = ({ onVerificationComplete }: MobileVerificationProps)
 
   const handleCancelOtp = () => {
     setShowOtpInput(false);
-    setOtpSent(false);
     setOtp('');
     setError(null);
     setSuccess(null);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -94,11 +94,7 @@ export default function DistrictMatrimonyPage() {
   // Generate age options (18-80)
   const ageOptions = Array.from({ length: 63 }, (_, i) => i + 18);
 
-  useEffect(() => {
-    fetchDistrictAndState();
-  }, [stateSlug, districtSlug]);
-
-  const fetchDistrictAndState = async () => {
+  const fetchDistrictAndState = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/masters`);
@@ -138,7 +134,11 @@ export default function DistrictMatrimonyPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [stateSlug, districtSlug]);
+
+  useEffect(() => {
+    fetchDistrictAndState();
+  }, [stateSlug, districtSlug, fetchDistrictAndState]);
 
   // Handle religion change and filter castes
   const handleReligionChange = (religionId: string) => {
@@ -228,13 +228,6 @@ export default function DistrictMatrimonyPage() {
 
   const handleViewProfile = () => {
     router.push('/login');
-  };
-
-  const createSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
   };
 
   if (loading) {

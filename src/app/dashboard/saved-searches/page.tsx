@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -30,14 +30,7 @@ const SavedSearchesPage = () => {
   const [error, setError] = useState<string | null>(null);
   const hasLoadedRef = useRef(false);
 
-  useEffect(() => {
-    if (token && !hasLoadedRef.current) {
-      hasLoadedRef.current = true;
-      loadSavedSearches();
-    }
-  }, [token]);
-
-  const loadSavedSearches = async () => {
+  const loadSavedSearches = useCallback(async () => {
     if (!token) return;
 
     setLoading(true);
@@ -59,7 +52,14 @@ const SavedSearchesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (token && !hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+      loadSavedSearches();
+    }
+  }, [token, loadSavedSearches]);
 
   const handleViewSearch = (searchId: number) => {
     router.push(`/search-results?type=saved&id=${searchId}`);
@@ -94,7 +94,7 @@ const SavedSearchesPage = () => {
         <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="saved-searches"
-            onSectionChange={(section) => {
+            onSectionChange={() => {
               // Navigate to dashboard for sections handled there
               router.push('/dashboard');
             }}

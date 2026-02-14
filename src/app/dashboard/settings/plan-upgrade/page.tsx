@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -83,13 +83,7 @@ const PlanUpgradePage = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (token) {
-      fetchPlans();
-    }
-  }, [token]);
-
-  const fetchPlans = async () => {
+  const fetchPlans = useCallback(async () => {
     try {
       setLoading(true);
       const premiumPlans = await getPremiumPlans();
@@ -100,7 +94,13 @@ const PlanUpgradePage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    if (token) {
+      fetchPlans();
+    }
+  }, [token, fetchPlans]);
 
   const handleUpgrade = async (plan: Plan) => {
     if (!razorpayLoaded) {
@@ -199,7 +199,7 @@ const PlanUpgradePage = () => {
         <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="upgrade-plan"
-            onSectionChange={(section) => {
+            onSectionChange={() => {
               // Navigate to dashboard for sections handled there
               router.push('/dashboard');
             }}

@@ -31,10 +31,6 @@ const FilterableMultiSelectById = ({
     option.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const selectedNames = options
-    .filter(opt => selectedIds.includes(opt.id))
-    .map(opt => opt.name);
-
   return (
     <div>
       <label className="flex items-center text-sm font-medium text-gray-700 mb-3">

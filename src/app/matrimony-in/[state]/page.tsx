@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -31,11 +31,7 @@ export default function StateMatrimonyPage() {
   const [districts, setDistricts] = useState<District[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchStateAndDistricts();
-  }, [stateSlug]);
-
-  const fetchStateAndDistricts = async () => {
+  const fetchStateAndDistricts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/masters`);
@@ -63,7 +59,11 @@ export default function StateMatrimonyPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [stateSlug]);
+
+  useEffect(() => {
+    fetchStateAndDistricts();
+  }, [stateSlug, fetchStateAndDistricts]);
 
   const createSlug = (name: string) => {
     return name

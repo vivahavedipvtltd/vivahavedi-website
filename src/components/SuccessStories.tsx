@@ -6,7 +6,6 @@ import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   getPaginatedSuccessStories,
   formatStoryDate,
-  truncateText,
   type SuccessStory,
   type SuccessStoriesPagination
 } from '@/lib/successStoriesApi';
@@ -82,12 +81,6 @@ const SuccessStories = () => {
     const prevPage = currentPage <= 1 ? pagination.last_page : currentPage - 1;
     setCurrentPage(prevPage);
     loadStories(prevPage);
-    setIsAutoPlaying(false);
-  };
-
-  const goToSlide = (page: number) => {
-    setCurrentPage(page);
-    loadStories(page);
     setIsAutoPlaying(false);
   };
 

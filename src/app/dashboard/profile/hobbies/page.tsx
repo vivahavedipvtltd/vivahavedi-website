@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -67,13 +67,7 @@ const HobbiesUpdatePage = () => {
   const drinkOptions = ['Yes', 'No', 'Occasionally', 'Socially'];
   const smokeOptions = ['Yes', 'No', 'Occasionally'];
 
-  useEffect(() => {
-    if (token) {
-      fetchProfileData();
-    }
-  }, [token]);
-
-  const fetchProfileData = async () => {
+  const fetchProfileData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/my-details`, {
@@ -110,7 +104,13 @@ const HobbiesUpdatePage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      fetchProfileData();
+    }
+  }, [token, fetchProfileData]);
 
   const handleMultiSelectChange = (field: keyof Pick<HobbiesData, 'up_hobbies' | 'up_music' | 'up_reads' | 'up_cuisine'>, value: string) => {
     setFormData((prev) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { X, Send, Loader2, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,7 +27,7 @@ interface ChatModalProps {
 
 const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModalProps) => {
   const { token, userId } = useAuth();
-  const { showSuccess, showError, showWarning, showInfo } = useToast();
+  const { showSuccess, showError } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,26 +38,11 @@ const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModa
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (isOpen && token && matchId) {
-      loadInitialMessages();
-      startPolling();
-    }
-
-    return () => {
-      stopPolling();
-    };
-  }, [isOpen, matchId, token]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const loadInitialMessages = async () => {
+  const loadInitialMessages = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/chat/load-initial`, {
@@ -81,7 +66,7 @@ const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModa
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, matchId]);
 
   const loadOldMessages = async () => {
     if (messages.length === 0 || loadingMore) return;
@@ -118,7 +103,7 @@ const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModa
     }
   };
 
-  const loadNewMessages = async () => {
+  const loadNewMessages = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/chat/load-new`, {
         method: 'POST',
@@ -138,13 +123,13 @@ const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModa
     } catch (error) {
       console.error('Error loading new messages:', error);
     }
-  };
+  }, [token, matchId]);
 
-  const startPolling = () => {
+  const startPolling = useCallback(() => {
     pollingIntervalRef.current = setInterval(() => {
       loadNewMessages();
     }, 5000); // Poll every 5 seconds
-  };
+  }, [loadNewMessages]);
 
   const stopPolling = () => {
     if (pollingIntervalRef.current) {
@@ -152,6 +137,21 @@ const ChatModal = ({ isOpen, onClose, matchId, matchName, matchPhoto }: ChatModa
       pollingIntervalRef.current = null;
     }
   };
+
+  useEffect(() => {
+    if (isOpen && token && matchId) {
+      loadInitialMessages();
+      startPolling();
+    }
+
+    return () => {
+      stopPolling();
+    };
+  }, [isOpen, matchId, token, loadInitialMessages, startPolling]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || sending) return;

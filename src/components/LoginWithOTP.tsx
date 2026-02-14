@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Smartphone, ArrowLeft, Loader2, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { auth } from '@/lib/api';
 import { sendOtpSchema, loginWithOtpSchema } from '@/lib/validation';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';

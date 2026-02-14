@@ -49,7 +49,7 @@ interface DashboardSidebarProps {
   };
 }
 
-const DashboardSidebar = ({ activeSection, onSectionChange: _onSectionChange, stats }: DashboardSidebarProps) => {
+const DashboardSidebar = ({ activeSection, stats }: DashboardSidebarProps) => {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);

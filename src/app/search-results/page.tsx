@@ -21,24 +21,6 @@ import {
 } from 'lucide-react';
 import { searchProfiles, getSearchCount, saveSearch, executeSavedSearch, getSavedSearchCount } from '@/lib/searchApi';
 
-interface MasterData {
-  religion: Array<{ id: number; name: string }>;
-  caste: Array<{ id: number; name: string; masterId: number }>;
-  country: Array<{ id: number; name: string }>;
-  state: Array<{ id: number; name: string; masterId: number }>;
-  district: Array<{ id: number; name: string; masterId: number }>;
-  nakshathra: Array<{ id: number; name: string }>;
-  qualification: Array<{ id: number; name: string; masterId: number }>;
-  qualification_level: Array<{ id: number; name: string }>;
-  specialization: Array<{ id: number; name: string }>;
-  profession: Array<{ id: number; name: string }>;
-  marital_status: Array<{ id: number; name: string }>;
-  body_type: Array<{ id: number; name: string }>;
-  complexion: Array<{ id: number; name: string }>;
-  physical_status: Array<{ id: number; name: string }>;
-  manglik: Array<{ id: number; name: string }>;
-}
-
 interface SearchFilters {
   age_from?: number;
   age_to?: number;
@@ -92,7 +74,7 @@ const SearchResultsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { token } = useAuth();
-  const { data: masterDataResponse, isLoading: masterLoading } = useMasterData();
+  const { data: masterDataResponse } = useMasterData();
   const masterData = masterDataResponse?.data;
 
   const [loading, setLoading] = useState(false);
@@ -105,7 +87,6 @@ const SearchResultsPage = () => {
   const [searchType, setSearchType] = useState<'advanced' | 'id' | 'saved'>('advanced');
   const [filters, setFilters] = useState<SearchFilters>({});
   const [searchId, setSearchId] = useState('');
-  const [savedSearchId, setSavedSearchId] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<'featured' | 'new' | 'photo'>('featured');
   const [userGender, setUserGender] = useState<string>('');
 
@@ -239,7 +220,6 @@ const SearchResultsPage = () => {
       const savedId = searchParams.get('id');
       if (savedId) {
         const id = parseInt(savedId);
-        setSavedSearchId(id);
         executeSavedSearchById(id, page);
       }
     } else {
@@ -477,7 +457,7 @@ const SearchResultsPage = () => {
         <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="search"
-            onSectionChange={(section) => {
+            onSectionChange={() => {
               // This should never be called as all navigation is handled in DashboardSidebar
               // But if it is, navigate to dashboard
               router.push('/dashboard');

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -15,24 +15,6 @@ import {
 } from 'lucide-react';
 import { getSearchCount } from '@/lib/searchApi';
 import MultiSelectCheckbox from '@/components/MultiSelectCheckbox';
-
-interface MasterData {
-  religion: Array<{ id: number; name: string }>;
-  caste: Array<{ id: number; name: string; masterId: number }>;
-  country: Array<{ id: number; name: string }>;
-  state: Array<{ id: number; name: string; masterId: number }>;
-  district: Array<{ id: number; name: string; masterId: number }>;
-  nakshathra: Array<{ id: number; name: string }>;
-  qualification: Array<{ id: number; name: string; masterId: number }>;
-  qualification_level: Array<{ id: number; name: string }>;
-  specialization: Array<{ id: number; name: string }>;
-  profession: Array<{ id: number; name: string }>;
-  marital_status: Array<{ id: number; name: string }>;
-  body_type: Array<{ id: number; name: string }>;
-  complexion: Array<{ id: number; name: string }>;
-  physical_status: Array<{ id: number; name: string }>;
-  manglik: Array<{ id: number; name: string }>;
-}
 
 interface SearchFilters {
   age_from?: number;
@@ -58,7 +40,7 @@ interface SearchFilters {
 const SearchPage = () => {
   const router = useRouter();
   const { token } = useAuth();
-  const { data: masterDataResponse, isLoading: masterLoading, hasData } = useMasterData();
+  const { data: masterDataResponse } = useMasterData();
   const masterData = masterDataResponse?.data;
 
   const [activeTab, setActiveTab] = useState<'advanced' | 'id'>('advanced');
