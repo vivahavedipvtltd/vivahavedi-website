@@ -182,7 +182,31 @@ export interface PartnerProfile {
     location: string;   // '1' = complete, '0' = incomplete
     education: string;  // '1' = complete, '0' = incomplete
   };
-  [key: string]: unknown; // Allow other fields from the API
+  // Basic preferences
+  upp_age_f?: number | null;
+  upp_age_t?: number | null;
+  upp_height_f?: number | null;
+  upp_height_t?: number | null;
+  upp_m_status?: string[];
+  upp_body_type?: string[];
+  upp_complexion?: string[];
+  upp_physical_status?: string[];
+  upp_mother_tongue?: string[];
+  upp_res_status?: string[];
+  // Religion & Caste (resolved names)
+  religion?: string[];
+  caste?: string[];
+  sub_caste?: string[];
+  nakshatra?: string[];
+  // Location (resolved names)
+  country?: string[];
+  state?: string[];
+  district?: string[];
+  // Education & Career (resolved names)
+  q_level?: string[];
+  qualification?: string[];
+  specialization?: string[];
+  profession?: string[];
 }
 
 export interface ContactedSectionData {

@@ -19,14 +19,12 @@ interface MasterDataItem {
 interface MasterData {
   religion: Array<MasterDataItem>;
   caste: Array<MasterDataItem & { masterId: number }>;
-  sub_caste: Array<MasterDataItem>;
-  nakshatra: Array<MasterDataItem>;
+  nakshathra: Array<MasterDataItem>;
 }
 
 interface PartnerReligionData {
   upp_relegion: number[];
   upp_caste: number[];
-  upp_sub_caste: number[];
   upp_nakshatra: number[];
 }
 
@@ -41,7 +39,6 @@ const PartnerReligionUpdatePage = () => {
   const [formData, setFormData] = useState<PartnerReligionData>({
     upp_relegion: [],
     upp_caste: [],
-    upp_sub_caste: [],
     upp_nakshatra: [],
   });
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +79,6 @@ const PartnerReligionUpdatePage = () => {
         setFormData({
           upp_relegion: partner.upp_relegion ? partner.upp_relegion.split('|').map((id: string) => parseInt(id.trim())) : [],
           upp_caste: partner.upp_caste ? partner.upp_caste.split('|').map((id: string) => parseInt(id.trim())) : [],
-          upp_sub_caste: partner.upp_sub_caste ? partner.upp_sub_caste.split('|').map((id: string) => parseInt(id.trim())) : [],
           upp_nakshatra: partner.upp_nakshatra ? partner.upp_nakshatra.split('|').map((id: string) => parseInt(id.trim())) : [],
         });
       }
@@ -247,23 +243,11 @@ const PartnerReligionUpdatePage = () => {
                   />
                 )}
 
-                {/* Sub Caste */}
-                {masters && masters.sub_caste && (
-                  <FilterableMultiSelectById
-                    label="Sub Caste (Select multiple)"
-                    options={masters.sub_caste}
-                    selectedIds={formData.upp_sub_caste}
-                    onChange={(id) => handleMultiSelectChange('upp_sub_caste', id)}
-                    placeholder="Search sub caste..."
-                    icon={<Users className="h-4 w-4 text-red-500" />}
-                  />
-                )}
-
                 {/* Nakshatra */}
-                {masters && masters.nakshatra && (
+                {masters && (
                   <FilterableMultiSelectById
                     label="Nakshatra (Select multiple)"
-                    options={masters.nakshatra}
+                    options={masters.nakshathra ?? []}
                     selectedIds={formData.upp_nakshatra}
                     onChange={(id) => handleMultiSelectChange('upp_nakshatra', id)}
                     placeholder="Search nakshatra..."

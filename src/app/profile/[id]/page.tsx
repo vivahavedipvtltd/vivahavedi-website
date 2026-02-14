@@ -118,6 +118,12 @@ interface ProfileData {
     upp_age_t?: number;
     upp_height_f?: number;
     upp_height_t?: number;
+    marital_status?: string[];
+    body_type?: string[];
+    complexion?: string[];
+    physical_status?: string[];
+    mother_tongue?: string[];
+    res_status?: string[];
     religion?: string[];
     caste?: string[];
     sub_caste?: string[];
@@ -1360,6 +1366,83 @@ const ProfileDetailsPage = () => {
                           </div>
                         </div>
                       </div>
+
+                      {/* Personal */}
+                      {!!(partner.marital_status?.length || partner.body_type?.length || partner.complexion?.length || partner.physical_status?.length || partner.mother_tongue?.length || partner.res_status?.length) && (
+                        <div className="space-y-2.5">
+                          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Personal</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {partner.marital_status && partner.marital_status.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.marital_status === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Marital Status</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.marital_status === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.marital_status === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.marital_status === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.marital_status.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.body_type && partner.body_type.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.body_type === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Body Type</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.body_type === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.body_type === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.body_type === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.body_type.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.complexion && partner.complexion.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.complexion === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Complexion</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.complexion === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.complexion === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.complexion === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.complexion.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.physical_status && partner.physical_status.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.physical_status === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Physical Status</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.physical_status === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.physical_status === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.physical_status === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.physical_status.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.mother_tongue && partner.mother_tongue.length > 0 && (
+                              <div className="rounded-xl p-4 border bg-gray-50 border-gray-200">
+                                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Mother Tongue</p>
+                                <p className="text-sm font-semibold text-gray-900">{partner.mother_tongue.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.res_status && partner.res_status.length > 0 && (
+                              <div className="rounded-xl p-4 border bg-gray-50 border-gray-200">
+                                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Residential Status</p>
+                                <p className="text-sm font-semibold text-gray-900">{partner.res_status.join(', ')}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Religious */}
                       {!!(partner.religion?.length || partner.caste?.length || partner.sub_caste?.length || partner.nakshatra?.length) && (
