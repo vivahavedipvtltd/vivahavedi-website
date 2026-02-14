@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import { GraduationCap, Loader2, Save, ArrowLeft } from 'lucide-react';
 
@@ -132,7 +130,7 @@ const EducationProfilePage = () => {
       if (result.status === 'success') {
         setSuccess('Education profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard?refresh=true');
+          router.push('/dashboard?section=my-profile');
         }, 2000);
       } else {
         if (result.errors) {
@@ -157,29 +155,20 @@ const EducationProfilePage = () => {
 
   if (loading) {
     return (
-      <AuthGuard requireAuth={true} redirectTo="/login">
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-grow flex items-center justify-center bg-gray-50">
-            <Loader2 className="h-12 w-12 animate-spin text-red-500" />
-          </main>
-          <Footer />
-        </div>
-      </AuthGuard>
+      <DashboardLayout centered showFooter={false}>
+        <Loader2 className="h-12 w-12 animate-spin text-red-500" />
+      </DashboardLayout>
     );
   }
 
   return (
-    <AuthGuard requireAuth={true} redirectTo="/login">
-      <div className="min-h-screen flex flex-col">
-        <Header />
-
-        <div className="flex-grow flex bg-gray-50">
+    <DashboardLayout showFooter={false}>
+      <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="my-profile"
             onSectionChange={(section) => {
               if (section !== 'my-profile') {
-                router.push('/dashboard');
+                router.push('/dashboard?section=my-profile');
               }
             }}
           />
@@ -193,7 +182,7 @@ const EducationProfilePage = () => {
                   Update Education & Career Profile
                 </h1>
                 <button
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push('/dashboard?section=my-profile')}
                   className="flex items-center text-gray-600 hover:text-gray-900"
                 >
                   <ArrowLeft className="h-5 w-5 mr-1" />
@@ -375,7 +364,7 @@ const EducationProfilePage = () => {
                 <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => router.push('/dashboard?section=my-profile')}
                     className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                   >
                     Cancel
@@ -403,10 +392,7 @@ const EducationProfilePage = () => {
             </div>
           </main>
         </div>
-
-        <Footer />
-      </div>
-    </AuthGuard>
+    </DashboardLayout>
   );
 };
 

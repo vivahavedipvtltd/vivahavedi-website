@@ -161,7 +161,7 @@ function DashboardContent() {
       case 'mobile-verification':
         return <MobileVerification onVerificationComplete={refresh} />;
       case 'partner-preferences':
-        return <PartnerPreferencesCard partnerProfile={partnerProfile || null} />;
+        return <PartnerPreferencesCard partnerProfile={partnerProfile || null} detailed />;
       case 'search':
         return (
           <PlaceholderSection

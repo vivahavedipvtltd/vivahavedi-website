@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import { Star, Loader2, Save, ArrowLeft, Users } from 'lucide-react';
 import FilterableMultiSelectById from '@/components/FilterableMultiSelectById';
@@ -138,7 +136,7 @@ const PartnerReligionUpdatePage = () => {
       if (result.status === 'success') {
         setSuccess('Partner religion preferences updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard?refresh=true');
+          router.push('/dashboard?section=partner-preferences');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update partner religion preferences');
@@ -153,32 +151,23 @@ const PartnerReligionUpdatePage = () => {
 
   if (loading) {
     return (
-      <AuthGuard requireAuth={true} redirectTo="/login">
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-grow flex items-center justify-center bg-gray-50">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-red-500 mx-auto mb-4" />
-              <p className="text-gray-600">Loading partner religion preferences...</p>
-            </div>
-          </main>
-          <Footer />
+      <DashboardLayout centered showFooter={false}>
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-red-500 mx-auto mb-4" />
+          <p className="text-gray-600">Loading partner religion preferences...</p>
         </div>
-      </AuthGuard>
+      </DashboardLayout>
     );
   }
 
   return (
-    <AuthGuard requireAuth={true} redirectTo="/login">
-      <div className="min-h-screen flex flex-col">
-        <Header />
-
-        <div className="flex-grow flex bg-gray-50">
+    <DashboardLayout showFooter={false}>
+      <div className="flex-1 flex bg-gray-50 overflow-hidden">
           <DashboardSidebar
             activeSection="my-profile"
             onSectionChange={(section) => {
               if (section !== 'my-profile') {
-                router.push('/dashboard');
+                router.push('/dashboard?section=partner-preferences');
               }
             }}
           />
@@ -188,7 +177,7 @@ const PartnerReligionUpdatePage = () => {
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <div className="flex items-center">
                 <button
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push('/dashboard?section=partner-preferences')}
                   className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <ArrowLeft className="h-5 w-5 text-gray-600" />
@@ -260,7 +249,7 @@ const PartnerReligionUpdatePage = () => {
               <div className="mt-8 flex items-center justify-between">
                 <button
                   type="button"
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push('/dashboard?section=partner-preferences')}
                   className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
@@ -287,10 +276,7 @@ const PartnerReligionUpdatePage = () => {
             </div>
           </main>
         </div>
-
-        <Footer />
-      </div>
-    </AuthGuard>
+    </DashboardLayout>
   );
 };
 

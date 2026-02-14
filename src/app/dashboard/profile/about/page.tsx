@@ -85,7 +85,7 @@ const AboutProfilePage = () => {
       if (result.status === 'success') {
         setSuccess('About profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard?refresh=true');
+          router.push('/dashboard?section=my-profile');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update profile');
@@ -130,7 +130,7 @@ const AboutProfilePage = () => {
             activeSection="my-profile"
             onSectionChange={(section) => {
               if (section !== 'my-profile') {
-                router.push('/dashboard');
+                router.push('/dashboard?section=my-profile');
               }
             }}
           />
@@ -143,7 +143,7 @@ const AboutProfilePage = () => {
                   About Myself
                 </h1>
                 <button
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push('/dashboard?section=my-profile')}
                   className="flex items-center text-gray-600 hover:text-gray-900"
                 >
                   <ArrowLeft className="h-5 w-5 mr-1" />
@@ -208,7 +208,7 @@ const AboutProfilePage = () => {
                 <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => router.push('/dashboard?section=my-profile')}
                     className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                   >
                     Cancel
