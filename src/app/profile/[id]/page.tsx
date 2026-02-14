@@ -1311,155 +1311,226 @@ const ProfileDetailsPage = () => {
 
                 {/* Partner Preferences */}
                 {partner && (
-                  <div className="bg-white rounded-lg shadow-md p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                      <Users className="h-5 w-5 mr-2 text-red-500" />
-                      Partner Preferences
-                    </h2>
-                    <div className="space-y-3">
-                      {/* Age Range */}
-                      <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.age === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                        <div>
-                          <p className="text-xs text-gray-500 mb-0.5">Age Range</p>
-                          <p className="text-gray-900 font-medium text-sm">
-                            {partner.upp_age_f && partner.upp_age_t
-                              ? `${partner.upp_age_f} - ${partner.upp_age_t} years`
-                              : 'Not specified'}
-                          </p>
+                  <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-rose-50 via-pink-50 to-white px-6 py-5 border-b border-rose-100">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0">
+                          <Users className="h-5 w-5 text-rose-500" />
                         </div>
-                        {match && <div className={`flex-shrink-0 ml-3 ${match.age === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.age)}</div>}
+                        <div>
+                          <h2 className="text-xl font-bold text-gray-900">Partner Preferences</h2>
+                          <p className="text-xs text-gray-500 mt-0.5">What they&apos;re looking for in a partner</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 space-y-6">
+                      {/* Basic */}
+                      <div className="space-y-2.5">
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Basic</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className={`rounded-xl p-4 border ${match?.age === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                            <div className="flex items-start justify-between gap-2 mb-1.5">
+                              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Age Range</p>
+                              {match && (
+                                <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.age === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                  {match.age === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                  {match.age === 'yes' ? 'Match' : 'No match'}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {partner.upp_age_f && partner.upp_age_t ? `${partner.upp_age_f} – ${partner.upp_age_t} years` : 'Any'}
+                            </p>
+                          </div>
+                          <div className={`rounded-xl p-4 border ${match?.height === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                            <div className="flex items-start justify-between gap-2 mb-1.5">
+                              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Height Range</p>
+                              {match && (
+                                <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.height === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                  {match.height === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                  {match.height === 'yes' ? 'Match' : 'No match'}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {partner.upp_height_f && partner.upp_height_t ? `${partner.upp_height_f} – ${partner.upp_height_t} cm` : 'Any'}
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Height Range */}
-                      <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.height === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                        <div>
-                          <p className="text-xs text-gray-500 mb-0.5">Height Range</p>
-                          <p className="text-gray-900 font-medium text-sm">
-                            {partner.upp_height_f && partner.upp_height_t
-                              ? `${partner.upp_height_f} - ${partner.upp_height_t} cm`
-                              : 'Not specified'}
-                          </p>
-                        </div>
-                        {match && <div className={`flex-shrink-0 ml-3 ${match.height === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.height)}</div>}
-                      </div>
-
-                      {/* Religion */}
-                      {partner.religion && partner.religion.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.relegion === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Religion</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.religion.join(', ')}</p>
+                      {/* Religious */}
+                      {!!(partner.religion?.length || partner.caste?.length || partner.sub_caste?.length || partner.nakshatra?.length) && (
+                        <div className="space-y-2.5">
+                          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Religious</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {partner.religion && partner.religion.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.relegion === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Religion</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.relegion === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.relegion === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.relegion === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.religion.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.caste && partner.caste.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.caste === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Caste</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.caste === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.caste === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.caste === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.caste.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.sub_caste && partner.sub_caste.length > 0 && (
+                              <div className="rounded-xl p-4 border bg-gray-50 border-gray-200">
+                                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Sub Caste</p>
+                                <p className="text-sm font-semibold text-gray-900">{partner.sub_caste.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.nakshatra && partner.nakshatra.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.nakshathra === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Nakshatra</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.nakshathra === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.nakshathra === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.nakshathra === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.nakshatra.join(', ')}</p>
+                              </div>
+                            )}
                           </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.relegion === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.relegion)}</div>}
-                        </div>
-                      )}
-
-                      {/* Caste */}
-                      {partner.caste && partner.caste.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.caste === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Caste</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.caste.join(', ')}</p>
-                          </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.caste === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.caste)}</div>}
-                        </div>
-                      )}
-
-                      {/* Sub Caste (no match key, shown as neutral) */}
-                      {partner.sub_caste && partner.sub_caste.length > 0 && (
-                        <div className="flex items-start justify-between p-3 rounded-lg border bg-gray-50 border-gray-200">
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Sub Caste</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.sub_caste.join(', ')}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Nakshatra */}
-                      {partner.nakshatra && partner.nakshatra.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.nakshathra === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Nakshatra</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.nakshatra.join(', ')}</p>
-                          </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.nakshathra === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.nakshathra)}</div>}
-                        </div>
-                      )}
-
-                      {/* Country */}
-                      {partner.country && partner.country.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.country === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Preferred Country</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.country.join(', ')}</p>
-                          </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.country === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.country)}</div>}
                         </div>
                       )}
 
-                      {/* State */}
-                      {partner.state && partner.state.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.state === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Preferred State</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.state.join(', ')}</p>
+                      {/* Location */}
+                      {!!(partner.country?.length || partner.state?.length || partner.district?.length) && (
+                        <div className="space-y-2.5">
+                          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Location</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {partner.country && partner.country.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.country === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Country</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.country === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.country === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.country === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.country.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.state && partner.state.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.state === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">State</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.state === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.state === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.state === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.state.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.district && partner.district.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.district === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">District</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.district === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.district === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.district === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.district.join(', ')}</p>
+                              </div>
+                            )}
                           </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.state === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.state)}</div>}
                         </div>
                       )}
 
-                      {/* District */}
-                      {partner.district && partner.district.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.district === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Preferred District</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.district.join(', ')}</p>
+                      {/* Education & Career */}
+                      {!!(partner.q_level?.length || partner.qualification?.length || partner.specialization?.length || partner.profession?.length) && (
+                        <div className="space-y-2.5">
+                          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Education & Career</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {partner.q_level && partner.q_level.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.q_level === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Education Level</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.q_level === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.q_level === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.q_level === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.q_level.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.qualification && partner.qualification.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.qualificatio === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Qualification</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.qualificatio === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.qualificatio === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.qualificatio === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.qualification.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.specialization && partner.specialization.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.spetialization === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Specialization</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.spetialization === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.spetialization === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.spetialization === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.specialization.join(', ')}</p>
+                              </div>
+                            )}
+                            {partner.profession && partner.profession.length > 0 && (
+                              <div className={`rounded-xl p-4 border ${match?.profession === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                                <div className="flex items-start justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Profession</p>
+                                  {match && (
+                                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.profession === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
+                                      {match.profession === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}
+                                      {match.profession === 'yes' ? 'Match' : 'No match'}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm font-semibold text-gray-900">{partner.profession.join(', ')}</p>
+                              </div>
+                            )}
                           </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.district === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.district)}</div>}
-                        </div>
-                      )}
-
-                      {/* Education Level */}
-                      {partner.q_level && partner.q_level.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.q_level === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Education Level</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.q_level.join(', ')}</p>
-                          </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.q_level === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.q_level)}</div>}
-                        </div>
-                      )}
-
-                      {/* Qualification */}
-                      {partner.qualification && partner.qualification.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.qualificatio === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Qualification</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.qualification.join(', ')}</p>
-                          </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.qualificatio === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.qualificatio)}</div>}
-                        </div>
-                      )}
-
-                      {/* Specialization */}
-                      {partner.specialization && partner.specialization.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.spetialization === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Specialization</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.specialization.join(', ')}</p>
-                          </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.spetialization === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.spetialization)}</div>}
-                        </div>
-                      )}
-
-                      {/* Profession */}
-                      {partner.profession && partner.profession.length > 0 && (
-                        <div className={`flex items-start justify-between p-3 rounded-lg border ${match?.profession === 'yes' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-0.5">Profession</p>
-                            <p className="text-gray-900 font-medium text-sm">{partner.profession.join(', ')}</p>
-                          </div>
-                          {match && <div className={`flex-shrink-0 ml-3 ${match.profession === 'yes' ? 'text-green-600' : 'text-red-400'}`}>{getMatchIcon(match.profession)}</div>}
                         </div>
                       )}
                     </div>
