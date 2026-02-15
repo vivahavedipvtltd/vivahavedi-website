@@ -108,7 +108,7 @@ export default function PackagesPage() {
                 return (
                   <div
                     key={plan.plan_id}
-                    className="relative bg-white rounded-xl shadow-sm border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-lg"
+                    className="relative bg-white rounded-xl shadow-sm border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-lg flex flex-col"
                   >
                     {/* Popular Badge */}
                     {isPopular && (
@@ -121,7 +121,7 @@ export default function PackagesPage() {
                     )}
 
                     {/* Plan Content */}
-                    <div className="p-8">
+                    <div className="p-8 pb-4 flex-1">
                       {/* Plan Name */}
                       <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">
                         {plan.plan_name}
@@ -146,11 +146,6 @@ export default function PackagesPage() {
                             )}
                           </span>
                         </div>
-                        {plan.plan_price_service > 0 && (
-                          <p className="text-xs text-gray-500 mt-2">
-                            + ₹{plan.plan_price_service} service charge
-                          </p>
-                        )}
                       </div>
 
                       {/* Divider */}
@@ -168,7 +163,7 @@ export default function PackagesPage() {
 
                       {/* Quick Stats */}
                       {plan.plan_price > 0 && (
-                        <div className="grid grid-cols-2 gap-2 mb-6 pt-4 border-t border-gray-100">
+                        <div className="grid grid-cols-2 gap-2 pt-4 border-t border-gray-100">
                           <div className="text-center p-2 bg-blue-50 rounded-lg">
                             <Eye className="h-4 w-4 text-blue-500 mx-auto mb-1" />
                             <div className="text-xs font-semibold text-gray-700">{plan.plan_contactview}</div>
@@ -191,8 +186,10 @@ export default function PackagesPage() {
                           </div>
                         </div>
                       )}
+                    </div>
 
-                      {/* CTA Button */}
+                    {/* CTA Button — pinned to bottom of card */}
+                    <div className="px-8 pb-8 pt-4">
                       <button
                         onClick={() => handleSelectPlan(plan)}
                         className="w-full py-3 rounded-lg font-semibold transition-all duration-200 bg-gradient-to-r from-red-500 to-pink-500 hover:shadow-lg hover:scale-105 text-white"
