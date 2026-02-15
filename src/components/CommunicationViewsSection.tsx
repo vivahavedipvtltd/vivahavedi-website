@@ -95,11 +95,17 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
   // Check if this is the contacted section (which has 4 tabs)
   const isContactedSection = initialSection === 'contacted';
 
-  // Get current view type based on active tab
-  const currentViewType = activeTab === 'by_me' ? config.byMeType : config.toMeType;
-
   // Determine if this is a contact request section
   const isContactRequestSection = initialSection === 'contact-requests';
+
+  // Shortlisted section only shows "by me" profiles (no tabs)
+  const isShortlistedSection = initialSection === 'shortlisted';
+
+  // Get current view type based on active tab
+  // For shortlisted section, always show "by me" profiles (no tab switching)
+  const currentViewType = isShortlistedSection
+    ? config.byMeType
+    : activeTab === 'by_me' ? config.byMeType : config.toMeType;
 
   // OPTIMIZED: Use single API call for contacted section (reduces 4 API calls to 1)
   const contactedSectionData = useContactedSectionData(
@@ -252,8 +258,8 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
         <h2 className="text-2xl font-bold text-gray-900 ml-3">{config.title}</h2>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      {/* Tabs - hidden for shortlisted section (shows only "by me") */}
+      {!isShortlistedSection && <div className="border-b border-gray-200 mb-6">
         {isContactedSection ? (
           // 4-tab layout for contacted section
           <div className="flex space-x-4 overflow-x-auto">
@@ -377,7 +383,7 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
             </button>
           </div>
         )}
-      </div>
+      </div>}
 
       {/* Loading State */}
       {loading ? (
@@ -398,6 +404,8 @@ const CommunicationViewsSection = ({ initialSection = 'interests' }: Communicati
                 : contactedActiveTab === 'request_send'
                 ? 'No contact requests sent yet.'
                 : 'No contact requests received yet.'
+              : isShortlistedSection
+              ? `You have not shortlisted any profiles yet.`
               : activeTab === 'to_me'
               ? `No ${config.title.toLowerCase()} received yet.`
               : `No ${config.title.toLowerCase()} sent yet.`}
