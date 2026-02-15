@@ -11,6 +11,7 @@ interface AccountSettingsSectionProps {
 const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = React.memo(({ myDetails, myPhotos, onRefresh }) => {
   const photoLocked = myPhotos?.lock_status === 'yes';
   const profileHidden = myDetails?.basic?.user_hide === 'yes';
+  const contactLocked = myDetails?.basic?.user_contact_lock === 'yes';
 
   return (
     <div className="space-y-6">
@@ -18,6 +19,7 @@ const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = React.memo
       <PrivacySettings
         initialPhotoLocked={photoLocked}
         initialProfileHidden={profileHidden}
+        initialContactLocked={contactLocked}
         onUpdate={onRefresh}
       />
 

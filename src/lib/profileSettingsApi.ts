@@ -40,8 +40,8 @@ export async function lockUnlockPhoto(
       body: JSON.stringify({
         status: lock ? 'true' : 'false',
       }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     const data = await response.json();
@@ -77,8 +77,8 @@ export async function hideShowProfile(
       body: JSON.stringify({
         status: hide ? 'true' : 'false',
       }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     const data = await response.json();

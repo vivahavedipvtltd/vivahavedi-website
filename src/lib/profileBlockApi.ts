@@ -52,8 +52,8 @@ export async function blockProfile(
       body: JSON.stringify({
         match_id: matchId,
       }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     const data = await response.json();
@@ -89,8 +89,8 @@ export async function unblockProfile(
       body: JSON.stringify({
         match_id: matchId,
       }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     const data = await response.json();

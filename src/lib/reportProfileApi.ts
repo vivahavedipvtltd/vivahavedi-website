@@ -64,8 +64,8 @@ export async function reportProfile(
         match_id: matchId,
         report_type: reportType,
       }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     const data = await response.json();

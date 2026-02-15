@@ -72,11 +72,16 @@ export default function LoginPage() {
         // Redirect to dashboard page
         router.push('/dashboard');
       } else {
-        setErrors({ login: result.message || 'Invalid login credentials' });
+        const msg = result.message || '';
+        if (msg.toLowerCase().includes('too many') || msg.toLowerCase().includes('attempts')) {
+          setErrors({ login: 'Too many login attempts. Please wait a minute and try again.' });
+        } else {
+          setErrors({ login: msg || 'Invalid login credentials' });
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
-      setErrors({ login: 'Login failed. Please check your credentials and try again.' });
+      setErrors({ login: 'Login failed. Please check your connection and try again.' });
     } finally {
       setLoading(false);
     }

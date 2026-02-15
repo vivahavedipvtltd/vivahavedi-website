@@ -51,8 +51,8 @@ export async function lockUnlockContactView(
       body: JSON.stringify({
         status: lock ? 'true' : 'false',
       }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     const data = await response.json();
@@ -202,8 +202,8 @@ export async function viewContactDetails(
       body: JSON.stringify({
         match_id: matchId,
       }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     const data = await response.json();

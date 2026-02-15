@@ -81,6 +81,9 @@ export const apiClient = {
 
   /**
    * User login
+   * No retries: auth endpoints must never auto-retry.
+   * Retrying on failure burns through rate-limit slots (throttle:10,1)
+   * and 429 responses would re-trigger more 429s in a loop.
    */
   async login(login: string, password: string) {
     const response = await fetchWithRetry(`${API_BASE_URL}/login`, {
@@ -90,8 +93,8 @@ export const apiClient = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ login, password }),
-      retries: 2,
-      retryDelay: 1000,
+      retries: 0,
+      retryOn: [],
     });
 
     return response.json();
