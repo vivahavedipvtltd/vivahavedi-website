@@ -16,12 +16,11 @@ import {
   Eye,
   Heart,
   Shield,
-  Zap
+  Sparkles
 } from 'lucide-react';
 import {
   getPremiumPlans,
   Plan,
-  formatPrice,
   formatValidity,
   getPlanFeatures
 } from '@/lib/planDetailsApi';
@@ -175,22 +174,6 @@ const PlanUpgradePage = () => {
     }
   };
 
-  const getPlanIcon = (index: number) => {
-    const icons = [Shield, Star, Crown, Zap];
-    const Icon = icons[index % icons.length];
-    return <Icon className="h-8 w-8" />;
-  };
-
-  const getPlanColor = (index: number) => {
-    const colors = [
-      'from-blue-500 to-indigo-500',
-      'from-yellow-500 to-orange-500',
-      'from-purple-500 to-pink-500',
-      'from-green-500 to-emerald-500'
-    ];
-    return colors[index % colors.length];
-  };
-
   return (
     <AuthGuard requireAuth={true} redirectTo="/login">
       <div className="h-screen flex flex-col">
@@ -228,79 +211,94 @@ const PlanUpgradePage = () => {
               {/* Plans Grid */}
               {!loading && plans.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {plans.map((plan, index) => {
+                  {plans.map((plan) => {
                     const features = getPlanFeatures(plan);
                     const isProcessing = selectedPlan?.plan_id === plan.plan_id && processingPayment;
 
                     return (
                       <div
                         key={plan.plan_id}
-                        className={`bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-                          plan.plan_top_sell === 'yes' ? 'ring-2 ring-red-500' : ''
-                        }`}
+                        className="relative bg-white rounded-xl shadow-sm border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-lg flex flex-col"
                       >
-                        {/* Plan Header */}
-                        <div className={`bg-gradient-to-r ${getPlanColor(index)} p-6 text-white relative`}>
-                          {plan.plan_top_sell === 'yes' && (
-                            <div className="absolute top-4 right-4 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-xs font-bold">
+                        {/* Popular Badge */}
+                        {plan.plan_top_sell === 'yes' && (
+                          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <span className="inline-flex items-center bg-red-500 text-white px-4 py-1 rounded-full text-xs font-semibold shadow-md">
+                              <Sparkles className="h-3 w-3 mr-1" />
                               POPULAR
-                            </div>
-                          )}
-                          <div className="flex items-center justify-center mb-4">
-                            {getPlanIcon(index)}
+                            </span>
                           </div>
-                          <h3 className="text-2xl font-bold text-center mb-2">
+                        )}
+
+                        {/* Plan Content */}
+                        <div className="p-8 pb-4 flex-1">
+                          {/* Plan Name */}
+                          <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">
                             {plan.plan_name}
                           </h3>
-                          <div className="text-center">
-                            <div className="text-4xl font-bold">
-                              {formatPrice(plan.plan_price)}
+
+                          {/* Validity */}
+                          <p className="text-center text-sm text-gray-500 mb-6">
+                            {formatValidity(plan.plan_validity)}
+                          </p>
+
+                          {/* Price */}
+                          <div className="text-center mb-8">
+                            <div className="flex items-baseline justify-center">
+                              <span className="text-5xl font-bold text-gray-900">
+                                <span className="text-2xl">₹</span>
+                                {plan.plan_price.toLocaleString('en-IN')}
+                              </span>
                             </div>
-                            <div className="text-sm text-white/80 mt-1">
-                              {formatValidity(plan.plan_validity)}
+                          </div>
+
+                          {/* Divider */}
+                          <div className="border-t border-gray-200 mb-6"></div>
+
+                          {/* Features */}
+                          <ul className="space-y-3 mb-8">
+                            {features.map((feature, idx) => (
+                              <li key={idx} className="flex items-start text-sm">
+                                <Check className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                                <span className="text-gray-700">{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          {/* Quick Stats */}
+                          <div className="grid grid-cols-2 gap-2 pt-4 border-t border-gray-100">
+                            <div className="text-center p-2 bg-blue-50 rounded-lg">
+                              <Eye className="h-4 w-4 text-blue-500 mx-auto mb-1" />
+                              <div className="text-xs font-semibold text-gray-700">{plan.plan_contactview}</div>
+                              <div className="text-xs text-gray-500">Views</div>
+                            </div>
+                            <div className="text-center p-2 bg-green-50 rounded-lg">
+                              <MessageCircle className="h-4 w-4 text-green-500 mx-auto mb-1" />
+                              <div className="text-xs font-semibold text-gray-700">{plan.plan_chat}</div>
+                              <div className="text-xs text-gray-500">Chats</div>
+                            </div>
+                            <div className="text-center p-2 bg-red-50 rounded-lg">
+                              <Heart className="h-4 w-4 text-red-500 mx-auto mb-1" />
+                              <div className="text-xs font-semibold text-gray-700">{plan.plan_expressintrest}</div>
+                              <div className="text-xs text-gray-500">Interests</div>
+                            </div>
+                            <div className="text-center p-2 bg-yellow-50 rounded-lg">
+                              <Star className="h-4 w-4 text-yellow-500 mx-auto mb-1" />
+                              <div className="text-xs font-semibold text-gray-700">{plan.plan_featured}</div>
+                              <div className="text-xs text-gray-500">Featured</div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Plan Features */}
-                        <div className="p-6">
-                          <div className="space-y-3 mb-6">
-                            {features.map((feature, idx) => (
-                              <div key={idx} className="flex items-start">
-                                <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                                <span className="text-gray-700 text-sm">{feature}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Quick Stats */}
-                          <div className="grid grid-cols-2 gap-3 mb-6 pt-4 border-t border-gray-100">
-                            <div className="flex items-center">
-                              <Eye className="h-4 w-4 text-blue-500 mr-2" />
-                              <span className="text-xs text-gray-600">{plan.plan_contactview} Views</span>
-                            </div>
-                            <div className="flex items-center">
-                              <MessageCircle className="h-4 w-4 text-green-500 mr-2" />
-                              <span className="text-xs text-gray-600">{plan.plan_chat} Chats</span>
-                            </div>
-                            <div className="flex items-center">
-                              <Heart className="h-4 w-4 text-red-500 mr-2" />
-                              <span className="text-xs text-gray-600">{plan.plan_expressintrest} Interests</span>
-                            </div>
-                            <div className="flex items-center">
-                              <Star className="h-4 w-4 text-yellow-500 mr-2" />
-                              <span className="text-xs text-gray-600">{plan.plan_featured} Days Featured</span>
-                            </div>
-                          </div>
-
-                          {/* Upgrade Button */}
+                        {/* Upgrade Button — pinned to bottom of card */}
+                        <div className="px-8 pb-8 pt-4">
                           <button
                             onClick={() => handleUpgrade(plan)}
                             disabled={processingPayment}
-                            className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${
+                            className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${
                               isProcessing
                                 ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                                : `bg-gradient-to-r ${getPlanColor(index)} text-white hover:shadow-lg hover:scale-105`
+                                : 'bg-gradient-to-r from-red-500 to-pink-500 hover:shadow-lg hover:scale-105 text-white'
                             }`}
                           >
                             {isProcessing ? (
