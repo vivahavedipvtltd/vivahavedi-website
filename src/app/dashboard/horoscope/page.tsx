@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { mutate } from 'swr';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
@@ -110,6 +111,7 @@ const HoroscopePage = () => {
 
       if (result.status === 'success') {
         setSuccess('Horoscope uploaded successfully!');
+        mutate((key: unknown) => Array.isArray(key) && typeof key[0] === 'string' && (key[0].endsWith('/my-details') || key[0].endsWith('/my-photos')));
         fetchData();
       } else {
         setError(result.message || 'Failed to upload horoscope');
@@ -145,6 +147,7 @@ const HoroscopePage = () => {
 
       if (result.status === 'success') {
         setSuccess('Horoscope deleted successfully!');
+        mutate((key: unknown) => Array.isArray(key) && typeof key[0] === 'string' && (key[0].endsWith('/my-details') || key[0].endsWith('/my-photos')));
         fetchData();
       } else {
         setError(result.message || 'Failed to delete horoscope');

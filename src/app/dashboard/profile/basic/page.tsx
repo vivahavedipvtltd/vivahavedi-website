@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { mutate } from 'swr';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
@@ -155,6 +156,7 @@ const BasicProfilePage = () => {
 
       if (result.status === 'success') {
         setSuccess('Basic profile updated successfully!');
+        mutate((key: unknown) => Array.isArray(key) && typeof key[0] === 'string' && key[0].endsWith('/my-details'));
         setTimeout(() => {
           router.push('/dashboard?section=my-profile');
         }, 2000);

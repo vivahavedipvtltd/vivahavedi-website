@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { mutate } from 'swr';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -121,8 +122,9 @@ const AstrologicalProfilePage = () => {
 
       if (result.status === 'success') {
         setSuccess('Astrological profile updated successfully!');
+        mutate((key: unknown) => Array.isArray(key) && typeof key[0] === 'string' && key[0].endsWith('/my-details'));
         setTimeout(() => {
-          router.push('/dashboard?section=my-profile&refresh=true');
+          router.push('/dashboard?section=my-profile');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update profile');

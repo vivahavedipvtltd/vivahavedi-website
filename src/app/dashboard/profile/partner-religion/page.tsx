@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { mutate } from 'swr';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
@@ -135,6 +136,7 @@ const PartnerReligionUpdatePage = () => {
 
       if (result.status === 'success') {
         setSuccess('Partner religion preferences updated successfully!');
+        mutate((key: unknown) => Array.isArray(key) && typeof key[0] === 'string' && key[0].endsWith('/partner-profile'));
         setTimeout(() => {
           router.push('/dashboard?section=partner-preferences');
         }, 2000);
