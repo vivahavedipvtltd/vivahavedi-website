@@ -158,6 +158,9 @@ export interface MyPhotos {
   id_proof_status: string;
   horoscope: string;
   horoscope_status: string;
+  photo_approvals?: {
+    [key: string]: string;
+  };
 }
 
 export interface CommunicationProfile {
