@@ -12,7 +12,8 @@ import {
   GraduationCap,
   Star,
   Edit2,
-  Heart
+  Heart,
+  Plus
 } from 'lucide-react';
 import ProfileItem from './ProfileItem';
 import { MyDetails } from '@/types/dashboard';
@@ -26,6 +27,7 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
   const basic = myDetails?.basic || {};
   const detailed = myDetails?.detailed || {};
   const astro = myDetails?.astro || {};
+  const completion = myDetails?.profile_completion || {};
 
   return (
     <div className="space-y-6">
@@ -94,8 +96,17 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             href="/dashboard/profile/basic"
             className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
           >
-            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-            <span className="text-sm font-semibold">Edit</span>
+            {completion.basic === '1' ? (
+              <>
+                <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                <span className="text-sm font-semibold">Edit</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-semibold">Add</span>
+              </>
+            )}
           </Link>
         </div>
 
@@ -133,8 +144,17 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             href="/dashboard/profile/education"
             className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
           >
-            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-            <span className="text-sm font-semibold">Edit</span>
+            {completion.education === '1' ? (
+              <>
+                <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                <span className="text-sm font-semibold">Edit</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-semibold">Add</span>
+              </>
+            )}
           </Link>
         </div>
 
@@ -179,8 +199,17 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             href="/dashboard/profile/family"
             className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
           >
-            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-            <span className="text-sm font-semibold">Edit</span>
+            {completion.family === '1' ? (
+              <>
+                <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                <span className="text-sm font-semibold">Edit</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-semibold">Add</span>
+              </>
+            )}
           </Link>
         </div>
 
@@ -220,8 +249,17 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             href="/dashboard/profile/hobbies"
             className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
           >
-            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-            <span className="text-sm font-semibold">Edit</span>
+            {completion.hobbies === '1' ? (
+              <>
+                <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                <span className="text-sm font-semibold">Edit</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-semibold">Add</span>
+              </>
+            )}
           </Link>
         </div>
 
@@ -310,8 +348,17 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             href="/dashboard/profile/astrological"
             className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
           >
-            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-            <span className="text-sm font-semibold">Edit</span>
+            {completion.astro === '1' ? (
+              <>
+                <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                <span className="text-sm font-semibold">Edit</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-semibold">Add</span>
+              </>
+            )}
           </Link>
         </div>
 
@@ -345,36 +392,47 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
       </div>
 
       {/* About Myself */}
-      {detailed.up_about_myself && (
-        <div className="relative bg-gradient-to-br from-white via-white to-indigo-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full opacity-20"></div>
+      <div className="relative bg-gradient-to-br from-white via-white to-indigo-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full opacity-20"></div>
 
-          <div className="relative flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-                <User className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  About Myself
-                </h2>
-                <p className="text-xs text-gray-500">Personal Description</p>
-              </div>
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+              <User className="h-6 w-6 text-white" />
             </div>
-            <Link
-              href="/dashboard/profile/about"
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
-            >
-              <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-              <span className="text-sm font-semibold">Edit</span>
-            </Link>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                About Myself
+              </h2>
+              <p className="text-xs text-gray-500">Personal Description</p>
+            </div>
           </div>
-
-          <div className="relative p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
-            <p className="text-gray-700 leading-relaxed text-base">{detailed.up_about_myself}</p>
-          </div>
+          <Link
+            href="/dashboard/profile/about"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            {detailed.up_about_myself ? (
+              <>
+                <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                <span className="text-sm font-semibold">Edit</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span className="text-sm font-semibold">Add</span>
+              </>
+            )}
+          </Link>
         </div>
-      )}
+
+        <div className="relative p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
+          {detailed.up_about_myself ? (
+            <p className="text-gray-700 leading-relaxed text-base">{detailed.up_about_myself}</p>
+          ) : (
+            <p className="text-gray-400 italic text-sm">No description added yet. Click &quot;Add&quot; to write about yourself.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 });

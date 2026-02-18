@@ -59,6 +59,7 @@ const BasicProfilePage = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof BasicProfileData, string>>>({});
 
   const fetchData = useCallback(async () => {
     try {
@@ -135,11 +136,37 @@ const BasicProfilePage = () => {
     }
   }, [token, fetchData]);
 
+  const isChildrenVisible =
+    formData.marital_status !== '' &&
+    formData.marital_status.toLowerCase() !== 'unmarried' &&
+    formData.marital_status.toLowerCase() !== 'never married';
+
+  const validate = (): boolean => {
+    const errs: Partial<Record<keyof BasicProfileData, string>> = {};
+
+    if (!formData.profile_created) errs.profile_created = 'Profile Created By is required';
+    if (!formData.height) errs.height = 'Height is required';
+    if (!formData.weight) errs.weight = 'Weight is required';
+    if (!formData.marital_status) errs.marital_status = 'Marital Status is required';
+    if (isChildrenVisible && !formData.children) errs.children = 'Children is required';
+    if (!formData.body_type) errs.body_type = 'Body Type is required';
+    if (!formData.complexion) errs.complexion = 'Complexion is required';
+    if (!formData.mother_tongue) errs.mother_tongue = 'Mother Tongue is required';
+    if (!formData.personal_values) errs.personal_values = 'Personal Values is required';
+    if (!formData.physical_status) errs.physical_status = 'Physical Status is required';
+
+    setFieldErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
     setError(null);
     setSuccess(null);
+
+    if (!validate()) return;
+
+    setSaving(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/profile/basic`, {
@@ -181,6 +208,9 @@ const BasicProfilePage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (fieldErrors[name as keyof BasicProfileData]) {
+      setFieldErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   if (loading) {
@@ -236,13 +266,13 @@ const BasicProfilePage = () => {
                 {/* Profile Created By */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Profile Created By
+                    Profile Created By <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="profile_created"
                     value={formData.profile_created}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.profile_created ? 'border-red-500' : 'border-gray-300'}`}
                   >
                     <option value="">Select</option>
                     {masters?.created?.map((item) => (
@@ -251,19 +281,20 @@ const BasicProfilePage = () => {
                       </option>
                     ))}
                   </select>
+                  {fieldErrors.profile_created && <p className="mt-1 text-sm text-red-600">{fieldErrors.profile_created}</p>}
                 </div>
 
                 {/* Height & Weight */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Height
+                      Height <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="height"
                       value={formData.height}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.height ? 'border-red-500' : 'border-gray-300'}`}
                     >
                       <option value="">Select Height</option>
                       <option value="122">4&apos;0&quot; (122 cm)</option>
@@ -304,16 +335,17 @@ const BasicProfilePage = () => {
                       <option value="211">6&apos;11&quot; (211 cm)</option>
                       <option value="213">7&apos;0&quot; (213 cm)</option>
                     </select>
+                    {fieldErrors.height && <p className="mt-1 text-sm text-red-600">{fieldErrors.height}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Weight (in kg)
+                      Weight (in kg) <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="weight"
                       value={formData.weight}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.weight ? 'border-red-500' : 'border-gray-300'}`}
                     >
                       <option value="">Select Weight</option>
                       {Array.from({ length: 101 }, (_, i) => i + 40).map((kg) => (
@@ -322,19 +354,20 @@ const BasicProfilePage = () => {
                         </option>
                       ))}
                     </select>
+                    {fieldErrors.weight && <p className="mt-1 text-sm text-red-600">{fieldErrors.weight}</p>}
                   </div>
                 </div>
 
                 {/* Marital Status */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Marital Status
+                    Marital Status <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="marital_status"
                     value={formData.marital_status}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.marital_status ? 'border-red-500' : 'border-gray-300'}`}
                   >
                     <option value="">Select</option>
                     {masters?.marital_status?.map((item) => (
@@ -343,19 +376,20 @@ const BasicProfilePage = () => {
                       </option>
                     ))}
                   </select>
+                  {fieldErrors.marital_status && <p className="mt-1 text-sm text-red-600">{fieldErrors.marital_status}</p>}
                 </div>
 
                 {/* Children - Only show if not unmarried */}
-                {formData.marital_status && formData.marital_status.toLowerCase() !== 'unmarried' && formData.marital_status.toLowerCase() !== 'never married' && (
+                {isChildrenVisible && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Children
+                      Children <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="children"
                       value={formData.children}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.children ? 'border-red-500' : 'border-gray-300'}`}
                     >
                       <option value="">Select</option>
                       <option value="No">No</option>
@@ -367,6 +401,7 @@ const BasicProfilePage = () => {
                       <option value="6">6 Children</option>
                       <option value="More than 6">More than 6</option>
                     </select>
+                    {fieldErrors.children && <p className="mt-1 text-sm text-red-600">{fieldErrors.children}</p>}
                   </div>
                 )}
 
@@ -374,13 +409,13 @@ const BasicProfilePage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Body Type
+                      Body Type <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="body_type"
                       value={formData.body_type}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.body_type ? 'border-red-500' : 'border-gray-300'}`}
                     >
                       <option value="">Select</option>
                       {masters?.body_type?.map((item) => (
@@ -389,16 +424,17 @@ const BasicProfilePage = () => {
                         </option>
                       ))}
                     </select>
+                    {fieldErrors.body_type && <p className="mt-1 text-sm text-red-600">{fieldErrors.body_type}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Complexion
+                      Complexion <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="complexion"
                       value={formData.complexion}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.complexion ? 'border-red-500' : 'border-gray-300'}`}
                     >
                       <option value="">Select</option>
                       {masters?.complexion?.map((item) => (
@@ -407,6 +443,7 @@ const BasicProfilePage = () => {
                         </option>
                       ))}
                     </select>
+                    {fieldErrors.complexion && <p className="mt-1 text-sm text-red-600">{fieldErrors.complexion}</p>}
                   </div>
                 </div>
 
@@ -414,13 +451,13 @@ const BasicProfilePage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Mother Tongue
+                      Mother Tongue <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="mother_tongue"
                       value={formData.mother_tongue}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.mother_tongue ? 'border-red-500' : 'border-gray-300'}`}
                     >
                       <option value="">Select</option>
                       {masters?.mother_tongue?.map((item) => (
@@ -429,16 +466,17 @@ const BasicProfilePage = () => {
                         </option>
                       ))}
                     </select>
+                    {fieldErrors.mother_tongue && <p className="mt-1 text-sm text-red-600">{fieldErrors.mother_tongue}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Personal Values
+                      Personal Values <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="personal_values"
                       value={formData.personal_values}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.personal_values ? 'border-red-500' : 'border-gray-300'}`}
                     >
                       <option value="">Select</option>
                       {masters?.personal_values?.map((item) => (
@@ -447,19 +485,20 @@ const BasicProfilePage = () => {
                         </option>
                       ))}
                     </select>
+                    {fieldErrors.personal_values && <p className="mt-1 text-sm text-red-600">{fieldErrors.personal_values}</p>}
                   </div>
                 </div>
 
                 {/* Physical Status */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Physical Status
+                    Physical Status <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="physical_status"
                     value={formData.physical_status}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${fieldErrors.physical_status ? 'border-red-500' : 'border-gray-300'}`}
                   >
                     <option value="">Select</option>
                     {masters?.physical_status?.map((item) => (
@@ -468,6 +507,7 @@ const BasicProfilePage = () => {
                       </option>
                     ))}
                   </select>
+                  {fieldErrors.physical_status && <p className="mt-1 text-sm text-red-600">{fieldErrors.physical_status}</p>}
                 </div>
 
                 {/* Submit Button */}

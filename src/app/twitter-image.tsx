@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 // Route segment config
-export const runtime = 'edge';
+// ImageResponse works in Node.js runtime (Next.js 14+), no need for edge runtime
 export const alt = 'vivahavedi - Find Your Perfect Life Partner | Indian Matrimonial Site';
 export const size = {
   width: 1200,

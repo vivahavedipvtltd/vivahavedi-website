@@ -1,5 +1,9 @@
 import { MetadataRoute } from 'next';
 
+// Revalidate sitemap every 24 hours (ISR) instead of disabling cache,
+// so Next.js can statically generate it at build time and refresh periodically.
+export const revalidate = 86400;
+
 interface Religion {
   id: number;
   name: string;
@@ -28,7 +32,7 @@ function createSlug(name: string): string {
 async function getMasterData(): Promise<MasterData> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/masters`, {
-      cache: 'no-store'
+      next: { revalidate: 86400 }
     });
     const data = await response.json();
 
