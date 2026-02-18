@@ -98,6 +98,22 @@ export interface MyDetails {
     ql_id?: number | null;
     job_status?: string | null;
   };
+  astro: {
+    astro_profile?: string | null;
+    city_of_birth?: string | null;
+    place_of_birth?: string | null;
+    nak_id?: number | null;
+    nak_name?: string | null;
+    manglik?: string | null;
+    b_hour?: string | null;
+    b_minute?: string | null;
+    b_second?: string | null;
+    time_of_birth?: string | null;
+    raasi?: string | null;
+    gothram?: string | null;
+    horoscope?: string | null;
+    uap_complete?: string | null;
+  } | null;
   profile_completion: {
     registration: string; // '1' = complete, '0' = incomplete
     basic: string;        // '1' = complete, '0' = incomplete

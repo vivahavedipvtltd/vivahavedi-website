@@ -122,7 +122,7 @@ const AstrologicalProfilePage = () => {
       if (result.status === 'success') {
         setSuccess('Astrological profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard?section=my-profile');
+          router.push('/dashboard?section=my-profile&refresh=true');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update profile');

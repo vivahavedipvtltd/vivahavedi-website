@@ -25,6 +25,7 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
   // Safe access to nested properties with defaults
   const basic = myDetails?.basic || {};
   const detailed = myDetails?.detailed || {};
+  const astro = myDetails?.astro || {};
 
   return (
     <div className="space-y-6">
@@ -285,6 +286,60 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
           )}
           {detailed.up_smoke && (
             <ProfileItem icon={<Star />} label="Smoking" value={detailed.up_smoke} />
+          )}
+        </div>
+      </div>
+
+      {/* Astrological Details */}
+      <div className="relative bg-gradient-to-br from-white via-white to-sky-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sky-100 to-blue-100 rounded-bl-full opacity-20"></div>
+
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Star className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
+                Astrological Details
+              </h2>
+              <p className="text-xs text-gray-500">Birth & Astrological Information</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile/astrological"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <span className="text-sm font-semibold">Edit</span>
+          </Link>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {astro.astro_profile && (
+            <ProfileItem icon={<Star />} label="Astrological Profile" value={astro.astro_profile} />
+          )}
+          {astro.city_of_birth && (
+            <ProfileItem icon={<MapPin />} label="City of Birth" value={astro.city_of_birth} />
+          )}
+          {astro.nak_name && (
+            <ProfileItem icon={<Star />} label="Nakshatra" value={astro.nak_name} />
+          )}
+          {astro.manglik && (
+            <ProfileItem icon={<Star />} label="Manglik" value={astro.manglik} />
+          )}
+          {(astro.b_hour || astro.b_minute || astro.b_second) && (
+            <ProfileItem
+              icon={<Calendar />}
+              label="Birth Time"
+              value={`${String(astro.b_hour ?? 0).padStart(2, '0')}:${String(astro.b_minute ?? 0).padStart(2, '0')}:${String(astro.b_second ?? 0).padStart(2, '0')}`}
+            />
+          )}
+          {astro.gothram && (
+            <ProfileItem icon={<Users />} label="Gothram" value={astro.gothram} />
+          )}
+          {astro.raasi && (
+            <ProfileItem icon={<Star />} label="Raasi" value={astro.raasi} />
           )}
         </div>
       </div>
