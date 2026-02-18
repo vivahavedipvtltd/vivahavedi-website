@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { Upload, X, Loader2, CheckCircle2, AlertCircle, FileText, Star, Eye } from 'lucide-react';
+import { Upload, X, Loader2, CheckCircle2, AlertCircle, FileText, Eye } from 'lucide-react';
 import { MyPhotos } from '@/types/dashboard';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -15,67 +15,11 @@ interface MyDocumentsManagementProps {
 
 const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementProps) => {
   const { token } = useAuth();
-  const [uploadingHoroscope, setUploadingHoroscope] = useState(false);
   const [uploadingIdProof, setUploadingIdProof] = useState(false);
-  const [deletingHoroscope, setDeletingHoroscope] = useState(false);
   const [deletingIdProof, setDeletingIdProof] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [viewingDocument, setViewingDocument] = useState<{ type: 'horoscope' | 'idproof'; url: string } | null>(null);
-
-  const handleHoroscopeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      setError('Invalid file type. Please upload JPG, PNG, GIF, BMP, or WEBP files.');
-      return;
-    }
-
-    // Validate file size (10MB max)
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File size exceeds 10MB. Please upload a smaller file.');
-      return;
-    }
-
-    try {
-      setUploadingHoroscope(true);
-      setError(null);
-      setSuccess(null);
-
-      const formData = new FormData();
-      formData.append('horoscope', file);
-
-      const response = await fetch(`${API_BASE_URL}/upload-horoscope`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        setSuccess('Horoscope uploaded successfully!');
-        setTimeout(() => {
-          onRefresh();
-          setSuccess(null);
-        }, 1500);
-      } else {
-        setError(result.message || 'Failed to upload horoscope');
-      }
-    } catch (error) {
-      console.error('Horoscope upload error:', error);
-      setError('An error occurred while uploading the horoscope');
-    } finally {
-      setUploadingHoroscope(false);
-      event.target.value = '';
-    }
-  };
+  const [viewingDocument, setViewingDocument] = useState<{ type: 'idproof'; url: string } | null>(null);
 
   const handleIdProofUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -128,45 +72,6 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
     } finally {
       setUploadingIdProof(false);
       event.target.value = '';
-    }
-  };
-
-  const handleHoroscopeDelete = async () => {
-    if (!confirm('Are you sure you want to delete your horoscope?')) {
-      return;
-    }
-
-    try {
-      setDeletingHoroscope(true);
-      setError(null);
-      setSuccess(null);
-
-      const response = await fetch(`${API_BASE_URL}/delete-photo`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ photo: 'horoscope' }),
-      });
-
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        setSuccess('Horoscope deleted successfully!');
-        setTimeout(() => {
-          onRefresh();
-          setSuccess(null);
-        }, 1000);
-      } else {
-        setError(result.message || 'Failed to delete horoscope');
-      }
-    } catch (error) {
-      console.error('Horoscope delete error:', error);
-      setError('An error occurred while deleting the horoscope');
-    } finally {
-      setDeletingHoroscope(false);
     }
   };
 
@@ -240,100 +145,8 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
         </div>
       )}
 
-      {/* Two columns grid for documents */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Horoscope Section */}
-        <div className="border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <Star className="h-5 w-5 text-yellow-600 mr-2" />
-              <h3 className="font-semibold text-gray-900">Horoscope</h3>
-            </div>
-            {myPhotos.horoscope_status === 'yes' ? (
-              <span className="text-green-600 font-semibold flex items-center text-sm">
-                <CheckCircle2 className="h-4 w-4 mr-1" />
-                Uploaded
-              </span>
-            ) : (
-              <span className="text-gray-500 font-semibold text-sm">Not Uploaded</span>
-            )}
-          </div>
-
-          {myPhotos.horoscope_status === 'yes' && myPhotos.horoscope !== 'no' ? (
-            <div className="space-y-3">
-              <div className="relative h-48 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                <Image
-                  src={myPhotos.horoscope || '/placeholder-avatar.png'}
-                  alt="Horoscope document for matrimonial profile - Birth chart for marriage matching on vivahavedi"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-contain"
-                  unoptimized={myPhotos.horoscope?.includes('vivahavedimatrimony.com')}
-                />
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setViewingDocument({ type: 'horoscope', url: myPhotos.horoscope })}
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
-                >
-                  <Eye className="h-4 w-4 mr-1" />
-                  View
-                </button>
-                <button
-                  onClick={handleHoroscopeDelete}
-                  disabled={deletingHoroscope}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center"
-                >
-                  {deletingHoroscope ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                      Deleting...
-                    </>
-                  ) : (
-                    <>
-                      <X className="h-4 w-4 mr-1" />
-                      Delete
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <input
-                type="file"
-                id="horoscope-upload"
-                accept="image/jpeg,image/jpg,image/png,image/gif,image/bmp,image/webp"
-                onChange={handleHoroscopeUpload}
-                disabled={uploadingHoroscope}
-                className="hidden"
-              />
-              <label
-                htmlFor="horoscope-upload"
-                className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-colors cursor-pointer ${
-                  uploadingHoroscope
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-yellow-500 hover:bg-yellow-600 text-white'
-                }`}
-              >
-                {uploadingHoroscope ? (
-                  <span className="flex items-center justify-center">
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Uploading...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center">
-                    <Upload className="h-5 w-5 mr-2" />
-                    Upload Horoscope
-                  </span>
-                )}
-              </label>
-            </div>
-          )}
-        </div>
-
-        {/* ID Proof Section */}
-        <div className="border border-gray-200 rounded-lg p-4">
+      {/* ID Proof Section */}
+      <div className="border border-gray-200 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <FileText className="h-5 w-5 text-blue-600 mr-2" />
@@ -420,7 +233,6 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
               </label>
             </div>
           )}
-        </div>
       </div>
 
       {/* Upload Info */}
@@ -449,7 +261,7 @@ const MyDocumentsManagement = ({ myPhotos, onRefresh }: MyDocumentsManagementPro
             <div className="relative w-full h-full min-h-[400px]">
               <Image
                 src={viewingDocument.url}
-                alt={viewingDocument.type === 'horoscope' ? 'Horoscope document preview - Birth chart for marriage compatibility on vivahavedi' : 'ID Proof document preview - Government identification for matrimonial profile verification'}
+                alt="ID Proof document preview - Government identification for matrimonial profile verification"
                 fill
                 sizes="(max-width: 1024px) 100vw, 1024px"
                 className="object-contain"

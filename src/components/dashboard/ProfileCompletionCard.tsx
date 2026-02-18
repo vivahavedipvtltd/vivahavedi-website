@@ -11,6 +11,7 @@ interface ProfileCompletion {
   astro: string;
   photo: string;
   id_proof: string;
+  horoscope: string;
   score: number;
 }
 
@@ -212,6 +213,12 @@ const ProfileCompletionCard: React.FC<ProfileCompletionCardProps> = React.memo((
           status={profileCompletion.id_proof}
           onClick={() => onSectionChange?.('my-documents')}
           points="15 pts"
+        />
+        <CompletionItem
+          label="Horoscope"
+          status={profileCompletion.horoscope ?? '0'}
+          editLink="/dashboard/horoscope"
+          points="Optional"
         />
       </div>
     </div>
