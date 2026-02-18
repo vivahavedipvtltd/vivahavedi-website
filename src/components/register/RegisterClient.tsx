@@ -119,10 +119,16 @@ export default function RegisterClient() {
           router.push('/dashboard');
         }, 1000);
       } else {
-        showError(result.message || 'Registration failed. Please try again.');
-        // Go back to appropriate step based on error
-        if (result.message === 'user already registered' || result.message === 'email already registered') {
+        // Parse specific field errors from API response
+        const fieldErrors = result.errors;
+        if (fieldErrors && (fieldErrors.mobile || fieldErrors.email)) {
+          const messages: string[] = [];
+          if (fieldErrors.mobile) messages.push(fieldErrors.mobile[0]);
+          if (fieldErrors.email) messages.push(fieldErrors.email[0]);
+          showError(messages.join('. '));
           setCurrentStep(1);
+        } else {
+          showError(result.message || 'Registration failed. Please try again.');
         }
       }
     } catch (error) {
