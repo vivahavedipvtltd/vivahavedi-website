@@ -212,13 +212,13 @@ const ProfileCompletionCard: React.FC<ProfileCompletionCardProps> = React.memo((
           label="ID Proof"
           status={profileCompletion.id_proof}
           onClick={() => onSectionChange?.('my-documents')}
-          points="15 pts"
+          points="10 pts"
         />
         <CompletionItem
           label="Horoscope"
           status={profileCompletion.horoscope ?? '0'}
           editLink="/dashboard/horoscope"
-          points="Optional"
+          points="5 pts"
         />
       </div>
     </div>
