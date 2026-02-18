@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMasterData } from '@/hooks/useMasterData';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import { Heart, Loader2, Save, ArrowLeft, Music, Book, Utensils, Wine, Cigarette } from 'lucide-react';
@@ -19,9 +20,14 @@ interface HobbiesData {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
+const dietOptions = ['Vegetarian', 'Non-Vegetarian', 'Eggetarian', 'Vegan'];
+const drinkOptions = ['Yes', 'No', 'Occasionally', 'Socially'];
+const smokeOptions = ['Yes', 'No', 'Occasionally'];
+
 const HobbiesUpdatePage = () => {
   const router = useRouter();
   const { token } = useAuth();
+  const { data: masterData, isLoading: mastersLoading } = useMasterData();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<HobbiesData>({
@@ -36,34 +42,10 @@ const HobbiesUpdatePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Pre-defined options
-  const hobbiesOptions = [
-    'Reading', 'Swimming', 'Cooking', 'Traveling', 'Photography',
-    'Gardening', 'Painting', 'Dancing', 'Singing', 'Sports',
-    'Gaming', 'Writing', 'Yoga', 'Meditation', 'Cycling'
-  ];
-
-  const musicOptions = [
-    'Classical', 'Jazz', 'Pop', 'Rock', 'Hip Hop',
-    'Country', 'Electronic', 'Blues', 'R&B', 'Folk',
-    'Devotional', 'Instrumental', 'Film Songs'
-  ];
-
-  const readsOptions = [
-    'Novels', 'Newspapers', 'Technical Books', 'Magazines',
-    'Poetry', 'Biography', 'History', 'Science Fiction',
-    'Mystery', 'Romance', 'Self-Help', 'Comics'
-  ];
-
-  const cuisineOptions = [
-    'Indian', 'Chinese', 'Continental', 'Italian', 'Mexican',
-    'Thai', 'Japanese', 'Korean', 'Mediterranean', 'American',
-    'Middle Eastern', 'French'
-  ];
-
-  const dietOptions = ['Vegetarian', 'Non-Vegetarian', 'Eggetarian', 'Vegan'];
-  const drinkOptions = ['Yes', 'No', 'Occasionally', 'Socially'];
-  const smokeOptions = ['Yes', 'No', 'Occasionally'];
+  const hobbiesOptions = masterData?.data?.hobbies ?? [];
+  const musicOptions = masterData?.data?.favourite_music ?? [];
+  const readsOptions = masterData?.data?.favourite_reads ?? [];
+  const cuisineOptions = masterData?.data?.favourite_cuisine ?? [];
 
   const fetchProfileData = useCallback(async () => {
     try {
@@ -96,8 +78,8 @@ const HobbiesUpdatePage = () => {
           up_smoke: detailed.up_smoke || '',
         });
       }
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
+    } catch (err) {
+      console.error('Error fetching profile data:', err);
       setError('Failed to load profile data');
     } finally {
       setLoading(false);
@@ -127,6 +109,19 @@ const HobbiesUpdatePage = () => {
     setSuccess(null);
 
     try {
+      const validHobbyNames = new Set(hobbiesOptions.map(h => h.name));
+      const validMusicNames = new Set(musicOptions.map(m => m.name));
+      const validReadNames = new Set(readsOptions.map(r => r.name));
+      const validCuisineNames = new Set(cuisineOptions.map(c => c.name));
+
+      const payload = {
+        ...formData,
+        up_hobbies: formData.up_hobbies.filter(v => validHobbyNames.has(v)),
+        up_music: formData.up_music.filter(v => validMusicNames.has(v)),
+        up_reads: formData.up_reads.filter(v => validReadNames.has(v)),
+        up_cuisine: formData.up_cuisine.filter(v => validCuisineNames.has(v)),
+      };
+
       const response = await fetch(`${API_BASE_URL}/profile-updation/hobbies`, {
         method: 'POST',
         headers: {
@@ -134,7 +129,7 @@ const HobbiesUpdatePage = () => {
           'Accept': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -142,20 +137,20 @@ const HobbiesUpdatePage = () => {
       if (result.status === 'success') {
         setSuccess('Hobbies profile updated successfully!');
         setTimeout(() => {
-          router.push('/dashboard?section=my-profile');
+          router.push('/dashboard?section=my-profile&refresh=true');
         }, 2000);
       } else {
         setError(result.message || 'Failed to update hobbies profile');
       }
-    } catch (error) {
-      console.error('Error updating hobbies profile:', error);
+    } catch (err) {
+      console.error('Error updating hobbies profile:', err);
       setError('An error occurred while updating profile');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
+  if (loading || mastersLoading) {
     return (
       <DashboardLayout centered showFooter={false}>
         <div className="text-center">
@@ -224,14 +219,14 @@ const HobbiesUpdatePage = () => {
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {hobbiesOptions.map((hobby) => (
-                      <label key={hobby} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                      <label key={hobby.id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.up_hobbies.includes(hobby)}
-                          onChange={() => handleMultiSelectChange('up_hobbies', hobby)}
+                          checked={formData.up_hobbies.includes(hobby.name)}
+                          onChange={() => handleMultiSelectChange('up_hobbies', hobby.name)}
                           className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                         />
-                        <span className="text-sm text-gray-700">{hobby}</span>
+                        <span className="text-sm text-gray-700">{hobby.name}</span>
                       </label>
                     ))}
                   </div>
@@ -245,14 +240,14 @@ const HobbiesUpdatePage = () => {
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {musicOptions.map((music) => (
-                      <label key={music} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                      <label key={music.id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.up_music.includes(music)}
-                          onChange={() => handleMultiSelectChange('up_music', music)}
+                          checked={formData.up_music.includes(music.name)}
+                          onChange={() => handleMultiSelectChange('up_music', music.name)}
                           className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                         />
-                        <span className="text-sm text-gray-700">{music}</span>
+                        <span className="text-sm text-gray-700">{music.name}</span>
                       </label>
                     ))}
                   </div>
@@ -266,14 +261,14 @@ const HobbiesUpdatePage = () => {
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {readsOptions.map((read) => (
-                      <label key={read} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                      <label key={read.id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.up_reads.includes(read)}
-                          onChange={() => handleMultiSelectChange('up_reads', read)}
+                          checked={formData.up_reads.includes(read.name)}
+                          onChange={() => handleMultiSelectChange('up_reads', read.name)}
                           className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                         />
-                        <span className="text-sm text-gray-700">{read}</span>
+                        <span className="text-sm text-gray-700">{read.name}</span>
                       </label>
                     ))}
                   </div>
@@ -287,14 +282,14 @@ const HobbiesUpdatePage = () => {
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {cuisineOptions.map((cuisine) => (
-                      <label key={cuisine} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                      <label key={cuisine.id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.up_cuisine.includes(cuisine)}
-                          onChange={() => handleMultiSelectChange('up_cuisine', cuisine)}
+                          checked={formData.up_cuisine.includes(cuisine.name)}
+                          onChange={() => handleMultiSelectChange('up_cuisine', cuisine.name)}
                           className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                         />
-                        <span className="text-sm text-gray-700">{cuisine}</span>
+                        <span className="text-sm text-gray-700">{cuisine.name}</span>
                       </label>
                     ))}
                   </div>

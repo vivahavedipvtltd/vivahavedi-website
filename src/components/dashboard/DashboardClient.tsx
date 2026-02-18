@@ -81,8 +81,9 @@ function DashboardContent() {
     // Handle refresh parameter (invalidate cache and reload data)
     if (refreshParam === 'true') {
       refresh();
-      // Clear the refresh parameter from URL
-      router.replace('/dashboard', { scroll: false });
+      // Clear the refresh parameter from URL while preserving the section
+      const url = sectionParam ? `/dashboard?section=${sectionParam}` : '/dashboard';
+      router.replace(url, { scroll: false });
       return;
     }
 
