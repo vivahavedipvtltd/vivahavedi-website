@@ -185,12 +185,12 @@ const HoroscopePage = () => {
         />
 
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             {/* Header */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <div className="flex items-center">
                 <button
-                  onClick={() => router.push('/dashboard?section=my-documents')}
+                  onClick={() => router.push('/dashboard')}
                   className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <ArrowLeft className="h-5 w-5 text-gray-600" />
