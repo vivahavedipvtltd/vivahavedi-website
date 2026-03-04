@@ -13,7 +13,8 @@ import {
   Star,
   Edit2,
   Heart,
-  Plus
+  Plus,
+  Globe
 } from 'lucide-react';
 import ProfileItem from './ProfileItem';
 import { MyDetails } from '@/types/dashboard';
@@ -36,25 +37,18 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
         {/* Decorative corner */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-100 to-pink-100 rounded-bl-full opacity-20"></div>
 
-        <div className="relative flex items-center justify-between mb-6">
+        <div className="relative flex items-center mb-6">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
               <User className="h-6 w-6 text-white" />
             </div>
             <div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-                Basic Information
+                Account Information
               </h2>
               <p className="text-xs text-gray-500">Personal & Contact Details</p>
             </div>
           </div>
-          <Link
-            href="/dashboard/profile/basic"
-            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
-          >
-            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-            <span className="text-sm font-semibold">Edit</span>
-          </Link>
         </div>
 
         <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -66,13 +60,42 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             <ProfileItem icon={<Phone />} label="Phone" value={basic.user_phone} />
           )}
           <ProfileItem icon={<Mail />} label="Email" value={basic.user_email || 'N/A'} />
-          <ProfileItem icon={<MapPin />} label="Address" value={basic.user_address || 'N/A'} />
+        </div>
+      </div>
+
+      {/* Religion & Location */}
+      <div className="relative bg-gradient-to-br from-white via-white to-teal-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-bl-full opacity-20"></div>
+
+        <div className="relative flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+              <Globe className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                Religion & Location
+              </h2>
+              <p className="text-xs text-gray-500">Faith & Residential Details</p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/profile/basic"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <span className="text-sm font-semibold">Edit</span>
+          </Link>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <ProfileItem icon={<Users />} label="Religion" value={basic.rel_name || 'N/A'} />
           <ProfileItem icon={<Users />} label="Caste" value={basic.caste_name || 'N/A'} />
-          <ProfileItem icon={<MapPin />} label="Country" value={basic.con_name || 'N/A'} />
+          <ProfileItem icon={<Globe />} label="Country" value={basic.con_name || 'N/A'} />
           <ProfileItem icon={<MapPin />} label="State" value={basic.state_name || 'N/A'} />
           <ProfileItem icon={<MapPin />} label="District" value={basic.dist_name || 'N/A'} />
           <ProfileItem icon={<MapPin />} label="Location" value={basic.lpo_name || 'N/A'} />
+          <ProfileItem icon={<MapPin />} label="Address" value={basic.user_address || 'N/A'} />
         </div>
       </div>
 
@@ -87,7 +110,7 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             </div>
             <div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Physical & Personal Details
+                Basic Information
               </h2>
               <p className="text-xs text-gray-500">Physical Attributes & Personal Info</p>
             </div>
