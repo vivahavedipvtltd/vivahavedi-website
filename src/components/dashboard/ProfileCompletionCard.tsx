@@ -12,6 +12,7 @@ interface ProfileCompletion {
   photo: string;
   id_proof: string;
   horoscope: string;
+  religion_caste: string;
   score: number;
 }
 
@@ -172,6 +173,12 @@ const ProfileCompletionCard: React.FC<ProfileCompletionCardProps> = React.memo((
 
       {/* Completion Items Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <CompletionItem
+          label="Religion & Location"
+          status={profileCompletion.religion_caste ?? '0'}
+          editLink="/dashboard/profile/religion-location"
+          points="20 pts"
+        />
         <CompletionItem
           label="Basic Info"
           status={profileCompletion.basic}

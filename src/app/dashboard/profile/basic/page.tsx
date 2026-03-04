@@ -6,7 +6,7 @@ import { mutate } from 'swr';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
-import { User, Loader2, Save, ArrowLeft } from 'lucide-react';
+import { User, FileText, Loader2, Save, ArrowLeft } from 'lucide-react';
 
 interface MasterData {
   body_type: Array<{ id: number; name: string }>;
@@ -32,6 +32,7 @@ interface BasicProfileData {
   eating_habits: string;
   drinking_habits: string;
   smoking_habits: string;
+  about_my_self: string;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -56,6 +57,7 @@ const BasicProfilePage = () => {
     eating_habits: '',
     drinking_habits: '',
     smoking_habits: '',
+    about_my_self: '',
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -111,6 +113,7 @@ const BasicProfilePage = () => {
           eating_habits: detailed.up_eating_habits || '',
           drinking_habits: detailed.up_drinking_habits || '',
           smoking_habits: detailed.up_smoking_habits || '',
+          about_my_self: detailed.up_about_myself || '',
         });
       } else {
         // Handle API errors
@@ -508,6 +511,33 @@ const BasicProfilePage = () => {
                     ))}
                   </select>
                   {fieldErrors.physical_status && <p className="mt-1 text-sm text-red-600">{fieldErrors.physical_status}</p>}
+                </div>
+
+                {/* About Myself */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <FileText className="h-4 w-4 mr-1 text-gray-500" />
+                    About Myself
+                  </label>
+                  <p className="text-sm text-gray-500 mb-3">
+                    Write a brief description about yourself to help others know you better.
+                  </p>
+                  <textarea
+                    name="about_my_self"
+                    value={formData.about_my_self}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 1000) {
+                        setFormData(prev => ({ ...prev, about_my_self: e.target.value }));
+                      }
+                    }}
+                    rows={6}
+                    maxLength={1000}
+                    placeholder="Write about your personality, interests, values, what you're looking for in a partner..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                  />
+                  <p className={`text-sm mt-1 text-right ${formData.about_my_self.length >= 1000 ? 'text-red-600 font-semibold' : 'text-gray-500'}`}>
+                    {formData.about_my_self.length} / 1000 characters
+                  </p>
                 </div>
 
                 {/* Submit Button */}

@@ -123,8 +123,9 @@ export interface MyDetails {
     astro: string;        // '1' = complete, '0' = incomplete
     photo: string;        // '1' = complete, '0' = incomplete
     id_proof: string;     // '1' = complete, '0' = incomplete
-    horoscope: string;    // '1' = complete, '0' = incomplete (does not affect score)
-    score: number;        // Overall completion percentage (0-100)
+    horoscope: string;       // '1' = complete, '0' = incomplete (does not affect score)
+    religion_caste: string;  // '1' = complete, '0' = incomplete (does not affect score)
+    score: number;           // Overall completion percentage (0-100)
   };
 }
 

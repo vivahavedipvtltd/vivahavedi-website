@@ -145,6 +145,13 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             <ProfileItem icon={<Users />} label="No. of Children" value={detailed.up_no_of_children.toString()} />
           )}
         </div>
+        {/* About Myself */}
+        {detailed.up_about_myself && (
+          <div className="relative mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+            <p className="text-xs text-gray-500 mb-1 font-semibold">About Myself</p>
+            <p className="text-sm text-gray-700 leading-relaxed">{detailed.up_about_myself}</p>
+          </div>
+        )}
       </div>
 
       {/* Education & Career */}
@@ -414,48 +421,6 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
         </div>
       </div>
 
-      {/* About Myself */}
-      <div className="relative bg-gradient-to-br from-white via-white to-indigo-50 rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full opacity-20"></div>
-
-        <div className="relative flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-              <User className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                About Myself
-              </h2>
-              <p className="text-xs text-gray-500">Personal Description</p>
-            </div>
-          </div>
-          <Link
-            href="/dashboard/profile/about"
-            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
-          >
-            {detailed.up_about_myself ? (
-              <>
-                <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-                <span className="text-sm font-semibold">Edit</span>
-              </>
-            ) : (
-              <>
-                <Plus className="h-4 w-4" />
-                <span className="text-sm font-semibold">Add</span>
-              </>
-            )}
-          </Link>
-        </div>
-
-        <div className="relative p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
-          {detailed.up_about_myself ? (
-            <p className="text-gray-700 leading-relaxed text-base">{detailed.up_about_myself}</p>
-          ) : (
-            <p className="text-gray-400 italic text-sm">No description added yet. Click &quot;Add&quot; to write about yourself.</p>
-          )}
-        </div>
-      </div>
     </div>
   );
 });
