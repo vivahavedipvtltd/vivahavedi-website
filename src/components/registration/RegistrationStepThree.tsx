@@ -19,6 +19,7 @@ const RegistrationStepThree = ({ formData, onComplete, onBack }: RegistrationSte
     state: formData.state,
     district: formData.district,
     location: formData.location,
+    address: formData.address,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -242,6 +243,22 @@ const RegistrationStepThree = ({ formData, onComplete, onBack }: RegistrationSte
           </select>
         </div>
         {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
+      </div>
+
+      {/* Address */}
+      <div>
+        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+          Address
+        </label>
+        <textarea
+          id="address"
+          name="address"
+          value={localFormData.address}
+          onChange={(e) => setLocalFormData({ ...localFormData, address: e.target.value })}
+          placeholder="Enter your address (optional)"
+          rows={3}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+        />
       </div>
 
       {/* Navigation Buttons */}

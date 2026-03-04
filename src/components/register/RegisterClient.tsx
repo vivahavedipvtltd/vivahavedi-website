@@ -64,6 +64,7 @@ export default function RegisterClient() {
     state: 0,
     district: 0,
     location: 0,
+    address: '',
   });
 
   const handleStepOneComplete = (data: Partial<RegistrationFormData>) => {
@@ -104,6 +105,7 @@ export default function RegisterClient() {
           state: finalData.state,
           district: finalData.district,
           location: finalData.location,
+          address: finalData.address,
         }),
       });
 

@@ -20,6 +20,7 @@ export interface RegistrationFormData {
   state: number;
   district: number;
   location: number;
+  address: string;
 }
 
 export interface MasterData {
