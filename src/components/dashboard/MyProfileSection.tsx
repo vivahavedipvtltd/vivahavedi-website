@@ -80,7 +80,7 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
             </div>
           </div>
           <Link
-            href="/dashboard/profile/basic"
+            href="/dashboard/profile/religion-location"
             className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group"
           >
             <Edit2 className="h-4 w-4 group-hover:rotate-12 transition-transform" />
