@@ -107,18 +107,28 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
         body: formData,
       });
 
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        setSuccess('Photo uploaded successfully!');
+      if (response.status === 429) {
+        setError('Too many upload attempts. Please wait a few minutes and try again.');
         setUploadProgress(null);
-        setTimeout(() => {
-          onRefresh();
-          setSuccess(null);
-        }, 1500);
       } else {
-        setError(result.message || 'Failed to upload photo');
-        setUploadProgress(null);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          setSuccess('Photo uploaded successfully!');
+          setUploadProgress(null);
+          setTimeout(() => {
+            onRefresh();
+            setSuccess(null);
+          }, 1500);
+        } else {
+          // Show specific field validation errors when available (e.g. file type/size issues)
+          const fieldErrors = result.errors?.photo;
+          const errorMsg = fieldErrors
+            ? (Array.isArray(fieldErrors) ? fieldErrors[0] : fieldErrors)
+            : (result.message || 'Failed to upload photo');
+          setError(errorMsg);
+          setUploadProgress(null);
+        }
       }
     } catch (err) {
       console.error('Photo upload error:', err);
@@ -190,18 +200,28 @@ const MyPhotosManagement = ({ myPhotos, onRefresh }: MyPhotosManagementProps) =>
         body: formData,
       });
 
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        setSuccess('Photo cropped and updated successfully!');
+      if (response.status === 429) {
+        setError('Too many upload attempts. Please wait a few minutes and try again.');
         setUploadProgress(null);
-        setTimeout(() => {
-          onRefresh();
-          setSuccess(null);
-        }, 1500);
       } else {
-        setError(result.message || 'Failed to update photo');
-        setUploadProgress(null);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          setSuccess('Photo cropped and updated successfully!');
+          setUploadProgress(null);
+          setTimeout(() => {
+            onRefresh();
+            setSuccess(null);
+          }, 1500);
+        } else {
+          // Show specific field validation errors when available
+          const fieldErrors = result.errors?.photo;
+          const errorMsg = fieldErrors
+            ? (Array.isArray(fieldErrors) ? fieldErrors[0] : fieldErrors)
+            : (result.message || 'Failed to update photo');
+          setError(errorMsg);
+          setUploadProgress(null);
+        }
       }
     } catch (err) {
       console.error('Photo crop upload error:', err);
