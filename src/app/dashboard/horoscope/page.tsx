@@ -178,7 +178,7 @@ const HoroscopePage = () => {
     <DashboardLayout showFooter={false}>
       <div className="flex-1 flex bg-gray-50 overflow-hidden">
         <DashboardSidebar
-          activeSection="my-documents"
+          activeSection="horoscope"
           onSectionChange={(section) => {
             router.push(`/dashboard?section=${section}`);
           }}

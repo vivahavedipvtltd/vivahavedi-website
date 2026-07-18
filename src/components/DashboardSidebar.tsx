@@ -68,6 +68,7 @@ const DashboardSidebar = ({ activeSection, stats }: DashboardSidebarProps) => {
       items: [
         { id: 'my-profile', label: 'My Profile', icon: <User className="h-5 w-5" /> },
         { id: 'my-photos', label: 'My Photos', icon: <ImageIcon className="h-5 w-5" /> },
+        { id: 'horoscope', label: 'My Horoscope', icon: <Star className="h-5 w-5" /> },
         { id: 'my-documents', label: 'My Documents', icon: <FileText className="h-5 w-5" /> },
         { id: 'mobile-verification', label: 'Mobile Verification', icon: <Shield className="h-5 w-5" /> },
         { id: 'partner-preferences', label: 'Partner Preferences', icon: <Heart className="h-5 w-5" /> },
@@ -128,6 +129,9 @@ const DashboardSidebar = ({ activeSection, stats }: DashboardSidebarProps) => {
         break;
       case 'matching-profiles':
         router.push('/dashboard/matching-profiles');
+        break;
+      case 'horoscope':
+        router.push('/dashboard/horoscope');
         break;
       case 'saved-searches':
         router.push('/dashboard/saved-searches');
