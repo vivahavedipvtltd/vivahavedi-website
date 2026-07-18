@@ -229,6 +229,7 @@ export interface PartnerProfile {
   qualification?: string[];
   specialization?: string[];
   profession?: string[];
+  upp_workin?: string[];
 }
 
 export interface ContactedSectionData {

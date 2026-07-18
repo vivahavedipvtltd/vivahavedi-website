@@ -13,6 +13,7 @@ interface MasterData {
   specialization: Array<{ id: number; name: string }>;
   profession: Array<{ id: number; name: string }>;
   job_status: Array<{ id: number; name: string }>;
+  country: Array<{ id: number; name: string }>;
 }
 
 interface EducationProfileData {
@@ -73,12 +74,20 @@ const EducationProfilePage = () => {
 
       if (profileResult.status === 'success') {
         const detailed = profileResult.data.detailed;
+        const rawWorkingIn = detailed.up_workingin || detailed.up_working_in || '';
+        // up_workingin used to be free text, so existing values may not match a
+        // master country's name exactly in case/whitespace; resolve to the
+        // canonical name so the select shows the current value as selected.
+        const countries: Array<{ id: number; name: string }> = mastersResult?.data?.country || [];
+        const matchedCountry = countries.find(
+          (c) => c.name.toLowerCase() === rawWorkingIn.trim().toLowerCase()
+        );
         setFormData({
           qualification: detailed.qual_id || '',
           spcialization: detailed.speci_id || '',
           profession: detailed.pro_id || '',
           job_status: detailed.up_job_status || detailed.job_status || '',
-          working_in: detailed.up_workingin || detailed.up_working_in || '',
+          working_in: matchedCountry ? matchedCountry.name : rawWorkingIn,
           working_at: detailed.up_working_at || detailed.up_company_name || '',
           working_as: detailed.up_working_as || detailed.up_designation || '',
           income: detailed.up_income || detailed.up_annualincome || '',
@@ -305,14 +314,19 @@ const EducationProfilePage = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Working In (Sector)
                         </label>
-                        <input
-                          type="text"
+                        <select
                           name="working_in"
                           value={formData.working_in}
                           onChange={handleChange}
-                          placeholder="e.g., Private, Government"
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                        />
+                        >
+                          <option value="">Select Country</option>
+                          {masters?.country?.map((item) => (
+                            <option key={item.id} value={item.name}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <div>

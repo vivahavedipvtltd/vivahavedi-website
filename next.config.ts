@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'api.vivahavedimatrimony.com',
       },
+{
+        protocol: 'https',
+        hostname: 'api.matrimonyforindian.com',
+      },
+      
       {
         protocol: 'https',
         hostname: 'www.vivahavedimatrimony.com',

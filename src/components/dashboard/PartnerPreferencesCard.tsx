@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Star, MapPin, GraduationCap, Heart, Pencil, CheckCircle2, Clock3, Users, Edit2 } from 'lucide-react';
+import { Star, MapPin, GraduationCap, Heart, Pencil, CheckCircle2, Clock3, Users, Edit2, Briefcase } from 'lucide-react';
 import ProfileItem from './ProfileItem';
 import { PartnerProfile } from '@/types/dashboard';
 
@@ -186,6 +186,7 @@ const PartnerPreferencesCard: React.FC<PartnerPreferencesCardProps> = React.memo
             <ProfileItem icon={<GraduationCap />} label="Qualification" value={formatArrOrDash(p?.qualification)} />
             <ProfileItem icon={<GraduationCap />} label="Specialization" value={formatArrOrDash(p?.specialization)} />
             <ProfileItem icon={<GraduationCap />} label="Profession" value={formatArrOrDash(p?.profession)} />
+            <ProfileItem icon={<Briefcase />} label="Working Country" value={formatArrOrDash(p?.upp_workin)} />
           </div>
         </div>
       </div>

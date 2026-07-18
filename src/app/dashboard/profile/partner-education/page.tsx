@@ -8,6 +8,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import { GraduationCap, Loader2, Save, ArrowLeft, Briefcase } from 'lucide-react';
 import FilterableMultiSelectById from '@/components/FilterableMultiSelectById';
+import FilterableMultiSelect from '@/components/FilterableMultiSelect';
 
 interface MasterDataItem {
   id: number;
@@ -19,6 +20,7 @@ interface MasterData {
   qualification: Array<MasterDataItem>;
   specialization: Array<MasterDataItem>;
   profession: Array<MasterDataItem>;
+  country: Array<MasterDataItem>;
 }
 
 interface PartnerEducationData {
@@ -26,6 +28,7 @@ interface PartnerEducationData {
   upp_qualification: number[];
   upp_spetialization: number[];
   upp_profession: number[];
+  upp_workin: string[];
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -41,6 +44,7 @@ const PartnerEducationUpdatePage = () => {
     upp_qualification: [],
     upp_spetialization: [],
     upp_profession: [],
+    upp_workin: [],
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -76,6 +80,9 @@ const PartnerEducationUpdatePage = () => {
           upp_qualification: partner.upp_qualification ? partner.upp_qualification.split('|').map((id: string) => parseInt(id.trim())) : [],
           upp_spetialization: partner.upp_spetialization ? partner.upp_spetialization.split('|').map((id: string) => parseInt(id.trim())) : [],
           upp_profession: partner.upp_profession ? partner.upp_profession.split('|').map((id: string) => parseInt(id.trim())) : [],
+          upp_workin: Array.isArray(partner.upp_workin)
+            ? partner.upp_workin
+            : (partner.upp_workin ? partner.upp_workin.split(',').map((name: string) => name.trim()).filter(Boolean) : []),
         });
       }
     } catch (error) {
@@ -92,13 +99,22 @@ const PartnerEducationUpdatePage = () => {
     }
   }, [token, fetchData]);
 
-  const handleMultiSelectChange = (field: keyof PartnerEducationData, value: number) => {
+  const handleMultiSelectChange = (field: keyof Omit<PartnerEducationData, 'upp_workin'>, value: number) => {
     setFormData((prev) => {
       const currentValues = prev[field];
       const newValues = currentValues.includes(value)
         ? currentValues.filter((v) => v !== value)
         : [...currentValues, value];
       return { ...prev, [field]: newValues };
+    });
+  };
+
+  const handleWorkingCountryChange = (value: string) => {
+    setFormData((prev) => {
+      const newValues = prev.upp_workin.includes(value)
+        ? prev.upp_workin.filter((v) => v !== value)
+        : [...prev.upp_workin, value];
+      return { ...prev, upp_workin: newValues };
     });
   };
 
@@ -242,6 +258,17 @@ const PartnerEducationUpdatePage = () => {
                     onChange={(id) => handleMultiSelectChange('upp_profession', id)}
                     placeholder="Search profession..."
                     icon={<Briefcase className="h-4 w-4 text-red-500" />}
+                  />
+                )}
+
+                {/* Working Country */}
+                {masters && masters.country && (
+                  <FilterableMultiSelect
+                    label="Working Country (Select multiple)"
+                    options={masters.country}
+                    selectedValues={formData.upp_workin}
+                    onChange={handleWorkingCountryChange}
+                    placeholder="Search country..."
                   />
                 )}
               </div>
