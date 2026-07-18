@@ -157,11 +157,11 @@ const PartnerLocationUpdatePage = () => {
         }, 2000);
       } else {
         setError(result.message || 'Failed to update partner location preferences');
+        setSaving(false);
       }
     } catch (error) {
       console.error('Error updating partner location preferences:', error);
       setError('An error occurred while updating preferences');
-    } finally {
       setSaving(false);
     }
   };

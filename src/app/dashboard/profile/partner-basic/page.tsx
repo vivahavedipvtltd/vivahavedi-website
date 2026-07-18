@@ -204,11 +204,11 @@ const PartnerBasicUpdatePage = () => {
         }, 2000);
       } else {
         setError(result.message || 'Failed to update partner profile');
+        setSaving(false);
       }
     } catch (error) {
       console.error('Error updating partner profile:', error);
       setError('An error occurred while updating profile');
-    } finally {
       setSaving(false);
     }
   };

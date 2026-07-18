@@ -142,11 +142,11 @@ const PartnerReligionUpdatePage = () => {
         }, 2000);
       } else {
         setError(result.message || 'Failed to update partner religion preferences');
+        setSaving(false);
       }
     } catch (error) {
       console.error('Error updating partner religion preferences:', error);
       setError('An error occurred while updating preferences');
-    } finally {
       setSaving(false);
     }
   };

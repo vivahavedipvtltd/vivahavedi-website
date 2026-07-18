@@ -143,11 +143,11 @@ const HobbiesUpdatePage = () => {
         }, 2000);
       } else {
         setError(result.message || 'Failed to update hobbies profile');
+        setSaving(false);
       }
     } catch (err) {
       console.error('Error updating hobbies profile:', err);
       setError('An error occurred while updating profile');
-    } finally {
       setSaving(false);
     }
   };

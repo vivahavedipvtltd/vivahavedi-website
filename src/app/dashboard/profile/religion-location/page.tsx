@@ -201,10 +201,10 @@ const ReligionLocationPage = () => {
         } else {
           setError(result.message || 'Failed to update location');
         }
+        setSaving(false);
       }
     } catch {
       setError('An error occurred while updating. Please try again.');
-    } finally {
       setSaving(false);
     }
   };

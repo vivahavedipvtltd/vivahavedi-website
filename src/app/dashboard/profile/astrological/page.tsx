@@ -128,11 +128,11 @@ const AstrologicalProfilePage = () => {
         }, 2000);
       } else {
         setError(result.message || 'Failed to update profile');
+        setSaving(false);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
       setError('An error occurred while updating profile');
-    } finally {
       setSaving(false);
     }
   };

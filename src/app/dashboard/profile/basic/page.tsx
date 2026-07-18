@@ -199,11 +199,11 @@ const BasicProfilePage = () => {
           setError(result.message || 'Failed to update profile');
         }
         console.error('API Error:', result);
+        setSaving(false);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
       setError('An error occurred while updating profile');
-    } finally {
       setSaving(false);
     }
   };

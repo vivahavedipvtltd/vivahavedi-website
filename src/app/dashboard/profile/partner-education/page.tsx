@@ -145,11 +145,11 @@ const PartnerEducationUpdatePage = () => {
         }, 2000);
       } else {
         setError(result.message || 'Failed to update partner education preferences');
+        setSaving(false);
       }
     } catch (error) {
       console.error('Error updating partner education preferences:', error);
       setError('An error occurred while updating preferences');
-    } finally {
       setSaving(false);
     }
   };
