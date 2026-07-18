@@ -194,6 +194,7 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
           <ProfileItem icon={<GraduationCap />} label="Specialization" value={detailed.up_specialization || 'N/A'} />
           <ProfileItem icon={<Briefcase />} label="Profession" value={detailed.up_profession || 'N/A'} />
           <ProfileItem icon={<Briefcase />} label="Job Status" value={detailed.up_job_status || 'N/A'} />
+          <ProfileItem icon={<Globe />} label="Working In" value={detailed.up_workingin || detailed.up_working_in || 'N/A'} />
           <ProfileItem icon={<Briefcase />} label="Annual Income" value={detailed.up_annual_income ? `₹${detailed.up_annual_income}` : 'N/A'} />
           {detailed.up_company_name && (
             <ProfileItem icon={<Briefcase />} label="Company" value={detailed.up_company_name} />
