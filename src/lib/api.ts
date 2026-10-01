@@ -68,6 +68,7 @@ export const apiClient = {
     const response = await fetchWithRetry(`${API_BASE_URL}/register`, {
       method: 'POST',
       headers: {
+        'X-Client-Platform': 'web',
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
