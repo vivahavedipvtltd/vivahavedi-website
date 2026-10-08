@@ -116,6 +116,7 @@ export default function WhatsAppPreferencesPage() {
   const [heightTo, setHeightTo] = useState('');
   const [religions, setReligions] = useState<number[]>([]);
   const [castes, setCastes] = useState<number[]>([]);
+  const [states, setStates] = useState<number[]>([]);
   const [districts, setDistricts] = useState<number[]>([]);
   const [levels, setLevels] = useState<number[]>([]);
 
@@ -137,13 +138,20 @@ export default function WhatsAppPreferencesPage() {
         setMasters(m.data);
         const d = p.status === 'success' ? p.data : null;
         if (d) {
+          // Older profiles may have castes/districts without their religion/state: work those out so nothing is hidden.
+          const md: Masters = m.data;
+          const savedCastes = ids(d.upp_caste);
+          const savedDistricts = ids(d.upp_district);
+          const relOfCaste = md.caste.filter(c => savedCastes.includes(c.id)).map(c => c.masterId as number);
+          const stateOfDistrict = md.district.filter(x => savedDistricts.includes(x.id)).map(x => x.masterId as number);
+          setReligions(Array.from(new Set([...ids(d.upp_relegion), ...relOfCaste])));
+          setStates(Array.from(new Set([...ids(d.upp_state), ...stateOfDistrict])));
           setAgeFrom(String(d.upp_age_f || d.upp_age_from || ''));
           setAgeTo(String(d.upp_age_t || d.upp_age_to || ''));
           setHeightFrom(String(d.upp_height_f || d.upp_height_from || ''));
           setHeightTo(String(d.upp_height_t || d.upp_height_to || ''));
-          setReligions(ids(d.upp_relegion));
-          setCastes(ids(d.upp_caste));
-          setDistricts(ids(d.upp_district));
+          setCastes(savedCastes);
+          setDistricts(savedDistricts);
           setLevels(ids(d.upp_qualification_level));
         }
       } catch {
@@ -169,14 +177,23 @@ export default function WhatsAppPreferencesPage() {
   };
 
   const casteOptions = useMemo(
-    () => (masters ? (religions.length ? masters.caste.filter(c => c.masterId !== undefined && religions.includes(c.masterId)) : masters.caste) : []),
+    () => (masters && religions.length ? masters.caste.filter(c => c.masterId !== undefined && religions.includes(c.masterId)) : []),
     [masters, religions],
   );
   const districtOptions = useMemo(() => {
-    if (!masters) return [];
-    const states = new Map(masters.state.map(s => [s.id, s.name]));
-    return masters.district.map(d => ({ id: d.id, name: states.get(d.masterId ?? -1) ? `${d.name} (${states.get(d.masterId ?? -1)})` : d.name }));
-  }, [masters]);
+    if (!masters || !states.length) return [];
+    return masters.district.filter(d => d.masterId !== undefined && states.includes(d.masterId));
+  }, [masters, states]);
+
+  const toggleState = (id: number) => {
+    const next = states.includes(id) ? states.filter(x => x !== id) : [...states, id];
+    setStates(next);
+    // Drop districts of states that are no longer selected.
+    if (masters) {
+      const okIds = new Set(masters.district.filter(d => d.masterId !== undefined && next.includes(d.masterId)).map(d => d.id));
+      setDistricts(prev => prev.filter(d => okIds.has(d)));
+    }
+  };
 
   const ageOptions = AGE_OPTIONS.map(a => ({ value: a, label: `${a} yrs` }));
   const heightOptions = HEIGHT_OPTIONS.map(h => ({ value: h.cm, label: h.label }));
@@ -199,6 +216,7 @@ export default function WhatsAppPreferencesPage() {
           upp_height_to: heightTo ? Number(heightTo) : null,
           upp_relegion: religions,
           upp_caste: castes,
+          upp_state: states,
           upp_district: districts,
           upp_qualification_level: levels,
         }),
@@ -242,9 +260,13 @@ export default function WhatsAppPreferencesPage() {
             <Range label="Height" from={heightFrom} to={heightTo} onFrom={setHeightFrom} onTo={setHeightTo} options={heightOptions} unit="height" />
             <ChipPicker label="Religion" options={masters.religion} selected={religions} onToggle={toggleReligion} />
             <ChipPicker label="Caste" searchable options={casteOptions} selected={castes} onToggle={toggle(setCastes)}
-              hint={religions.length ? 'Showing castes of the religions you picked.' : 'Pick a religion above to narrow this list. Leave empty for any caste.'} />
+              empty="Pick a religion above to see its castes."
+              hint={religions.length ? 'Showing castes of the religion(s) you picked. Leave empty for any caste.' : undefined} />
+            <ChipPicker label="State" searchable options={masters.state} selected={states} onToggle={toggleState}
+              hint="Pick the state(s) first, then choose districts below." />
             <ChipPicker label="District" searchable options={districtOptions} selected={districts} onToggle={toggle(setDistricts)}
-              hint="Leave empty for any district." />
+              empty="Pick a state above to see its districts."
+              hint={states.length ? 'Showing districts of the state(s) you picked. Leave empty for the whole state.' : undefined} />
             <ChipPicker label="Education level" options={masters.qualification_level} selected={levels} onToggle={toggle(setLevels)}
               hint="Leave empty for any education." />
             {error && <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
