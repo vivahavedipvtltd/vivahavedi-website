@@ -168,7 +168,7 @@ function WhatsAppFindMatches() {
     <main className="min-h-screen bg-gray-50 pb-28">
       <div className="max-w-xl mx-auto px-4 pt-6">
         <h1 className="text-2xl font-bold text-gray-900">Find your matches</h1>
-        <p className="text-gray-600 mt-1 mb-5">Tell us who you are looking for. We'll remember this next time you message us on WhatsApp.</p>
+        <p className="text-gray-600 mt-1 mb-5">Tell us who you are looking for. We&apos;ll remember this next time you message us on WhatsApp.</p>
 
         {!masters ? (
           <div className="py-16 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-red-600" /></div>

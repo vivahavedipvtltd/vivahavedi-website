@@ -132,7 +132,7 @@ function WhatsAppRegister() {
       <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="max-w-sm w-full text-center bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
           <CheckCircle2 className="w-14 h-14 text-green-600 mx-auto mb-3" />
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">You're registered</h1>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">You&apos;re registered</h1>
           <p className="text-gray-600">Go back to WhatsApp — we have sent you your login details there.</p>
         </div>
       </main>
@@ -143,7 +143,7 @@ function WhatsAppRegister() {
     <main className="min-h-screen bg-gray-50 pb-28">
       <div className="max-w-xl mx-auto px-4 pt-6">
         <h1 className="text-2xl font-bold text-gray-900">Create your profile</h1>
-        <p className="text-gray-600 mt-1 mb-5">Just a few details. We'll use your WhatsApp number as your mobile number and send your password on WhatsApp.</p>
+        <p className="text-gray-600 mt-1 mb-5">Just a few details. We&apos;ll use your WhatsApp number as your mobile number and send your password on WhatsApp.</p>
 
         <form id="reg" onSubmit={submit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 space-y-5">
           <Field label="Name">
