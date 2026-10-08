@@ -10,6 +10,8 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/',
           '/whatsapp-login',
           '/whatsapp-preferences',
+          '/whatsapp-register',
+          '/whatsapp-find-matches',
           '/api/',
           '/profile/*/edit',
           '/_next/',
