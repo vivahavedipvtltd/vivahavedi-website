@@ -8,6 +8,8 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/dashboard/',
+          '/whatsapp-login',
+          '/whatsapp-preferences',
           '/api/',
           '/profile/*/edit',
           '/_next/',
