@@ -38,6 +38,7 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
     birth_year: formData.birth_year,
     religion: formData.religion,
     caste: formData.caste,
+    sub_caste: formData.sub_caste ?? 0,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -66,7 +67,9 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
 
     // Reset caste when religion changes
     if (name === 'religion') {
-      setLocalFormData({ ...localFormData, religion: numValue, caste: 0 });
+      setLocalFormData({ ...localFormData, religion: numValue, caste: 0, sub_caste: 0 });
+    } else if (name === 'caste') {
+      setLocalFormData({ ...localFormData, caste: numValue, sub_caste: 0 });
     }
   };
 
@@ -123,6 +126,12 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
       (caste) => caste.masterId === localFormData.religion
     ) || [];
   }, [masterData?.caste, localFormData.religion]);
+
+  const filteredSubCastes = useMemo(() => {
+    return masterData?.sub_caste?.filter(
+      (sc) => sc.masterId === localFormData.caste
+    ) || [];
+  }, [masterData?.sub_caste, localFormData.caste]);
 
   if (loading) {
     return (
@@ -255,6 +264,29 @@ const RegistrationStepTwo = ({ formData, onComplete, onBack }: RegistrationStepT
         </select>
         {errors.caste && <p className="mt-1 text-sm text-red-600">{errors.caste}</p>}
       </div>
+
+      {/* Sub Caste - only if the selected caste has sub castes */}
+      {filteredSubCastes.length > 0 && (
+        <div>
+          <label htmlFor="sub_caste" className="block text-sm font-medium text-gray-700 mb-1">
+            Sub Caste
+          </label>
+          <select
+            id="sub_caste"
+            name="sub_caste"
+            value={localFormData.sub_caste}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          >
+            <option value="">Select Sub Caste</option>
+            {filteredSubCastes.map((sc) => (
+              <option key={sc.id} value={sc.id}>
+                {sc.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Navigation Buttons */}
       <div className="flex justify-between pt-4">

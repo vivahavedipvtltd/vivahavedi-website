@@ -138,7 +138,7 @@ const MyProfileSection: React.FC<MyProfileSectionProps> = React.memo(({ myDetail
           <ProfileItem icon={<User />} label="Weight" value={detailed.up_weight ? `${detailed.up_weight} kg` : 'N/A'} />
           <ProfileItem icon={<User />} label="Complexion" value={detailed.up_complexion || 'N/A'} />
           <ProfileItem icon={<User />} label="Body Type" value={detailed.up_body_type || 'N/A'} />
-          <ProfileItem icon={<User />} label="Physical Status" value={detailed.up_physical_status || 'N/A'} />
+          <ProfileItem icon={<User />} label="Physically Challenged" value={detailed.up_physical_status || 'N/A'} />
           <ProfileItem icon={<User />} label="Mother Tongue" value={detailed.up_mother_tongue || 'N/A'} />
           <ProfileItem icon={<Users />} label="Marital Status" value={detailed.up_marital_status || 'N/A'} />
           {detailed.up_no_of_children && detailed.up_no_of_children > 0 && (

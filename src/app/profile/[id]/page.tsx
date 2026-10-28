@@ -783,7 +783,7 @@ const ProfileDetailsPage = () => {
                         { label: 'Marital Status', key: 'marital_status' },
                         { label: 'Body Type', key: 'body_type' },
                         { label: 'Complexion', key: 'complexion' },
-                        { label: 'Physical Status', key: 'physical_status' },
+                        { label: 'Physically Challenged', key: 'physical_status' },
                         { label: 'Religion', key: 'relegion' },
                         { label: 'Caste', key: 'caste' },
                         { label: 'Nakshatra', key: 'nakshathra' },
@@ -996,7 +996,7 @@ const ProfileDetailsPage = () => {
                       <p className="text-gray-900 font-medium">{detailed.up_complexion || 'Not specified'}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Physical Status</p>
+                      <p className="text-sm text-gray-600">Physically Challenged</p>
                       <p className="text-gray-900 font-medium">{detailed.up_physical_status || 'Not specified'}</p>
                     </div>
                     <div>
@@ -1413,7 +1413,7 @@ const ProfileDetailsPage = () => {
                             {partner.physical_status && partner.physical_status.length > 0 && (
                               <div className={`rounded-xl p-4 border ${match?.physical_status === 'yes' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
                                 <div className="flex items-start justify-between gap-2 mb-1.5">
-                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Physical Status</p>
+                                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Physically Challenged</p>
                                   {match && (
                                     <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${match.physical_status === 'yes' ? 'bg-green-100 text-green-700' : 'bg-rose-50 text-rose-400'}`}>
                                       {match.physical_status === 'yes' ? <CheckCircle className="h-2.5 w-2.5" /> : <XCircle className="h-2.5 w-2.5" />}

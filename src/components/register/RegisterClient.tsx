@@ -101,6 +101,7 @@ export default function RegisterClient() {
           birth_year: finalData.birth_year,
           religion: finalData.religion,
           caste: finalData.caste,
+          sub_caste: finalData.sub_caste || undefined,
           country: finalData.country,
           state: finalData.state,
           district: finalData.district,

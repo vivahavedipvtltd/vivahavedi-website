@@ -49,6 +49,7 @@ const ReligionLocationPage = () => {
   // Read-only religion/caste display values
   const [relName, setRelName] = useState('');
   const [casteName, setCasteName] = useState('');
+  const [subCasteName, setSubCasteName] = useState('');
 
   const [formData, setFormData] = useState<FormData>({
     country: '',
@@ -102,6 +103,7 @@ const ReligionLocationPage = () => {
         const basic = profileResult.data.basic;
         setRelName(basic.rel_name || '');
         setCasteName(basic.caste_name || '');
+        setSubCasteName(basic.sub_caste_name || '');
         const districtId = basic.dist_id ? String(basic.dist_id) : '';
         setFormData({
           country: basic.con_id ? String(basic.con_id) : '',
@@ -311,6 +313,17 @@ const ReligionLocationPage = () => {
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                     />
                   </div>
+                  {subCasteName && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-500 mb-2">Sub Caste</label>
+                      <input
+                        type="text"
+                        value={subCasteName}
+                        disabled
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 

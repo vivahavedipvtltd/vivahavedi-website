@@ -8,6 +8,7 @@ export interface MasterDataResponse {
   data: {
     religion: Array<{ id: number; name: string }>;
     caste: Array<{ id: number; name: string; masterId: number }>;
+    sub_caste?: Array<{ id: number; name: string; masterId: number }>;
     nakshathra: Array<{ id: number; name: string }>;
     country: Array<{ id: number; name: string }>;
     state: Array<{ id: number; name: string; masterId: number }>;

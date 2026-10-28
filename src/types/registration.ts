@@ -14,6 +14,7 @@ export interface RegistrationFormData {
   birth_year: number;
   religion: number;
   caste: number;
+  sub_caste?: number;
 
   // Step 3 - Location
   country: number;
@@ -26,6 +27,7 @@ export interface RegistrationFormData {
 export interface MasterData {
   religion: Array<{ id: number; name: string }>;
   caste: Array<{ id: number; name: string; masterId: number }>;
+  sub_caste?: Array<{ id: number; name: string; masterId: number }>;
   country: Array<{ id: number; name: string }>;
   state: Array<{ id: number; name: string; masterId: number }>;
   district: Array<{ id: number; name: string; masterId: number }>;

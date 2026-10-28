@@ -24,11 +24,13 @@ interface BasicProfileData {
   weight: string;
   marital_status: string;
   children: string;
+  about_child: string;
   body_type: string;
   complexion: string;
   mother_tongue: string;
   personal_values: string;
   physical_status: string;
+  physical_description: string;
   eating_habits: string;
   drinking_habits: string;
   smoking_habits: string;
@@ -49,11 +51,13 @@ const BasicProfilePage = () => {
     weight: '',
     marital_status: '',
     children: '',
+    about_child: '',
     body_type: '',
     complexion: '',
     mother_tongue: '',
     personal_values: '',
     physical_status: '',
+    physical_description: '',
     eating_habits: '',
     drinking_habits: '',
     smoking_habits: '',
@@ -105,11 +109,13 @@ const BasicProfilePage = () => {
           weight: detailed.up_body_weight || '',
           marital_status: detailed.up_marital_status || '',
           children: detailed.up_children || 'No',
+          about_child: detailed.up_about_child || '',
           body_type: detailed.up_body_type || '',
           complexion: detailed.up_complexion || '',
           mother_tongue: detailed.up_mother_tongue || '',
           personal_values: detailed.up_personal_values || '',
           physical_status: detailed.up_physical_status || '',
+          physical_description: detailed.up_physical_description || '',
           eating_habits: detailed.up_eating_habits || '',
           drinking_habits: detailed.up_drinking_habits || '',
           smoking_habits: detailed.up_smoking_habits || '',
@@ -139,10 +145,12 @@ const BasicProfilePage = () => {
     }
   }, [token, fetchData]);
 
+  const isPhysicallyChallenged = formData.physical_status !== '' && formData.physical_status.trim().toLowerCase() !== 'no';
   const isChildrenVisible =
     formData.marital_status !== '' &&
     formData.marital_status.toLowerCase() !== 'unmarried' &&
     formData.marital_status.toLowerCase() !== 'never married';
+  const isAboutChildVisible = isChildrenVisible && formData.children !== '' && !['no', 'none', 'without'].includes(formData.children.trim().toLowerCase());
 
   const validate = (): boolean => {
     const errs: Partial<Record<keyof BasicProfileData, string>> = {};
@@ -156,7 +164,7 @@ const BasicProfilePage = () => {
     if (!formData.complexion) errs.complexion = 'Complexion is required';
     if (!formData.mother_tongue) errs.mother_tongue = 'Mother Tongue is required';
     if (!formData.personal_values) errs.personal_values = 'Personal Values is required';
-    if (!formData.physical_status) errs.physical_status = 'Physical Status is required';
+    if (!formData.physical_status) errs.physical_status = 'Physically Challenged is required';
 
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
@@ -179,7 +187,7 @@ const BasicProfilePage = () => {
           'Accept': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, about_child: isAboutChildVisible ? formData.about_child : '', physical_description: isPhysicallyChallenged ? formData.physical_description : '' }),
       });
 
       const result = await response.json();
@@ -408,6 +416,26 @@ const BasicProfilePage = () => {
                   </div>
                 )}
 
+                {/* About Children - Only show if children is selected and not "No" */}
+                {isAboutChildVisible && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">About Children</label>
+                    <textarea
+                      name="about_child"
+                      value={formData.about_child}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 1000) {
+                          setFormData(prev => ({ ...prev, about_child: e.target.value }));
+                        }
+                      }}
+                      rows={3}
+                      maxLength={1000}
+                      placeholder="Write about your children..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                    />
+                  </div>
+                )}
+
                 {/* Body Type & Complexion */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -495,7 +523,7 @@ const BasicProfilePage = () => {
                 {/* Physical Status */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Physical Status <span className="text-red-500">*</span>
+                    Physically Challenged <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="physical_status"
@@ -512,6 +540,26 @@ const BasicProfilePage = () => {
                   </select>
                   {fieldErrors.physical_status && <p className="mt-1 text-sm text-red-600">{fieldErrors.physical_status}</p>}
                 </div>
+
+                {/* About Physical Status - only if physically challenged */}
+                {isPhysicallyChallenged && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">About Physical Status</label>
+                    <textarea
+                      name="physical_description"
+                      value={formData.physical_description}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 1000) {
+                          setFormData(prev => ({ ...prev, physical_description: e.target.value }));
+                        }
+                      }}
+                      rows={3}
+                      maxLength={1000}
+                      placeholder="Describe the physical challenge..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                    />
+                  </div>
+                )}
 
                 {/* About Myself */}
                 <div>
